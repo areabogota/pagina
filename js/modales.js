@@ -252,9 +252,11 @@
           ["fecha inicio", "fecha fin", "nombre", "mensaje", "direccion", "contacto"].forEach(c => datos[c] = f.elements[c].value.trim());
           const file = f.elements.flyer.files[0];
           if (file) datos.flyer = await comprimir(file);
-          await llamar({ modo: nuevo ? "crear" : "editar", fila: v.fila || 0, datos });
+          const r = await llamar({ modo: nuevo ? "crear" : "editar", fila: v.fila || 0, datos });
           refrescar();
-          inicio(nuevo ? "Evento agregado." : "Evento actualizado.");
+          if (r.errorCalendario) console.error("[evento] calendario:", r.errorCalendario);
+          const base = nuevo ? "Evento agregado." : "Evento actualizado.";
+          inicio(r.errorCalendario ? `${base} Pero NO se pudo agregar al calendario: ${r.errorCalendario}` : base);
         } catch (e2) {
           console.error("[evento] error al guardar:", e2);
           err(e2.message === "fecha" ? "El evento debe empezar con al menos 15 días de anticipación." : "No se pudo guardar: " + e2.message);

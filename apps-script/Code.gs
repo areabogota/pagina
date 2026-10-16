@@ -186,15 +186,15 @@ function buscarEnCalendario_(cal, previo, idCal) {
 function sincronizarCalendario_(accion, previo, d, ini, fin, grupo, idCal) {
   try {
     const cal = CalendarApp.getCalendarById(CALENDARIO_ID);
-    if (!cal) return "";
-    if (accion === "eliminar") { const e = buscarEnCalendario_(cal, previo, idCal); if (e) e.deleteEvent(); return ""; }
+    if (!cal) return { id: "", error: "sin acceso al calendario " + CALENDARIO_ID + " (compártelo con la cuenta del script)" };
+    if (accion === "eliminar") { const e = buscarEnCalendario_(cal, previo, idCal); if (e) e.deleteEvent(); return { id: "" }; }
     const inicio = aFecha_(ini), finExcl = new Date(aFecha_(fin).getTime() + 86400000); // fin exclusivo en eventos de día completo
     const opts = { location: String(d.direccion || ""), description: String(d.mensaje || "") + "\nContacto: " + d.contacto + "\nGrupo: " + grupo };
     let e = accion === "editar" ? buscarEnCalendario_(cal, previo, idCal) : null;
     if (e) { e.setTitle(d.nombre); e.setAllDayDates(inicio, finExcl); e.setLocation(opts.location); e.setDescription(opts.description); }
     else e = cal.createAllDayEvent(d.nombre, inicio, finExcl, opts);
-    return e.getId();
-  } catch (x) { return ""; }
+    return { id: e.getId() };
+  } catch (x) { return { id: "", error: String(x && x.message || x) }; }
 }
 
 // Eventos (POST con grupo+clave). modo: listar | crear | editar | eliminar
@@ -247,7 +247,8 @@ function evento_(b) {
     if (d.flyer) flyer = guardarFlyer_(d.flyer);
     else if (!previo) return { ok: false, error: "flyer: no llegó la imagen al servidor" };
 
-    const idCal = sincronizarCalendario_(modo, previo, d, ini, fin, b.grupo, previo && previo["calendario id"]);
+    const cs = sincronizarCalendario_(modo, previo, d, ini, fin, b.grupo, previo && previo["calendario id"]);
+    const idCal = cs.id;
     const val = {
       "fecha inicio": aDMY_(ini), "fecha fin": aDMY_(fin), nombre: d.nombre, mensaje: d.mensaje,
       flyer: flyer, direccion: d.direccion, contacto: d.contacto, grupo: b.grupo, "calendario id": idCal
@@ -257,7 +258,7 @@ function evento_(b) {
       const j = cols.indexOf(c);
       if (j >= 0) sh.getRange(fila, j + 1).setNumberFormat("@").setValue(clean_(val[c]));
     });
-    return { ok: true, calendario: !!idCal };
+    return { ok: true, calendario: !!idCal, errorCalendario: cs.error || "" };
   } finally { lock.releaseLock(); }
 }
 

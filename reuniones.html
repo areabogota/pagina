@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Reuniones – Narcóticos Anónimos</title>
+  <link rel="icon" href="https://res.cloudinary.com/dlspk9ipi/image/upload/v1776920336/LOGO-AZUL_1_uoqp92.png">
+  <link rel="stylesheet" href="css/styles.css?v=43">
+</head>
+<body>
+<div id="loader" role="status" aria-label="Cargando"><img src="https://res.cloudinary.com/dlspk9ipi/image/upload/v1776919815/Mesa_de_trabajo_2_cbxrik.png" alt=""><div class="spinner"></div></div>
+  <header class="header"><div class="header-inner">
+    <a class="brand" href="index.html"><img src="https://res.cloudinary.com/dlspk9ipi/image/upload/v1776919815/Mesa_de_trabajo_2_cbxrik.png" alt="Logo NA Área Bogotá" class="logo"><span class="brand-text">Narcóticos Anónimos <span>Área Bogotá</span></span></a>
+    <button class="menu-toggle" aria-label="Menú" aria-expanded="false"><span></span><span></span><span></span></button>
+    <nav class="nav"><ul>
+      <li><a href="index.html">Inicio</a></li>
+      <li><a class="active" href="reuniones.html">Reuniones</a></li>
+      <li><a href="eventos.html">Eventos</a></li>
+      <li><a href="calendario.html">Calendario</a></li>
+      <li><a href="guia.html">Guía procedimientos</a></li>
+    </ul></nav>
+  </div></header>
+
+  <main>
+    <h1>Reuniones</h1>
+    <div class="filters">
+      <select id="fGrupo" aria-label="Grupo"><option value="">Todos los grupos</option></select>
+      <select id="fDia" aria-label="Día"><option value="">Todos los días</option></select>
+      <select id="fHora" aria-label="Horario"><option value="">Todo horario</option><option value="am">a.m. (mañana)</option><option value="pm">p.m. (tarde / noche)</option></select>
+      <select id="fUbic" aria-label="Ubicación"><option value="">Toda ubicación</option></select>
+    </div>
+    <div id="lista"><p class="status">Cargando…</p></div>
+  </main>
+  <footer>
+    <div class="foot-inner">
+      <div class="foot-area">
+        <img src="https://res.cloudinary.com/dlspk9ipi/image/upload/v1776919815/Mesa_de_trabajo_2_cbxrik.png" alt="NA Área Bogotá" class="logo-foot">
+        <div>
+          <strong>Narcóticos Anónimos Área Bogotá</strong>
+          <small>Todos los derechos reservados &copy; <span id="year"></span></small>
+        </div>
+      </div>
+      <div class="foot-redes" id="redes">
+        <h2>Enlaces de Interés</h2>
+        <p>Síguenos e infórmate en nuestras redes sociales.</p>
+        <div class="redes-lista" id="redes-lista"></div>
+      </div>
+    </div>
+  </footer>
+  <script src="js/config.js?v=43"></script>
+  <script src="js/main.js?v=43"></script>
+  <script src="js/auth.js?v=43"></script>
+  <script src="js/modales.js?v=43"></script>
+  <script src="js/particulas.js?v=43"></script>
+  <script src="js/reuniones.js?v=43"></script>
+</body>
+</html>

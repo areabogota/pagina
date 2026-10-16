@@ -146,7 +146,7 @@ function doGet(e) {
 // Evento nuevo (POST con grupo+clave). Columnas de la pestaña "Eventos":
 // Fecha inicio, Fecha fin, Nombre, Mensaje, Flyer, Direccion, Contacto, Grupo
 // Ejecutar UNA vez desde el editor (botón Ejecutar) para autorizar Drive y Sheets
-function autorizar_() {
+function autorizar() {
   const c = DriveApp.getFolderById(CARPETA_FLYERS_ID);
   const s = SpreadsheetApp.openById(SHEET_ID).getSheetByName("Eventos");
   const cal = CalendarApp.getCalendarById(CALENDARIO_ID);
@@ -173,13 +173,16 @@ const CALENDARIO_ID = "areabogota@nacolombia.org";
 const aFecha_ = m => Utilities.parseDate(m[0], "America/Bogota", "yyyy-MM-dd");
 const dmy_ = s => { const m = String(s || "").match(/^(\d{2})\/(\d{2})\/(\d{4})$/); return m ? Utilities.parseDate(m[3] + "-" + m[2] + "-" + m[1], "America/Bogota", "yyyy-MM-dd") : null; };
 
+const tituloCal_ = (nombre, grupo) => nombre + " – " + grupo;
+
 function buscarEnCalendario_(cal, previo, idCal) {
   if (idCal) { try { const e = cal.getEventById(idCal); if (e) return e; } catch (x) {} }
   const ini = dmy_(previo["fecha inicio"]);
   if (!ini) return null;
   const fin = new Date(ini.getTime() + 400 * 86400000);
+  const t = tituloCal_(previo.nombre, previo.grupo);
   return cal.getEvents(new Date(ini.getTime() - 86400000), fin, { search: previo.nombre })
-    .filter(e => e.getTitle() === previo.nombre)[0] || null;
+    .filter(e => e.getTitle() === t || e.getTitle() === previo.nombre)[0] || null;
 }
 
 // accion: "crear" | "editar" | "eliminar". Devuelve el id del evento de calendario (o "" si falla)
@@ -190,9 +193,10 @@ function sincronizarCalendario_(accion, previo, d, ini, fin, grupo, idCal) {
     if (accion === "eliminar") { const e = buscarEnCalendario_(cal, previo, idCal); if (e) e.deleteEvent(); return { id: "" }; }
     const inicio = aFecha_(ini), finExcl = new Date(aFecha_(fin).getTime() + 86400000); // fin exclusivo en eventos de día completo
     const opts = { location: String(d.direccion || ""), description: String(d.mensaje || "") + "\nContacto: " + d.contacto + "\nGrupo: " + grupo };
+    const titulo = tituloCal_(d.nombre, grupo);
     let e = accion === "editar" ? buscarEnCalendario_(cal, previo, idCal) : null;
-    if (e) { e.setTitle(d.nombre); e.setAllDayDates(inicio, finExcl); e.setLocation(opts.location); e.setDescription(opts.description); }
-    else e = cal.createAllDayEvent(d.nombre, inicio, finExcl, opts);
+    if (e) { e.setTitle(titulo); e.setAllDayDates(inicio, finExcl); e.setLocation(opts.location); e.setDescription(opts.description); }
+    else e = cal.createAllDayEvent(titulo, inicio, finExcl, opts);
     return { id: e.getId() };
   } catch (x) { return { id: "", error: String(x && x.message || x) }; }
 }

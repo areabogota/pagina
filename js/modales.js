@@ -114,6 +114,7 @@
   const iniciadores = {
     literatura() {
       const form = body.querySelector("form");
+      if (!form) return;
       const msg = form.querySelector(".msg");
       const show = (t, x) => { msg.className = "msg " + t; msg.textContent = x; };
       form.addEventListener("submit", async e => {

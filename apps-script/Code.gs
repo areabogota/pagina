@@ -249,6 +249,20 @@ function evento_(b) {
     const cambiaIni = !previo || previo["fecha inicio"] !== aDMY_(ini);
     if (cambiaIni && ini[0] < Utilities.formatDate(lim, "America/Bogota", "yyyy-MM-dd")) return { ok: false, error: "fecha" };
 
+    // Cruce de fechas con eventos de otros (o del mismo grupo): se avisa y solo se crea si confirman
+    if (!b.confirmarCruce) {
+      const iN = cols.indexOf("nombre"), iI = cols.indexOf("fecha inicio"), iF = cols.indexOf("fecha fin");
+      const todas = sh.getDataRange().getDisplayValues();
+      const aIso = s => { const m = String(s || "").match(/^(\d{2})\/(\d{2})\/(\d{4})$/); return m ? m[3] + "-" + m[2] + "-" + m[1] : ""; };
+      for (let i = 1; i < todas.length; i++) {
+        if (i + 1 === fila) continue;
+        const oi = aIso(todas[i][iI]), of = aIso(todas[i][iF]) || oi;
+        if (oi && ini[0] <= of && fin[0] >= oi) {
+          return { ok: false, cruce: { grupo: todas[i][iG], nombre: todas[i][iN], inicio: todas[i][iI], fin: todas[i][iF] } };
+        }
+      }
+    }
+
     let flyer = previo ? previo.flyer : "";
     if (d.flyer) flyer = guardarFlyer_(d.flyer);
     else if (!previo) return { ok: false, error: "flyer: no llegó la imagen al servidor" };

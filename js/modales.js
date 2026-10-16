@@ -174,7 +174,7 @@
       console.log("[evento] respuesta del servidor:", r.status, txt);
       let j;
       try { j = JSON.parse(txt); } catch { throw new Error("respuesta inválida (¿publicaste la nueva versión del Apps Script?)"); }
-      if (!j.ok) throw new Error(j.error || "error");
+      if (!j.ok) { const er = new Error(j.error || "error"); er.cruce = j.cruce; throw er; }
       return j;
     }
     const refrescar = () => {
@@ -251,15 +251,23 @@
           ["fecha inicio", "fecha fin", "nombre", "mensaje", "direccion", "contacto"].forEach(c => datos[c] = f.elements[c].value.trim());
           const file = f.elements.flyer.files[0];
           if (file) datos.flyer = await comprimir(file);
-          const r = await llamar({ modo: nuevo ? "crear" : "editar", fila: v.fila || 0, datos });
+          const r = await llamar({ modo: nuevo ? "crear" : "editar", fila: v.fila || 0, datos, confirmarCruce: !!(f.elements.cruce && f.elements.cruce.checked) });
           refrescar();
           if (r.errorCalendario) console.error("[evento] calendario:", r.errorCalendario);
           const base = nuevo ? "Evento agregado." : "Evento actualizado.";
           inicio(r.errorCalendario ? `${base} Pero NO se pudo agregar al calendario: ${r.errorCalendario}` : base);
         } catch (e2) {
+          btn.disabled = false;
+          if (e2.cruce) {
+            const c = e2.cruce, fechas = c.fin && c.fin !== c.inicio ? `del ${c.inicio} al ${c.fin}` : `el ${c.inicio}`;
+            res.innerHTML = aviso("err", `Se sugiere crear el evento en otra fecha, ya que el grupo ${c.grupo} tiene el evento "${c.nombre}" ${fechas}.`) +
+              '<label class="chk"><input type="checkbox" name="cruce"> Comprendí el mensaje y deseo crear el evento de todos modos</label>';
+            f.elements.cruce.onchange = () => { btn.disabled = !f.elements.cruce.checked; };
+            btn.disabled = true;
+            return;
+          }
           console.error("[evento] error al guardar:", e2);
           err(e2.message === "fecha" ? "El evento debe empezar con al menos 15 días de anticipación." : "No se pudo guardar: " + e2.message);
-          btn.disabled = false;
         }
       };
     }

@@ -47,7 +47,7 @@
     modal.innerHTML = `<div class="auth-box" role="dialog" aria-modal="true" aria-label="Ingresar">
       <button type="button" class="auth-close" aria-label="Cerrar">&times;</button>
       <h2>Ingresar</h2>
-      <p>Elige cómo quieres ingresar. Recordaremos tu sesión en este dispositivo.</p>
+      <p>Selecciona ingresar por google. Recordaremos tu sesión en este dispositivo.</p>
       ${PROVEEDORES.map(p => `<button type="button" class="prov ${p.cls}" data-id="${p.id}">Continuar con ${p.nombre}</button>`).join("")}
       <p class="auth-err" role="alert"></p>
     </div>`;

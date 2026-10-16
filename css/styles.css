@@ -284,3 +284,7 @@ body:has(.zona) main, main:has(.zona) { max-width: 1200px; }
 .ev-detalle { max-width: 700px; margin: 1.2rem auto 0; padding: 1.1rem 1.3rem; text-align: center; background: var(--card); border-radius: var(--radius); border-top: 4px solid var(--sand); box-shadow: 0 2px 8px rgba(0,0,0,.08); }
 .ev-detalle p { margin: .4rem 0; overflow-wrap: anywhere; }
 .ev-detalle .tag { margin-bottom: .6rem; }
+
+#evento-panel .btn { margin: .4rem .6rem .4rem 0; }
+#evento-panel .btn.fila { display: block; width: 100%; text-align: left; margin-right: 0; }
+#evento-panel p { margin: .6rem 0; }

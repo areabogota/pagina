@@ -150,6 +150,7 @@
       });
     },
     evento() {
+      if (!window.NA_USER) { cerrar(); return; }
       const form = body.querySelector("#evento-acceso");
       const panel = body.querySelector("#evento-panel");
       if (!form) return;
@@ -318,6 +319,12 @@
     e.preventDefault();
     const nombre = a.dataset.modal;
     if (!/^[a-z0-9_-]+$/i.test(nombre)) return;
+    // Agregar/editar eventos exige sesión iniciada: si no la hay, abre el inicio de sesión
+    if (nombre === "evento" && !window.NA_USER) {
+      const entrar = document.getElementById("entrar");
+      if (entrar) entrar.click(); else alert("Inicia sesión para agregar o editar eventos.");
+      return;
+    }
     document.querySelector(".nav")?.classList.remove("open");
     document.querySelector(".menu-toggle")?.classList.remove("open");
     try {

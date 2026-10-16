@@ -54,9 +54,9 @@
     document.body.appendChild(modal);
     const err = modal.querySelector(".auth-err");
     const cerrar = () => { modal.hidden = true; };
-    modal.addEventListener("click", e => { if (e.target === modal) cerrar(); });
+    // solo se cierra con la X
     modal.querySelector(".auth-close").addEventListener("click", cerrar);
-    addEventListener("keydown", e => { if (e.key === "Escape") cerrar(); });
+    
 
     modal.querySelectorAll(".prov").forEach(b => b.addEventListener("click", async () => {
       err.textContent = "";

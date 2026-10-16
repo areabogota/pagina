@@ -181,8 +181,10 @@ function buscarEnCalendario_(cal, previo, idCal) {
   if (!ini) return null;
   const fin = new Date(ini.getTime() + 400 * 86400000);
   const t = tituloCal_(previo.nombre, previo.grupo);
-  return cal.getEvents(new Date(ini.getTime() - 86400000), fin, { search: previo.nombre })
-    .filter(e => e.getTitle() === t || e.getTitle() === previo.nombre)[0] || null;
+  const n = s => String(s || "").replace(/[–—-]/g, "-").replace(/\s+/g, " ").trim().toLowerCase();
+  const posibles = [n(t), n(previo.nombre)];
+  return cal.getEvents(new Date(ini.getTime() - 86400000), fin)
+    .filter(e => posibles.indexOf(n(e.getTitle())) >= 0)[0] || null;
 }
 
 // accion: "crear" | "editar" | "eliminar". Devuelve el id del evento de calendario (o "" si falla)
@@ -190,7 +192,7 @@ function sincronizarCalendario_(accion, previo, d, ini, fin, grupo, idCal) {
   try {
     const cal = CalendarApp.getCalendarById(CALENDARIO_ID);
     if (!cal) return { id: "", error: "sin acceso al calendario " + CALENDARIO_ID + " (compártelo con la cuenta del script)" };
-    if (accion === "eliminar") { const e = buscarEnCalendario_(cal, previo, idCal); if (e) e.deleteEvent(); return { id: "" }; }
+    if (accion === "eliminar") { const e = buscarEnCalendario_(cal, previo, idCal); if (!e) return { id: "", error: "no se encontró el evento en el calendario (bórralo a mano ahí)" }; e.deleteEvent(); return { id: "" }; }
     const inicio = aFecha_(ini), finExcl = new Date(aFecha_(fin).getTime() + 86400000); // fin exclusivo en eventos de día completo
     const opts = { location: String(d.direccion || ""), description: String(d.mensaje || "") + "\nContacto: " + d.contacto + "\nGrupo: " + grupo };
     const titulo = tituloCal_(d.nombre, grupo);
@@ -230,9 +232,9 @@ function evento_(b) {
       previo = propias().filter(x => x.fila === fila)[0]; // solo eventos del propio grupo
       if (!previo) return { ok: false, error: "evento no encontrado" };
       if (modo === "eliminar") {
-        sincronizarCalendario_("eliminar", previo, null, null, null, b.grupo, previo["calendario id"]);
+        const cs = sincronizarCalendario_("eliminar", previo, null, null, null, b.grupo, previo["calendario id"]);
         sh.deleteRow(fila);
-        return { ok: true };
+        return { ok: true, errorCalendario: cs.error || "" };
       }
     } else if (modo !== "crear") return { ok: false, error: "modo invalido" };
 

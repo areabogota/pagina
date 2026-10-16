@@ -6,9 +6,7 @@
   modal.innerHTML = '<div class="auth-box" role="dialog" aria-modal="true"><button type="button" class="auth-close" aria-label="Cerrar">&times;</button><div class="modal-body"></div></div>';
   const body = modal.querySelector(".modal-body");
   const cerrar = () => { modal.hidden = true; body.innerHTML = ""; };
-  modal.addEventListener("click", e => { if (e.target === modal) cerrar(); });
-  modal.querySelector(".auth-close").addEventListener("click", cerrar);
-  addEventListener("keydown", e => { if (e.key === "Escape") cerrar(); });
+  modal.querySelector(".auth-close").addEventListener("click", cerrar); // solo se cierra con la X
   document.addEventListener("DOMContentLoaded", () => document.body.appendChild(modal));
 
   const esSi = v => ["si", "s", "x", "true", "1", "virtual"].includes(norm(v));
@@ -237,7 +235,7 @@
       if (del) del.onclick = async () => {
         if (!confirm("¿Eliminar este evento? No se puede deshacer.")) return;
         del.disabled = true;
-        try { await llamar({ modo: "eliminar", fila: v.fila }); refrescar(); inicio("Evento eliminado."); }
+        try { const r = await llamar({ modo: "eliminar", fila: v.fila }); refrescar(); inicio(r.errorCalendario ? "Evento eliminado, pero NO del calendario: " + r.errorCalendario : "Evento eliminado."); }
         catch (e) { console.error("[evento] error al eliminar:", e); err("No se pudo eliminar: " + e.message); del.disabled = false; }
       };
       f.onsubmit = async e => {

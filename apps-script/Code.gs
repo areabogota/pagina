@@ -74,7 +74,7 @@ function filasDe_(t, grupo) {
 function doGet(e) {
   try {
     const p = e.parameter || {};
-    if (p.accion === "version") return json_({ version: "2026-10-16-eventos-carrusel" });
+    if (p.accion === "version") return json_({ version: "2026-10-16-calendario" });
     if (p.accion === "grupos") return json_({ grupos: claves_().map(x => x.grupo) });
     if (p.accion === "verificar") return json_(verificar_(p.grupo, p.clave));
 
@@ -149,7 +149,8 @@ function doGet(e) {
 function autorizar_() {
   const c = DriveApp.getFolderById(CARPETA_FLYERS_ID);
   const s = SpreadsheetApp.openById(SHEET_ID).getSheetByName("Eventos");
-  Logger.log("OK carpeta: " + c.getName() + " | hoja: " + s.getName());
+  const cal = CalendarApp.getCalendarById(CALENDARIO_ID);
+  Logger.log("OK carpeta: " + c.getName() + " | hoja: " + s.getName() + " | calendario: " + (cal ? cal.getName() : "SIN ACCESO"));
 }
 
 const CARPETA_FLYERS_ID = "15AXKrIPjVMjH4fHJDYkOiDA_6H3y_216";
@@ -165,6 +166,35 @@ function guardarFlyer_(b64) {
   const archivo = DriveApp.getFolderById(CARPETA_FLYERS_ID).createFile(blob);
   archivo.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
   return "https://lh3.googleusercontent.com/d/" + archivo.getId() + "=w1000";
+}
+
+// Calendario de Google del área: cada evento se refleja ahí (el dueño del script debe poder editarlo)
+const CALENDARIO_ID = "areabogota@nacolombia.org";
+const aFecha_ = m => Utilities.parseDate(m[0], "America/Bogota", "yyyy-MM-dd");
+const dmy_ = s => { const m = String(s || "").match(/^(\d{2})\/(\d{2})\/(\d{4})$/); return m ? Utilities.parseDate(m[3] + "-" + m[2] + "-" + m[1], "America/Bogota", "yyyy-MM-dd") : null; };
+
+function buscarEnCalendario_(cal, previo, idCal) {
+  if (idCal) { try { const e = cal.getEventById(idCal); if (e) return e; } catch (x) {} }
+  const ini = dmy_(previo["fecha inicio"]);
+  if (!ini) return null;
+  const fin = new Date(ini.getTime() + 400 * 86400000);
+  return cal.getEvents(new Date(ini.getTime() - 86400000), fin, { search: previo.nombre })
+    .filter(e => e.getTitle() === previo.nombre)[0] || null;
+}
+
+// accion: "crear" | "editar" | "eliminar". Devuelve el id del evento de calendario (o "" si falla)
+function sincronizarCalendario_(accion, previo, d, ini, fin, grupo, idCal) {
+  try {
+    const cal = CalendarApp.getCalendarById(CALENDARIO_ID);
+    if (!cal) return "";
+    if (accion === "eliminar") { const e = buscarEnCalendario_(cal, previo, idCal); if (e) e.deleteEvent(); return ""; }
+    const inicio = aFecha_(ini), finExcl = new Date(aFecha_(fin).getTime() + 86400000); // fin exclusivo en eventos de día completo
+    const opts = { location: String(d.direccion || ""), description: String(d.mensaje || "") + "\nContacto: " + d.contacto + "\nGrupo: " + grupo };
+    let e = accion === "editar" ? buscarEnCalendario_(cal, previo, idCal) : null;
+    if (e) { e.setTitle(d.nombre); e.setAllDayDates(inicio, finExcl); e.setLocation(opts.location); e.setDescription(opts.description); }
+    else e = cal.createAllDayEvent(d.nombre, inicio, finExcl, opts);
+    return e.getId();
+  } catch (x) { return ""; }
 }
 
 // Eventos (POST con grupo+clave). modo: listar | crear | editar | eliminar
@@ -195,7 +225,11 @@ function evento_(b) {
       fila = Number(b.fila);
       previo = propias().filter(x => x.fila === fila)[0]; // solo eventos del propio grupo
       if (!previo) return { ok: false, error: "evento no encontrado" };
-      if (modo === "eliminar") { sh.deleteRow(fila); return { ok: true }; }
+      if (modo === "eliminar") {
+        sincronizarCalendario_("eliminar", previo, null, null, null, b.grupo, previo["calendario id"]);
+        sh.deleteRow(fila);
+        return { ok: true };
+      }
     } else if (modo !== "crear") return { ok: false, error: "modo invalido" };
 
     const d = b.datos || {};
@@ -213,16 +247,17 @@ function evento_(b) {
     if (d.flyer) flyer = guardarFlyer_(d.flyer);
     else if (!previo) return { ok: false, error: "flyer: no llegó la imagen al servidor" };
 
+    const idCal = sincronizarCalendario_(modo, previo, d, ini, fin, b.grupo, previo && previo["calendario id"]);
     const val = {
       "fecha inicio": aDMY_(ini), "fecha fin": aDMY_(fin), nombre: d.nombre, mensaje: d.mensaje,
-      flyer: flyer, direccion: d.direccion, contacto: d.contacto, grupo: b.grupo
+      flyer: flyer, direccion: d.direccion, contacto: d.contacto, grupo: b.grupo, "calendario id": idCal
     };
     if (!fila) fila = sh.getLastRow() + 1;
     Object.keys(val).forEach(c => {
       const j = cols.indexOf(c);
       if (j >= 0) sh.getRange(fila, j + 1).setNumberFormat("@").setValue(clean_(val[c]));
     });
-    return { ok: true };
+    return { ok: true, calendario: !!idCal };
   } finally { lock.releaseLock(); }
 }
 

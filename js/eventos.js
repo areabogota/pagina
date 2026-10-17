@@ -8,7 +8,7 @@ window.cargarEventos = async () => {
   try {
     const hoy = new Date(); hoy.setHours(0, 0, 0, 0);
     // Solo eventos que no han terminado, ordenados por fecha de inicio
-    const eventos = (await fetchSheet(CONFIG.TAB_EVENTOS))
+    const eventos = (await fetchSheet(CONFIG.TAB_EVENTOS, false, () => window.cargarEventos()))
       .filter(e => e.nombre)
       .filter(e => { const f = parseDMY(e["fecha fin"]) || parseDMY(e["fecha inicio"]); return !f || f >= hoy; })
       .sort((a, b) => (parseDMY(a["fecha inicio"]) || 0) - (parseDMY(b["fecha inicio"]) || 0));

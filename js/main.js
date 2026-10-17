@@ -69,16 +69,22 @@ window.addEventListener("load", () => setTimeout(revisarLoader, 0));
 setTimeout(ocultarLoader, 12000);
 
 // Consulta con caché genérica: carga(): Promise<datos>. silencioso = no retiene el loader
-async function conCache(key, carga, silencioso) {
+async function conCache(key, carga, silencioso, alActualizar) {
   let guardado = null;
   try { guardado = JSON.parse(localStorage.getItem(key)); } catch (e) {}
   const refrescar = async () => {
-    const datos = await carga();
-    try { localStorage.setItem(key, JSON.stringify({ t: Date.now(), datos })); } catch (e) {}
+    let datos;
+    try { datos = await carga(); } catch (e) { datos = await carga(); } // un reintento ante fallos de red
+    // No se guarda una respuesta vacía (a veces la hoja responde sin filas por error)
+    if (!(Array.isArray(datos) && !datos.length)) {
+      try { localStorage.setItem(key, JSON.stringify({ t: Date.now(), datos })); } catch (e) {}
+    }
     return datos;
   };
-  if (guardado && guardado.datos) {
-    if (Date.now() - guardado.t >= CACHE_MIN * 60000) refrescar().catch(() => {});
+  if (guardado && guardado.datos && !(Array.isArray(guardado.datos) && !guardado.datos.length)) {
+    if (Date.now() - guardado.t >= CACHE_MIN * 60000) {
+      refrescar().then(d => { if (alActualizar && JSON.stringify(d) !== JSON.stringify(guardado.datos)) alActualizar(d); }).catch(() => {});
+    }
     return guardado.datos;
   }
   if (!silencioso) pendientes++;
@@ -86,7 +92,7 @@ async function conCache(key, carga, silencioso) {
   finally { if (!silencioso) { pendientes--; revisarLoader(); } }
 }
 
-const fetchSheet = (tab, silencioso) => conCache(`na_sheet_${CONFIG.SHEET_ID}_${tab}`, () => leerHoja(tab), silencioso);
+const fetchSheet = (tab, silencioso, alActualizar) => conCache(`na_sheet_${CONFIG.SHEET_ID}_${tab}`, () => leerHoja(tab), silencioso, alActualizar);
 
 // Lista de grupos (solo nombres) del Apps Script
 const fetchGrupos = silencioso => conCache("na_grupos", async () => {
@@ -98,6 +104,7 @@ const fetchGrupos = silencioso => conCache("na_grupos", async () => {
 // Precarga en segundo plano en todas las páginas para que Reuniones y Ajustes abran al instante
 window.addEventListener("load", () => setTimeout(() => {
   fetchSheet(CONFIG.TAB_REUNIONES, true).catch(() => {});
+  fetchSheet(CONFIG.TAB_EVENTOS, true).catch(() => {}); // eventos disponibles en todas las páginas
   if (CONFIG.ORDERS_URL) fetchGrupos(true).catch(() => {});
 }, 300));
 async function leerHoja(tab) {

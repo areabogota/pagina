@@ -34,8 +34,8 @@ document.addEventListener("DOMContentLoaded", () => {
         const txt = `${svgDe(ICO_TEL)}${esc(t.numero)}`;
         return ok ? `<a class="red" href="tel:${num}">${txt}</a>` : `<span class="red red-off">${txt}</span>`;
       }).join("");
-      box.innerHTML = `<div class="redes-lista">${grupos}</div>`;
-      redes.after(box);
+      box.innerHTML = `<h2>Líneas de atención</h2><div class="redes-lista">${grupos}</div>`;
+      (redes.closest(".foot-inner") || redes.parentNode).appendChild(box);
     }
   }  const y = document.getElementById("year");
   if (y) y.textContent = new Date().getFullYear();

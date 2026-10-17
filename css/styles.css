@@ -328,3 +328,16 @@ html[data-tema="dark"] .msg.err { background: #4a2420; color: #ffd0c9; }
 html[data-tema="dark"] .msg.ok { background: #1d3d2a; color: #b9ebc8; }
 html[data-tema="dark"] #loader { background: #121a33; }
 html[data-tema="dark"] body::before { opacity: .07; }
+/* Footer más compacto */
+footer { padding: .6rem 1rem; }
+.foot-inner { gap: .6rem 1.5rem; }
+.foot-area .logo-foot { height: 44px; padding: 3px 6px; }
+.foot-area strong { font-size: .9rem; }
+.foot-area small { font-size: .75rem; }
+.foot-redes h2 { font-size: .9rem; margin: 0 0 .1rem; }
+.foot-redes p { margin: 0 0 .3rem; font-size: .75rem; }
+.foot-redes .red { padding: .25rem .65rem; font-size: .8rem; }
+.lineas { margin-top: .4rem; }
+.foot-redes .lineas h2 { margin-bottom: .1rem; }
+.foot-redes .lineas p { margin: 0; line-height: 1.3; }
+@media (max-width: 700px) { footer { padding: .5rem .8rem; } .foot-area .logo-foot { height: 32px; } }

@@ -27,6 +27,7 @@ const CONFIG = {
 // Líneas de atención que se muestran en el footer
 const TELEFONOS = [
   { nombre: "NA BOGOTÁ - 24 HORAS", numero: "314 246 82 89" },
+  { nombre: "", numero: "315 370 70 31" },
 ];
 
 // Botón flotante de WhatsApp: elige al azar uno de estos números (con indicativo de país) y envía el mensaje

@@ -74,7 +74,7 @@ function filasDe_(t, grupo) {
 function doGet(e) {
   try {
     const p = e.parameter || {};
-    if (p.accion === "version") return json_({ version: "2026-10-16-calendario" });
+    if (p.accion === "version") return json_({ version: "2026-10-16-estado" });
     if (p.accion === "grupos") return json_({ grupos: claves_().map(x => x.grupo) });
     if (p.accion === "verificar") return json_(verificar_(p.grupo, p.clave));
 
@@ -157,6 +157,33 @@ const CARPETA_FLYERS_ID = "15AXKrIPjVMjH4fHJDYkOiDA_6H3y_216";
 const aDMY_ = m => m[3] + "/" + m[2] + "/" + m[1];
 const ISO_ = /^(\d{4})-(\d{2})-(\d{2})$/;
 
+// Marca como "Archivado" los eventos cuya fecha fin ya pasó (hora de Bogotá) y como "Activo" los demás.
+// No toca el calendario de Google ni los flyers de Drive.
+function archivarEventos() {
+  const sh = SpreadsheetApp.openById(SHEET_ID).getSheetByName("Eventos");
+  const v = sh.getDataRange().getDisplayValues();
+  const cols = v[0].map(norm_);
+  const iE = cols.indexOf("estado"), iI = cols.indexOf("fecha inicio"), iF = cols.indexOf("fecha fin");
+  if (iE < 0) throw new Error('Falta la columna "Estado" en la pestaña Eventos');
+  const hoy = Utilities.formatDate(new Date(), "America/Bogota", "yyyy-MM-dd");
+  const aIso = s => { const m = String(s || "").match(/^(\d{2})\/(\d{2})\/(\d{4})$/); return m ? m[3] + "-" + m[2] + "-" + m[1] : ""; };
+  let n = 0;
+  for (let i = 1; i < v.length; i++) {
+    const fin = aIso(v[i][iF]) || aIso(v[i][iI]);
+    if (!fin) continue;
+    const nuevo = fin < hoy ? "Archivado" : "Activo";
+    if (v[i][iE] !== nuevo) { sh.getRange(i + 1, iE + 1).setNumberFormat("@").setValue(nuevo); n++; }
+  }
+  Logger.log("Eventos actualizados: " + n);
+}
+
+// Ejecutar UNA vez desde el editor: programa archivarEventos() todos los días a las 3:00 a. m. (Bogotá)
+function programarArchivo() {
+  ScriptApp.getProjectTriggers().filter(t => t.getHandlerFunction() === "archivarEventos").forEach(t => ScriptApp.deleteTrigger(t));
+  ScriptApp.newTrigger("archivarEventos").timeBased().everyDays(1).atHour(3).inTimezone("America/Bogota").create();
+  archivarEventos();
+}
+
 function guardarFlyer_(b64) {
   if (String(b64).length > 6000000) throw new Error("flyer: imagen demasiado pesada");
   const bytes = Utilities.base64Decode(String(b64));
@@ -221,7 +248,7 @@ function evento_(b) {
     }
     return out;
   };
-  if (modo === "listar") return { ok: true, eventos: propias() };
+  if (modo === "listar") return { ok: true, eventos: propias().filter(x => norm_(x.estado) !== "archivado") };
 
   const lock = LockService.getScriptLock();
   lock.waitLock(10000);
@@ -271,7 +298,7 @@ function evento_(b) {
     const idCal = cs.id;
     const val = {
       "fecha inicio": aDMY_(ini), "fecha fin": aDMY_(fin), nombre: d.nombre, mensaje: d.mensaje,
-      flyer: flyer, direccion: d.direccion, contacto: d.contacto, grupo: b.grupo, "calendario id": idCal
+      flyer: flyer, direccion: d.direccion, contacto: d.contacto, grupo: b.grupo, "calendario id": idCal, estado: "Activo"
     };
     if (!fila) fila = sh.getLastRow() + 1;
     Object.keys(val).forEach(c => {

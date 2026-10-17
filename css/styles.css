@@ -302,3 +302,29 @@ body:has(.zona) main, main:has(.zona) { max-width: 1200px; }
 .filters select:invalid, .filters select:has(option[disabled]:checked) { color: var(--muted); font-weight: 500; }
 .filters select option { color: var(--text); font-weight: 400; background: #fff; }
 .filters select option:checked { background: var(--accent); }
+/* Botones flotantes: tema y WhatsApp */
+.wa-fab, .tema-btn { position: fixed; right: 1rem; z-index: 90; width: 54px; height: 54px; border-radius: 50%; display: grid; place-items: center; box-shadow: 0 4px 14px rgba(0,0,0,.35); border: 0; cursor: pointer; transition: transform .2s; }
+.wa-fab { bottom: 1rem; background: #25D366; }
+.tema-btn { bottom: 5rem; background: var(--blue-dark); color: #fff; font-size: 1.5rem; border: 2px solid var(--lilac); }
+.wa-fab:hover, .tema-btn:hover { transform: scale(1.1); }
+
+/* Modo oscuro */
+html[data-tema="dark"] { color-scheme: dark; --bg: #121a33; --text: #ecebf5; --muted: #9aa0b8; --card: #1d2848; }
+html[data-tema="dark"] h1, html[data-tema="dark"] h2, html[data-tema="dark"] h3 { color: var(--accent); }
+html[data-tema="dark"] a { color: #8ec5ff; }
+html[data-tema="dark"] .btn, html[data-tema="dark"] .nav a, html[data-tema="dark"] .header a { color: #fff; }
+html[data-tema="dark"] .status, html[data-tema="dark"] footer, html[data-tema="dark"] .redes p,
+html[data-tema="dark"] .auth-box p, html[data-tema="dark"] .auth-close, html[data-tema="dark"] #ajustes-panel .ayuda,
+html[data-tema="dark"] .grupo .intereses, html[data-tema="dark"] .horarios td:last-child,
+html[data-tema="dark"] .grupo-info .direccion, html[data-tema="dark"] .user-dropdown .user-name { color: #c9cde0; }
+html[data-tema="dark"] input, html[data-tema="dark"] textarea, html[data-tema="dark"] select { background: #16203d; color: var(--text); border-color: #3b4a7a; }
+html[data-tema="dark"] .filters select { background-color: #16203d; color: var(--accent); border-color: var(--purple); }
+html[data-tema="dark"] .filters select option { background: #16203d; color: var(--text); }
+html[data-tema="dark"] .auth-box, html[data-tema="dark"] .user-dropdown, html[data-tema="dark"] .aviso, html[data-tema="dark"] .prov { background: var(--card); color: var(--text); }
+html[data-tema="dark"] .user-dropdown a:hover, html[data-tema="dark"] .user-dropdown button:hover { background: #2a3763; }
+html[data-tema="dark"] .user-dropdown .user-name { border-color: #3b4a7a; }
+html[data-tema="dark"] .tag-cerrada { background: #5a2a24; color: #ffd0c9; }
+html[data-tema="dark"] .msg.err { background: #4a2420; color: #ffd0c9; }
+html[data-tema="dark"] .msg.ok { background: #1d3d2a; color: #b9ebc8; }
+html[data-tema="dark"] #loader { background: #121a33; }
+html[data-tema="dark"] body::before { opacity: .07; }

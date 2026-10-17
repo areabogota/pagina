@@ -27,8 +27,11 @@ const CONFIG = {
 // Líneas de atención que se muestran en el footer
 const TELEFONOS = [
   { nombre: "NA BOGOTÁ - 24 HORAS", numero: "314 246 82 89" },
-  { nombre: "", numero: "315 370 70 31" }
 ];
+
+// Botón flotante de WhatsApp: elige al azar uno de estos números (con indicativo de país) y envía el mensaje
+const WHATSAPP_NUMEROS = ["573142468289", "573153707031"];
+const WHATSAPP_MENSAJE = "Hola, soy nuevo y quiero información sobre las reuniones de Narcóticos Anónimos en Bogotá.";
 
 // Redes sociales (sección "Enlaces de Interés"). Las que tengan url vacía no se muestran.
 const REDES = [

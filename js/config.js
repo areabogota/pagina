@@ -27,7 +27,8 @@ const CONFIG = {
 // Líneas de atención que se muestran en el footer
 const TELEFONOS = [
   { nombre: "NA BOGOTÁ - 24 HORAS", numero: "314 246 82 89" },
-  { nombre: "", numero: "315 370 70 31" },
+  { nombre: "", numero: "315 370 70 31" }
+,
 ];
 
 // Botón flotante de WhatsApp: elige al azar uno de estos números (con indicativo de país) y envía el mensaje
@@ -48,5 +49,6 @@ const GRUPOS = [
   { nombre: "Nuevo Amanecer", imagen: "https://res.cloudinary.com/dlspk9ipi/image/upload/v1792012674/NUEVO_AMANECER_bpv6cz.avif" },
   { nombre: "Nuevo Comienzo", imagen: "https://res.cloudinary.com/dlspk9ipi/image/upload/v1792012674/NUEVO_COMIENZO_egvtx7.avif" },
   { nombre: "Solo Por Hoy", imagen: "https://res.cloudinary.com/dlspk9ipi/image/upload/v1792012674/SOLO_POR_HOY_ov814e.avif" },
-  { nombre: "Nuevo Amanecer", imagen: "https://res.cloudinary.com/dlspk9ipi/image/upload/v1792012674/NUEVO_AMANECER2_pv9yya.avif" }
+  { nombre: "Nuevo Amanecer", imagen: "https://res.cloudinary.com/dlspk9ipi/image/upload/v1792012674/NUEVO_AMANECER2_pv9yya.avif" },
+  { nombre: "Sí se puede", imagen: "https://res.cloudinary.com/dlspk9ipi/image/upload/v1792424900/WhatsApp_Image_2026-10-19_at_7.31.07_AM_2_ucwgk6.jpg" }
 ];

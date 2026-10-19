@@ -133,20 +133,6 @@
         finally { btn.disabled = false; }
       });
     },
-    ajustes() {
-      const u = window.NA_USER;
-      const el = body.querySelector("#ajustes-cuenta");
-      if (u && el) el.textContent = [u.nombre, u.email].filter(Boolean).join(" · ");
-
-      const form = body.querySelector("#ajustes-acceso");
-      const panel = body.querySelector("#ajustes-panel");
-      if (!form) return;
-      accesoGrupo(form, (grupo, clave) => {
-        body.querySelector("#ajustes-grupo").textContent = grupo;
-        panel.hidden = false;
-        editor(panel, CONFIG.ORDERS_URL, grupo, clave);
-      });
-    },
     evento() {
       if (!window.NA_USER) { cerrar(); return; }
       const form = body.querySelector("#evento-acceso");

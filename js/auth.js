@@ -96,7 +96,9 @@
           </button>
           <div class="user-dropdown" id="user-dropdown" hidden>
             <div class="user-name">${nombre}</div>
-            <a href="#" data-modal="literatura">Pedidos de literatura</a>
+            <a href="actas.html">Actas asambleas &amp; reuniones</a>
+            <a href="mociones.html">Historial mociones</a>
+            <a href="septima.html">Séptima tradición Área</a>
             <button type="button" id="salir">${SALIR} Cerrar sesión</button>
           </div></div>`;
         const trig = li.querySelector("#user-trigger"), dd = li.querySelector("#user-dropdown");

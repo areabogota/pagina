@@ -1,9 +1,8 @@
 // Pegar en Extensiones > Apps Script de la hoja de Google Sheets.
 // Implementar > Nueva implementación > Aplicación web
 //   Ejecutar como: Yo | Quién tiene acceso: Cualquier persona
-// Copiar la URL resultante en js/config.js (ORDERS_URL).
+// Copiar la URL resultante en js/config.js (API_URL).
 const SHEET_ID = "1sy6R4HxHgFEsAkOjt_H-f0i5X8XUdHjE0y0Cha5EREI";
-const TAB = "Pedidos";
 
 // Las claves viven en OTRO libro de Google Sheets que NO se comparte con nadie
 // (pestaña CLAVES: col A = grupo, col B = clave). Pega aquí el ID de ese libro privado.
@@ -316,18 +315,8 @@ function doPost(e) {
       try { return json_(evento_(d)); }
       catch (err2) { return json_({ ok: false, error: "servidor: " + err2.message }); }
     }
-    const clean = v => String(v == null ? "" : v).slice(0, 500).replace(/^[=+\-@]/, "'$&"); // evita fórmulas
-    const items = (Array.isArray(d.items) ? d.items.slice(0, 50) : [])
-      .map(i => clean(i.titulo) + " x" + (Number(i.cantidad) || 1)).join("\n");
-    const ss = SpreadsheetApp.openById(SHEET_ID);
-    let sh = ss.getSheetByName(TAB);
-    if (!sh) {
-      sh = ss.insertSheet(TAB);
-      sh.appendRow(["Fecha", "Nombre", "Grupo/Área", "Contacto", "Pedido", "Notas", "Cuenta"]);
-    }
-    sh.appendRow([new Date(), clean(d.nombre), clean(d.grupo), clean(d.contacto), items, clean(d.notas), clean(d.cuenta)]);
-    return ContentService.createTextOutput("ok");
+    return json_({ ok: false, error: "accion no valida" });
   } catch (err) {
-    return ContentService.createTextOutput("error");
+    return json_({ ok: false, error: "solicitud invalida" });
   }
 }

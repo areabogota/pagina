@@ -96,7 +96,7 @@ const fetchSheet = (tab, silencioso, alActualizar) => conCache(`na_sheet_${CONFI
 
 // Lista de grupos (solo nombres) del Apps Script
 const fetchGrupos = silencioso => conCache("na_grupos", async () => {
-  const j = await (await fetch(`${CONFIG.ORDERS_URL}?accion=grupos`)).json();
+  const j = await (await fetch(`${CONFIG.API_URL}?accion=grupos`)).json();
   if (!j.grupos) throw new Error();
   return j.grupos;
 }, silencioso);
@@ -105,7 +105,7 @@ const fetchGrupos = silencioso => conCache("na_grupos", async () => {
 window.addEventListener("load", () => setTimeout(() => {
   fetchSheet(CONFIG.TAB_REUNIONES, true).catch(() => {});
   fetchSheet(CONFIG.TAB_EVENTOS, true).catch(() => {}); // eventos disponibles en todas las páginas
-  if (CONFIG.ORDERS_URL) fetchGrupos(true).catch(() => {});
+  if (CONFIG.API_URL) fetchGrupos(true).catch(() => {});
 }, 300));
 async function leerHoja(tab) {
   const url = `https://docs.google.com/spreadsheets/d/${CONFIG.SHEET_ID}/gviz/tq?tqx=out:json&headers=1&sheet=${encodeURIComponent(tab)}`;

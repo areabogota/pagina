@@ -5,7 +5,7 @@ const CONFIG = {
   TAB_REUNIONES: "GRUPOS",
   TAB_EVENTOS: "Eventos",
   // URL de la Web App de Google Apps Script (ver apps-script/Code.gs). Pegar aquí tras desplegarla.
-  ORDERS_URL: "https://script.google.com/macros/s/AKfycby1AblCA0XEQ2tiO3jD26oiPUuP6OnQ-HB1IsGFDW_P8IMegJwppMkmq3xW-CpSbxag/exec",
+  API_URL: "https://script.google.com/macros/s/AKfycby1AblCA0XEQ2tiO3jD26oiPUuP6OnQ-HB1IsGFDW_P8IMegJwppMkmq3xW-CpSbxag/exec",
   // Pestaña opcional con columnas: Nombre, Imagen. Si tiene filas, reemplaza la lista de abajo.
   TAB_CARRUSEL: "Carrusel",
   // Segundos entre imágenes

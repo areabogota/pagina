@@ -110,29 +110,6 @@
   }
 
   const iniciadores = {
-    literatura() {
-      const form = body.querySelector("form");
-      if (!form) return;
-      const msg = form.querySelector(".msg");
-      const show = (t, x) => { msg.className = "msg " + t; msg.textContent = x; };
-      form.addEventListener("submit", async e => {
-        e.preventDefault();
-        if (form.website.value) return; // honeypot anti-spam
-        if (!window.NA_USER) { show("err", "Debes ingresar con tu cuenta."); return; }
-        if (!CONFIG.ORDERS_URL) { show("err", "El envío de pedidos aún no está configurado."); return; }
-        const btn = form.querySelector("[type=submit]");
-        btn.disabled = true;
-        const u = window.NA_USER;
-        try {
-          // text/plain evita el preflight CORS con Apps Script
-          await fetch(CONFIG.ORDERS_URL, { method: "POST", mode: "no-cors", headers: { "Content-Type": "text/plain;charset=utf-8" },
-            body: JSON.stringify({ nombre: u.nombre, contacto: form.telefono.value.trim(), cuenta: u.email || u.uid, items: [], grupo: "", notas: "" }) });
-          show("ok", "¡Pedido enviado! Nos pondremos en contacto contigo.");
-          form.reset();
-        } catch { show("err", "No se pudo enviar el pedido. Intenta nuevamente."); }
-        finally { btn.disabled = false; }
-      });
-    },
     evento() {
       if (!window.NA_USER) { cerrar(); return; }
       const form = body.querySelector("#evento-acceso");
@@ -144,7 +121,7 @@
 
   // Panel de eventos del grupo: crear, editar o eliminar (todo pasa por el Apps Script con grupo+clave)
   function eventosPanel(panel, grupo, clave) {
-    const api = CONFIG.ORDERS_URL;
+    const api = CONFIG.API_URL;
     const titulo = `<h3>${esc(grupo)}</h3>`;
     const aviso = (t, x) => `<p class="msg ${t}">${esc(x)}</p>`;
     const iso = d => d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
@@ -271,7 +248,7 @@
     });
     const msg = form.querySelector(".msg");
     const sel = form.grupo;
-    const api = CONFIG.ORDERS_URL;
+    const api = CONFIG.API_URL;
 
     // Las claves nunca llegan al navegador: el servidor (Apps Script) solo lista grupos y verifica.
     if (!api) sel.innerHTML = '<option value="">Servicio no configurado</option>';

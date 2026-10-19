@@ -73,7 +73,7 @@ function filasDe_(t, grupo) {
 function doGet(e) {
   try {
     const p = e.parameter || {};
-    if (p.accion === "version") return json_({ version: "2026-10-16-estado" });
+    if (p.accion === "version") return json_({ version: "2026-10-17-admin" });
     if (p.accion === "grupos") return json_({ grupos: claves_().map(x => x.grupo) });
     if (p.accion === "verificar") return json_(verificar_(p.grupo, p.clave));
 
@@ -170,10 +170,57 @@ function archivarEventos() {
   for (let i = 1; i < v.length; i++) {
     const fin = aIso(v[i][iF]) || aIso(v[i][iI]);
     if (!fin) continue;
-    const nuevo = fin < hoy ? "Archivado" : "Activo";
+    // Solo archiva vencidos; nunca aprueba (Pendiente sigue Pendiente hasta que el admin lo apruebe)
+    const nuevo = fin < hoy ? "Archivado" : (v[i][iE] === "" ? "Pendiente" : v[i][iE]);
     if (v[i][iE] !== nuevo) { sh.getRange(i + 1, iE + 1).setNumberFormat("@").setValue(nuevo); n++; }
   }
   Logger.log("Eventos actualizados: " + n);
+}
+
+// Ejecutar UNA vez desde el editor: deja todos los eventos vigentes como "Pendiente" para que el admin los apruebe
+function migrarAPendiente() {
+  const sh = SpreadsheetApp.openById(SHEET_ID).getSheetByName("Eventos");
+  const v = sh.getDataRange().getDisplayValues();
+  const iE = v[0].map(norm_).indexOf("estado");
+  if (iE < 0) throw new Error('Falta la columna "Estado" en la pestaña Eventos');
+  let n = 0;
+  for (let i = 1; i < v.length; i++) if (norm_(v[i][iE]) !== "archivado" && norm_(v[i][iE]) !== "pendiente") { sh.getRange(i + 1, iE + 1).setNumberFormat("@").setValue("Pendiente"); n++; }
+  Logger.log("Eventos pasados a Pendiente: " + n);
+}
+
+// Clave de administración: libro privado, pestaña ADMIN, celda A1 (con freno ante intentos repetidos)
+function verificarAdmin_(clave) {
+  const cache = CacheService.getScriptCache();
+  const n = Number(cache.get("int_admin") || 0);
+  if (n >= 5) return { ok: false, bloqueado: true };
+  const real = String(SpreadsheetApp.openById(CLAVES_SHEET_ID).getSheetByName("ADMIN").getRange("A1").getValue()).trim();
+  const ok = !!real && real === String(clave || "").trim();
+  if (!ok) cache.put("int_admin", String(n + 1), 600);
+  return { ok: ok };
+}
+
+// Admin: modo listar (todos los eventos) | aprobar (fila -> Estado = Activo)
+function admin_(b) {
+  const auth = verificarAdmin_(b.clave);
+  if (!auth.ok) return auth;
+  const sh = SpreadsheetApp.openById(SHEET_ID).getSheetByName("Eventos");
+  const cols = sh.getRange(1, 1, 1, sh.getLastColumn()).getDisplayValues()[0].map(norm_);
+  const iE = cols.indexOf("estado");
+  if (iE < 0) return { ok: false, error: 'falta la columna "Estado"' };
+  if (b.modo === "aprobar") {
+    const fila = Number(b.fila);
+    if (!(fila >= 2 && fila <= sh.getLastRow())) return { ok: false, error: "evento no encontrado" };
+    sh.getRange(fila, iE + 1).setNumberFormat("@").setValue("Activo");
+    return { ok: true };
+  }
+  const v = sh.getDataRange().getDisplayValues(), out = [];
+  for (let i = 1; i < v.length; i++) {
+    if (!v[i].join("").trim() || norm_(v[i][iE]) === "archivado") continue;
+    const o = { fila: i + 1 };
+    cols.forEach((c, j) => o[c] = v[i][j]);
+    out.push(o);
+  }
+  return { ok: true, eventos: out };
 }
 
 // Ejecutar UNA vez desde el editor: programa archivarEventos() todos los días a las 3:00 a. m. (Bogotá)
@@ -297,7 +344,7 @@ function evento_(b) {
     const idCal = cs.id;
     const val = {
       "fecha inicio": aDMY_(ini), "fecha fin": aDMY_(fin), nombre: d.nombre, mensaje: d.mensaje,
-      flyer: flyer, direccion: d.direccion, contacto: d.contacto, grupo: b.grupo, "calendario id": idCal, estado: "Activo"
+      flyer: flyer, direccion: d.direccion, contacto: d.contacto, grupo: b.grupo, "calendario id": idCal, estado: "Pendiente"
     };
     if (!fila) fila = sh.getLastRow() + 1;
     Object.keys(val).forEach(c => {
@@ -314,6 +361,10 @@ function doPost(e) {
     if (d.accion === "evento") {
       try { return json_(evento_(d)); }
       catch (err2) { return json_({ ok: false, error: "servidor: " + err2.message }); }
+    }
+    if (d.accion === "admin") {
+      try { return json_(admin_(d)); }
+      catch (err3) { return json_({ ok: false, error: "servidor: " + err3.message }); }
     }
     return json_({ ok: false, error: "accion no valida" });
   } catch (err) {

@@ -389,3 +389,17 @@ footer { padding: .6rem 1rem; }
 .foot-inner .red-off:hover { background: none; text-decoration: none; color: #fff; }
 .foot-area { align-self: center; }
 @media (max-width: 700px) { .foot-inner { grid-template-columns: 1fr 1fr; } .foot-area { grid-column: 1 / -1; } }
+/* Admin */
+.auth-box:has(.admin-wrap) { width: min(900px, 100%); }
+.admin-wrap { overflow-x: auto; }
+.admin-tabla { width: 100%; border-collapse: collapse; font-size: .9rem; }
+.admin-tabla th, .admin-tabla td { padding: .5rem; border-bottom: 1px solid #ddd; text-align: left; vertical-align: top; }
+.admin-tabla img { width: 110px; height: auto; border-radius: 8px; display: block; }
+.admin-tabla .chip { display: inline-block; padding: .15rem .6rem; border-radius: 999px; font-size: .8rem; font-weight: 700; background: #fff3c4; color: #5c4400; }
+.admin-tabla .chip.aprobado { background: #cdeed3; color: #0d4a1f; }
+.admin-tabla .chip.archivado { background: #e2e2e2; color: #333; }
+html[data-tema="dark"] .admin-tabla th, html[data-tema="dark"] .admin-tabla td { border-color: #3a466f; color: #ecebf5; }
+.admin-tabla img { cursor: zoom-in; }
+.admin-lightbox { z-index: 10000; cursor: zoom-out; }
+.admin-lightbox img { max-width: 95vw; max-height: 90vh; border-radius: 8px; }
+.admin-lightbox .auth-close { position: fixed; top: 1rem; right: 1rem; color: #fff; }

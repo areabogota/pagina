@@ -116,8 +116,79 @@
       const panel = body.querySelector("#evento-panel");
       if (!form) return;
       accesoGrupo(form, (grupo, clave) => eventosPanel(panel, grupo, clave));
+    },
+    admin() {
+      if (!window.NA_USER) { cerrar(); return; }
+      const form = body.querySelector("#admin-acceso");
+      const panel = body.querySelector("#admin-panel");
+      const msg = form.querySelector(".msg");
+      const ojo = form.querySelector(".ojo");
+      ojo.addEventListener("click", () => { form.clave.type = form.clave.type === "password" ? "text" : "password"; });
+      form.addEventListener("submit", async e => {
+        e.preventDefault();
+        const btn = form.querySelector("[type=submit]");
+        btn.disabled = true; msg.textContent = "";
+        try {
+          const clave = form.clave.value;
+          const j = await adminLlamar(clave, { modo: "listar" });
+          form.hidden = true;
+          adminPanel(panel, clave, j.eventos);
+        } catch (er) { msg.textContent = er.message; }
+        finally { btn.disabled = false; }
+      });
     }
   };
+
+  async function adminLlamar(clave, cuerpo) {
+    const r = await fetch(CONFIG.API_URL, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify({ accion: "admin", clave, ...cuerpo }) });
+    let j;
+    try { j = JSON.parse(await r.text()); } catch { throw new Error("Respuesta inválida (¿publicaste la nueva versión del Apps Script?)"); }
+    if (j.bloqueado) throw new Error("Demasiados intentos. Espera unos minutos.");
+    if (!j.ok) throw new Error(j.error || "Clave incorrecta.");
+    return j;
+  }
+
+  // Tabla de todos los eventos con botón Aprobar para los pendientes
+  function adminPanel(panel, clave, eventos) {
+    panel.hidden = false;
+    const est = e => { const s = norm(e.estado); return s === "activo" ? "Aprobado" : s === "archivado" ? "Archivado" : "Pendiente"; };
+    const fechas = e => e["fecha fin"] && e["fecha fin"] !== e["fecha inicio"] ? `${esc(e["fecha inicio"])} al ${esc(e["fecha fin"])}` : esc(e["fecha inicio"]);
+    const orden = eventos.filter(e => est(e) !== "Archivado").sort((a, b) => (est(a) === "Pendiente" ? 0 : 1) - (est(b) === "Pendiente" ? 0 : 1));
+    panel.innerHTML = `<div class="admin-wrap"><table class="admin-tabla">
+      <thead><tr><th>Flyer</th><th>Evento</th><th>Información</th><th>Estado</th></tr></thead>
+      <tbody>${orden.map(e => {
+        const img = safeUrl(e.flyer);
+        const s = est(e);
+        return `<tr data-fila="${Number(e.fila)}">
+          <td>${img ? `<img src="${img}" alt="Flyer" loading="lazy" referrerpolicy="no-referrer">` : "—"}</td>
+          <td><strong>${esc(e.nombre)}</strong><br>${esc(e.grupo)}<br>${fechas(e)}</td>
+          <td>${esc(e.mensaje)}<br><small>📍 ${esc(e.direccion)}<br>📞 ${esc(e.contacto)}</small></td>
+          <td class="admin-estado"><span class="chip ${s.toLowerCase()}">${s}</span>${s === "Pendiente" ? '<br><button type="button" class="btn" data-aprobar>Aprobar</button>' : ""}</td>
+        </tr>`;
+      }).join("") || '<tr><td colspan="4">No hay eventos.</td></tr>'}</tbody></table></div><p class="msg" role="alert"></p>`;
+    const msg = panel.querySelector(".msg");
+    panel.addEventListener("click", async ev => {
+      const im = ev.target.closest(".admin-tabla img");
+      if (im) {
+        const lb = document.createElement("div");
+        lb.className = "auth-modal admin-lightbox";
+        lb.innerHTML = `<img src="${im.src}" alt="Flyer ampliado" referrerpolicy="no-referrer"><button type="button" class="auth-close" aria-label="Cerrar">&times;</button>`;
+        lb.addEventListener("click", () => lb.remove());
+        document.body.appendChild(lb);
+        return;
+      }
+      const b = ev.target.closest("[data-aprobar]");
+      if (!b) return;
+      const tr = b.closest("tr");
+      b.disabled = true; msg.textContent = "";
+      try {
+        await adminLlamar(clave, { modo: "aprobar", fila: Number(tr.dataset.fila) });
+        tr.querySelector(".admin-estado").innerHTML = '<span class="chip aprobado">Aprobado</span>';
+        Object.keys(localStorage).filter(k => k.startsWith("na_sheet_")).forEach(k => localStorage.removeItem(k));
+        if (typeof window.cargarEventos === "function") window.cargarEventos();
+      } catch (er) { msg.textContent = er.message; b.disabled = false; }
+    });
+  }
 
   // Panel de eventos del grupo: crear, editar o eliminar (todo pasa por el Apps Script con grupo+clave)
   function eventosPanel(panel, grupo, clave) {

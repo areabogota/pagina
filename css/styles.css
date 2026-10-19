@@ -409,3 +409,4 @@ html[data-tema="dark"] .admin-tabla th, html[data-tema="dark"] .admin-tabla td {
 .car-slide img { cursor: zoom-in; }
 .ev-lightbox .lb-cont { display: grid; gap: .8rem; justify-items: center; cursor: default; }
 .ev-lightbox .lb-desc { text-decoration: none; }
+.car-slide.active img { pointer-events: auto; }

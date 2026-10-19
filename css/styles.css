@@ -25,7 +25,7 @@ a { color: var(--blue); }
 .menu-toggle.open span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
 .menu-toggle.open span:nth-child(2) { opacity: 0; }
 .menu-toggle.open span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
-.nav ul { list-style: none; margin: 0; padding: 0; display: flex; gap: .25rem; }
+.nav > ul { list-style: none; margin: 0; padding: 0; display: flex; gap: .25rem; }
 .nav a { color: #fff; text-decoration: none; padding: .5rem .9rem; border-radius: 8px; display: block; }
 .nav a:hover, .nav a.active { background: var(--blue); box-shadow: inset 0 -3px 0 var(--accent); }
 .nav-dropdown { position: relative; }
@@ -39,7 +39,7 @@ a { color: var(--blue); }
   .menu-toggle { display: block; }
   .nav { position: absolute; top: 100%; left: 0; right: 0; background: var(--blue-dark); max-height: 0; overflow: hidden; transition: max-height .3s; }
   .nav.open { max-height: 650px; }
-  .nav ul { flex-direction: column; padding: .5rem 1rem 1rem; }
+  .nav > ul { flex-direction: column; padding: .5rem 1rem 1rem; }
   .nav ul.nav-submenu { position: static; min-width: 0; margin: 0 0 .3rem .75rem; padding: .15rem 0 .15rem .5rem; border-left: 2px solid var(--lilac); border-radius: 0; box-shadow: none; background: transparent; }
   .nav-submenu a { white-space: normal; }
   .nav .nav-dropdown-toggle { width: 100%; text-align: left; }
@@ -330,6 +330,8 @@ html[data-tema="dark"] input, html[data-tema="dark"] textarea, html[data-tema="d
 html[data-tema="dark"] .filters select { background-color: #16203d; color: var(--accent); border-color: var(--purple); }
 html[data-tema="dark"] .filters select option { background: #16203d; color: var(--text); }
 html[data-tema="dark"] .auth-box, html[data-tema="dark"] .user-dropdown, html[data-tema="dark"] .aviso, html[data-tema="dark"] .prov { background: var(--card); color: var(--text); }
+html[data-tema="dark"] .user-dropdown a,
+html[data-tema="dark"] .user-dropdown button { color: #ecebf5; }
 html[data-tema="dark"] .user-dropdown a:hover, html[data-tema="dark"] .user-dropdown button:hover { background: #2a3763; }
 html[data-tema="dark"] .user-dropdown .user-name { border-color: #3b4a7a; }
 html[data-tema="dark"] .tag-cerrada { background: #5a2a24; color: #ffd0c9; }

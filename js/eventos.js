@@ -69,6 +69,32 @@ window.cargarEventos = async () => {
     const frame = box.querySelector(".car-frame");
     frame.addEventListener("mouseenter", stop);
     frame.addEventListener("mouseleave", start);
+    // Clic en el flyer: se amplía y se puede descargar
+    frame.addEventListener("click", ev => {
+      const im = ev.target.closest(".car-slide img");
+      if (!im) return;
+      stop();
+      const nombre = (eventos[cur].nombre || "flyer").replace(/[^\w\-]+/g, "_");
+      const lb = document.createElement("div");
+      lb.className = "auth-modal admin-lightbox ev-lightbox";
+      lb.innerHTML = `<div class="lb-cont"><img src="${im.src}" alt="${esc(im.alt)}" referrerpolicy="no-referrer">
+        <a class="btn lb-desc" href="${im.src}" target="_blank" rel="noopener noreferrer" download="${nombre}.jpg">Descargar</a></div>
+        <button type="button" class="auth-close" aria-label="Cerrar">&times;</button>`;
+      const cerrar = () => { lb.remove(); start(); };
+      lb.addEventListener("click", async e2 => {
+        const d = e2.target.closest(".lb-desc");
+        if (!d) { cerrar(); return; }
+        e2.preventDefault();
+        try {
+          const blob = await (await fetch(im.src)).blob();
+          const a = document.createElement("a");
+          a.href = URL.createObjectURL(blob); a.download = nombre + ".jpg";
+          document.body.appendChild(a); a.click(); a.remove();
+          setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+        } catch { window.open(im.src, "_blank", "noopener"); }
+      });
+      document.body.appendChild(lb);
+    });
     frame.addEventListener("touchstart", e => { frame._x = e.touches[0].clientX; }, { passive: true });
     frame.addEventListener("touchend", e => {
       const d = e.changedTouches[0].clientX - frame._x;

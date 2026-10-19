@@ -406,3 +406,6 @@ html[data-tema="dark"] .admin-tabla th, html[data-tema="dark"] .admin-tabla td {
 .ico { vertical-align: -.15em; flex-shrink: 0; }
 .tema-btn .ico { width: 1.5rem; height: 1.5rem; }
 .clave-wrap .ojo .ico { width: 1.2rem; height: 1.2rem; display: block; }
+.car-slide img { cursor: zoom-in; }
+.ev-lightbox .lb-cont { display: grid; gap: .8rem; justify-items: center; cursor: default; }
+.ev-lightbox .lb-desc { text-decoration: none; }

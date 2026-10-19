@@ -28,12 +28,21 @@ a { color: var(--blue); }
 .nav ul { list-style: none; margin: 0; padding: 0; display: flex; gap: .25rem; }
 .nav a { color: #fff; text-decoration: none; padding: .5rem .9rem; border-radius: 8px; display: block; }
 .nav a:hover, .nav a.active { background: var(--blue); box-shadow: inset 0 -3px 0 var(--accent); }
+.nav-dropdown { position: relative; }
+.nav .nav-dropdown-toggle { color: #fff; background: transparent; border: 0; font: inherit; padding: .5rem .9rem; border-radius: 8px; display: block; cursor: pointer; }
+.nav .nav-dropdown-toggle:hover, .nav .nav-dropdown-toggle[aria-expanded="true"] { background: var(--blue); box-shadow: inset 0 -3px 0 var(--accent); }
+.nav ul.nav-submenu { position: absolute; top: 100%; left: 0; z-index: 70; min-width: 190px; padding: .35rem; list-style: none; display: grid; gap: .15rem; border-radius: 10px; background: var(--blue-dark); box-shadow: 0 8px 20px rgba(0,0,0,.25); }
+.nav ul.nav-submenu[hidden] { display: none; }
+.nav-submenu a { white-space: nowrap; }
 
 @media (max-width: 720px) {
   .menu-toggle { display: block; }
   .nav { position: absolute; top: 100%; left: 0; right: 0; background: var(--blue-dark); max-height: 0; overflow: hidden; transition: max-height .3s; }
-  .nav.open { max-height: 460px; }
+  .nav.open { max-height: 650px; }
   .nav ul { flex-direction: column; padding: .5rem 1rem 1rem; }
+  .nav ul.nav-submenu { position: static; min-width: 0; margin: 0 0 .3rem .75rem; padding: .15rem 0 .15rem .5rem; border-left: 2px solid var(--lilac); border-radius: 0; box-shadow: none; background: transparent; }
+  .nav-submenu a { white-space: normal; }
+  .nav .nav-dropdown-toggle { width: 100%; text-align: left; }
 }
 
 main { max-width: 1000px; margin: auto; padding: 1.5rem 1rem 3rem; }
@@ -328,6 +337,8 @@ html[data-tema="dark"] .msg.err { background: #4a2420; color: #ffd0c9; }
 html[data-tema="dark"] .msg.ok { background: #1d3d2a; color: #b9ebc8; }
 html[data-tema="dark"] #loader { background: #121a33; }
 html[data-tema="dark"] body::before { opacity: .07; }
+html[data-tema="dark"] .horarios th,
+html[data-tema="dark"] .zona-titulo { color: #fada88; }
 
 .private-lock { max-width: 560px; margin: 2rem auto; text-align: center; }
 .private-content[hidden], .private-lock[hidden] { display: none; }

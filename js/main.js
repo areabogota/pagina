@@ -12,6 +12,13 @@ document.addEventListener("DOMContentLoaded", () => {
       nav.classList.remove("open");
       btn.classList.remove("open");
     }));
+    const lectura = nav.querySelector(".nav-dropdown-toggle");
+    const submenu = nav.querySelector(".nav-submenu");
+    if (lectura && submenu) lectura.addEventListener("click", () => {
+      const abierto = lectura.getAttribute("aria-expanded") !== "true";
+      lectura.setAttribute("aria-expanded", String(abierto));
+      submenu.hidden = !abierto;
+    });
   }
   const redes = document.getElementById("redes-lista");
   if (redes && typeof REDES !== "undefined") {

@@ -403,3 +403,6 @@ html[data-tema="dark"] .admin-tabla th, html[data-tema="dark"] .admin-tabla td {
 .admin-lightbox { z-index: 10000; cursor: zoom-out; }
 .admin-lightbox img { max-width: 95vw; max-height: 90vh; border-radius: 8px; }
 .admin-lightbox .auth-close { position: fixed; top: 1rem; right: 1rem; color: #fff; }
+.ico { vertical-align: -.15em; flex-shrink: 0; }
+.tema-btn .ico { width: 1.5rem; height: 1.5rem; }
+.clave-wrap .ojo .ico { width: 1.2rem; height: 1.2rem; display: block; }

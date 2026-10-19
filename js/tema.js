@@ -9,7 +9,7 @@
     b.type = "button"; b.className = "tema-btn";
     const pintar = () => {
       const osc = document.documentElement.dataset.tema === "dark";
-      b.textContent = osc ? "☀️" : "🌙";
+      b.innerHTML = osc ? ICO.sol : ICO.luna;
       b.title = b.ariaLabel = osc ? "Cambiar a modo claro" : "Cambiar a modo oscuro";
     };
     b.onclick = () => {

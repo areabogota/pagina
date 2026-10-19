@@ -52,14 +52,14 @@ const linkVirtual = g => [g.direccion, g.virtual ? g.maps : ""].map(s => String(
 function cardGrupo(g) {
   const vlink = linkVirtual(g);
   const filas = g.horarios.map(h => `<tr><td>${esc(diaCorto(h.dia))}</td><td>${esc(h.hora)}</td><td>${h.tipo ? `<span class="tag tag-${norm(h.tipo).startsWith("cerr") ? "cerrada" : "abierta"}">${esc(h.tipo)}</span>` : ""}</td><td>${esc(h.formato)}</td><td>${esc(h.intereses)}</td></tr>`).join("");
-  const dir = esLink(g.direccion) ? `<a class="link-virtual" href="${safeUrl(g.direccion)}" target="_blank" rel="noopener noreferrer">🔗 ${esc(String(g.direccion).trim().replace(/^https?:\/\//i, ""))}</a>` : /^https?:\/\/?$/i.test(String(g.direccion || "").trim()) ? "" : esc(g.direccion);
+  const dir = esLink(g.direccion) ? `<a class="link-virtual" href="${safeUrl(g.direccion)}" target="_blank" rel="noopener noreferrer">${ICO.link} ${esc(String(g.direccion).trim().replace(/^https?:\/\//i, ""))}</a>` : /^https?:\/\/?$/i.test(String(g.direccion || "").trim()) ? "" : esc(g.direccion);
   const lugar = [dir, esc(g.barrio), esc(g.localidad)].filter(Boolean).join(" · ");
   const bare = /^https?:\/\/?$/i.test(String(g.direccion || "").trim()); // "https://" sin dirección real
   return `<article class="card grupo${safeUrl(vlink) ? " clicable" : ""}"${safeUrl(vlink) ? ` data-href="${safeUrl(vlink)}"` : ""}>
     <div class="grupo-head">
       <div class="grupo-info">
         <h3>${esc(g.nombre)}</h3>
-        ${lugar && !(bare && !g.barrio && !g.localidad) ? `<p class="direccion">${vlink ? "" : "📍 "}${lugar}</p>` : ""}
+        ${lugar && !(bare && !g.barrio && !g.localidad) ? `<p class="direccion">${vlink ? "" : ICO.pin + " "}${lugar}</p>` : ""}
         ${g.virtual ? '<p><span class="tag tag-virtual">Virtual</span></p>' : ""}
       </div>
       ${miniMapa(g)}

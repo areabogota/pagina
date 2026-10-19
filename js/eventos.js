@@ -57,8 +57,8 @@ window.cargarEventos = async () => {
       const tel = String(e.contacto || "").replace(/[^\d+]/g, "");
       detalle.innerHTML = `${fechas(e) ? `<span class="tag">${esc(fechas(e))}</span>` : ""}
         ${e.mensaje ? `<p>${esc(e.mensaje)}</p>` : ""}
-        ${e.direccion ? `<p>📍 ${esc(e.direccion)}</p>` : ""}
-        ${e.contacto ? `<p>📞 <a href="tel:${esc(tel)}">${esc(e.contacto)}</a></p>` : ""}`;
+        ${e.direccion ? `<p>${ICO.pin} ${esc(e.direccion)}</p>` : ""}
+        ${e.contacto ? `<p>${ICO.tel} <a href="tel:${esc(tel)}">${esc(e.contacto)}</a></p>` : ""}`;
     }
     const stop = () => clearInterval(eventosTimer);
     const start = () => { stop(); if (slides.length > 1) eventosTimer = setInterval(() => go(cur + 1), ms); };

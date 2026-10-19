@@ -162,7 +162,7 @@
         return `<tr data-fila="${Number(e.fila)}">
           <td>${img ? `<img src="${img}" alt="Flyer" loading="lazy" referrerpolicy="no-referrer">` : "—"}</td>
           <td><strong>${esc(e.nombre)}</strong><br>${esc(e.grupo)}<br>${fechas(e)}</td>
-          <td>${esc(e.mensaje)}<br><small>📍 ${esc(e.direccion)}<br>📞 ${esc(e.contacto)}</small></td>
+          <td>${esc(e.mensaje)}<br><small>${ICO.pin} ${esc(e.direccion)}<br>${ICO.tel} ${esc(e.contacto)}</small></td>
           <td class="admin-estado"><span class="chip ${s.toLowerCase()}">${s}</span>${s === "Pendiente" ? '<br><button type="button" class="btn" data-aprobar>Aprobar</button>' : ""}</td>
         </tr>`;
       }).join("") || '<tr><td colspan="4">No hay eventos.</td></tr>'}</tbody></table></div><p class="msg" role="alert"></p>`;

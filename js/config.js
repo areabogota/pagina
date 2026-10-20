@@ -45,10 +45,22 @@ const REDES = [
 ];
 
 const GRUPOS = [
-  { nombre: "El Camino", imagen: "https://res.cloudinary.com/dlspk9ipi/image/upload/v1792012674/EL_CAMINO_bqvpzx.avif" },
-  { nombre: "Nuevo Amanecer", imagen: "https://res.cloudinary.com/dlspk9ipi/image/upload/v1792012674/NUEVO_AMANECER_bpv6cz.avif" },
-  { nombre: "Nuevo Comienzo", imagen: "https://res.cloudinary.com/dlspk9ipi/image/upload/v1792012674/NUEVO_COMIENZO_egvtx7.avif" },
-  { nombre: "Solo Por Hoy", imagen: "https://res.cloudinary.com/dlspk9ipi/image/upload/v1792012674/SOLO_POR_HOY_ov814e.avif" },
+  { nombre: "Nunca Más Solos", imagen: "" },
   { nombre: "Nuevo Amanecer", imagen: "https://res.cloudinary.com/dlspk9ipi/image/upload/v1792012674/NUEVO_AMANECER2_pv9yya.avif" },
-  { nombre: "Sí se puede", imagen: "https://res.cloudinary.com/dlspk9ipi/image/upload/v1792424900/WhatsApp_Image_2026-10-19_at_7.31.07_AM_2_ucwgk6.jpg" }
+  { nombre: "Vivir Limpios", imagen: "" },
+  { nombre: "La Gratitud", imagen: "" },
+  { nombre: "La Rendición", imagen: "https://res.cloudinary.com/dlspk9ipi/image/upload/v1792454855/LaResurrecion_aei7bb.png" },
+  { nombre: "La Cumbre", imagen: "" },
+  { nombre: "El Mensaje", imagen: "" },
+  { nombre: "Sí se puede", imagen: "https://res.cloudinary.com/dlspk9ipi/image/upload/v1792424900/WhatsApp_Image_2026-10-19_at_7.31.07_AM_2_ucwgk6.jpg" },
+  { nombre: "Solo por hoy", imagen: "https://res.cloudinary.com/dlspk9ipi/image/upload/v1792454856/SoloPorHOy_lbx2vc.png" },
+  { nombre: "Juntes Podemos", imagen: "https://res.cloudinary.com/dlspk9ipi/image/upload/v1792455635/juntes_h4bgat.png" },
+  { nombre: "Un Nuevo Comienzo", imagen: "https://res.cloudinary.com/dlspk9ipi/image/upload/v1792012674/NUEVO_COMIENZO_egvtx7.avif" },
+  { nombre: "El Camino", imagen: "https://res.cloudinary.com/dlspk9ipi/image/upload/v1792454855/elCamino_cluccc.png" },
+  { nombre: "Aqui y Ahora", imagen: "https://res.cloudinary.com/dlspk9ipi/image/upload/v1792454867/aqui_y_ajora_wc6qhr.jpg" },
+  { nombre: "Seguir Adelante", imagen: "https://res.cloudinary.com/dlspk9ipi/image/upload/v1792012674/EL_CAMINO_bqvpzx.avif" },
+  { nombre: "Libertad - Mosquera", imagen: "https://res.cloudinary.com/dlspk9ipi/image/upload/v1792455253/Copilot_20261019_191306_bqr9a0.png" },
+  { nombre: "Volver a Creer - Fusagasugá", imagen: "" },
+  { nombre: "Nueva Vida - Facatativá", imagen: "" },
+  { nombre: "Fortaleza y Esperanza - Tocancipá", imagen: "" },
 ];

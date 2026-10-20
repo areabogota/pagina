@@ -60,7 +60,7 @@ const GRUPOS = [
   { nombre: "Aqui y Ahora", imagen: "https://res.cloudinary.com/dlspk9ipi/image/upload/v1792454867/aqui_y_ajora_wc6qhr.jpg" },
   { nombre: "Seguir Adelante", imagen: "https://res.cloudinary.com/dlspk9ipi/image/upload/v1792456891/Copilot_20261019_193901_fqbdnx.png" },
   { nombre: "Libertad - Mosquera", imagen: "https://res.cloudinary.com/dlspk9ipi/image/upload/v1792455253/Copilot_20261019_191306_bqr9a0.png" },
-  { nombre: "Volver a Creer - Fusagasugá", imagen: "" },
+  { nombre: "Volver a Creer - Fusagasugá", imagen: "https://res.cloudinary.com/dlspk9ipi/image/upload/v1792459624/fusagasuga_axhqek.png" },
   { nombre: "Nueva Vida - Facatativá", imagen: "" },
   { nombre: "Fortaleza y Esperanza - Tocancipá", imagen: "" },
 ];

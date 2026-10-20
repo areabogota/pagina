@@ -51,7 +51,7 @@ const GRUPOS = [
   { nombre: "La Gratitud", imagen: "" },
   { nombre: "La Rendición", imagen: "https://res.cloudinary.com/dlspk9ipi/image/upload/v1792454855/LaResurrecion_aei7bb.png" },
   { nombre: "La Cumbre", imagen: "" },
-  { nombre: "El Mensaje", imagen: "" },
+  { nombre: "El Mensaje", imagen: "https://res.cloudinary.com/dlspk9ipi/image/upload/v1792460080/msj_uxeljm.png" },
   { nombre: "Sí se puede", imagen: "https://res.cloudinary.com/dlspk9ipi/image/upload/v1792424900/WhatsApp_Image_2026-10-19_at_7.31.07_AM_2_ucwgk6.jpg" },
   { nombre: "Solo por hoy", imagen: "https://res.cloudinary.com/dlspk9ipi/image/upload/v1792454856/SoloPorHOy_lbx2vc.png" },
   { nombre: "Juntes Podemos", imagen: "https://res.cloudinary.com/dlspk9ipi/image/upload/v1792455635/juntes_h4bgat.png" },

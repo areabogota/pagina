@@ -47,7 +47,7 @@ const REDES = [
 const GRUPOS = [
   { nombre: "Nunca Más Solos", imagen: "" },
   { nombre: "Nuevo Amanecer", imagen: "https://res.cloudinary.com/dlspk9ipi/image/upload/v1792012674/NUEVO_AMANECER2_pv9yya.avif" },
-  { nombre: "Vivir Limpios", imagen: "https://res.cloudinary.com/dlspk9ipi/image/upload/v1793149695/VIVIRLIMPIOS_lsbw5w.jpg" },
+  { nombre: "Vivir Limpios", imagen: "https://res.cloudinary.com/dlspk9ipi/image/upload/v1793149997/WhatsApp_Image_2026-10-27_at_7.36.27_PM_rnn1ii.jpg" },
   { nombre: "La Gratitud", imagen: "" },
   { nombre: "La Rendición", imagen: "https://res.cloudinary.com/dlspk9ipi/image/upload/v1792454855/LaResurrecion_aei7bb.png" },
   { nombre: "La Cumbre", imagen: "" },

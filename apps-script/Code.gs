@@ -1,11 +1,7 @@
-// Pegar en Extensiones > Apps Script de la hoja de Google Sheets.
-// Implementar > Nueva implementación > Aplicación web
-//   Ejecutar como: Yo | Quién tiene acceso: Cualquier persona
-// Copiar la URL resultante en js/config.js (API_URL).
+
 const SHEET_ID = "1sy6R4HxHgFEsAkOjt_H-f0i5X8XUdHjE0y0Cha5EREI";
 
-// Las claves viven en OTRO libro de Google Sheets que NO se comparte con nadie
-// (pestaña CLAVES: col A = grupo, col B = clave). Pega aquí el ID de ese libro privado.
+
 const CLAVES_SHEET_ID = "1vEa1xMXnRZaMH-XmJoXtmqQRe9H34c63umbo1NyjuDs";
 
 function claves_() {
@@ -25,7 +21,7 @@ const BASICOS = ["direccion", "barrio", "localidad", "virtual", "link maps"];
 const REUNION = ["dia", "hora inicio", "hora fin", "tipo", "intereses comunes", "formato"];
 const DIAS_ = ["lunes", "martes", "miercoles", "jueves", "viernes", "sabado", "domingo", "festivos"];
 
-// Obligatorios: día, horas (24 h HH:MM) y tipo; intereses comunes y formato son opcionales
+
 function validarReunion_(d) {
   for (const c of ["dia", "hora inicio", "hora fin", "tipo"]) if (!String(d[c] == null ? "" : d[c]).trim()) return false;
   if (DIAS_.indexOf(norm_(d.dia)) < 0) return false;
@@ -33,7 +29,7 @@ function validarReunion_(d) {
   return h.test(String(d["hora inicio"]).trim()) && h.test(String(d["hora fin"]).trim());
 }
 
-// Escribe la reunión en una fila; las horas se guardan como hora real con formato 24 h
+
 function escribirReunion_(t, fila, d) {
   REUNION.forEach(c => {
     const j = t.cols.indexOf(c);
@@ -46,7 +42,6 @@ function escribirReunion_(t, fila, d) {
   });
 }
 
-// Verifica grupo+clave (con freno ante intentos repetidos)
 function verificar_(grupo, clave) {
   const cache = CacheService.getScriptCache();
   const k = "int_" + Utilities.base64EncodeWebSafe(String(grupo || "")).slice(0, 80);
@@ -142,9 +137,6 @@ function doGet(e) {
   }
 }
 
-// Evento nuevo (POST con grupo+clave). Columnas de la pestaña "Eventos":
-// Fecha inicio, Fecha fin, Nombre, Mensaje, Flyer, Direccion, Contacto, Grupo
-// Ejecutar UNA vez desde el editor (botón Ejecutar) para autorizar Drive y Sheets
 function autorizar() {
   const c = DriveApp.getFolderById(CARPETA_FLYERS_ID);
   const s = SpreadsheetApp.openById(SHEET_ID).getSheetByName("Eventos");
@@ -156,8 +148,6 @@ const CARPETA_FLYERS_ID = "15AXKrIPjVMjH4fHJDYkOiDA_6H3y_216";
 const aDMY_ = m => m[3] + "/" + m[2] + "/" + m[1];
 const ISO_ = /^(\d{4})-(\d{2})-(\d{2})$/;
 
-// Marca como "Archivado" los eventos cuya fecha fin ya pasó (hora de Bogotá) y como "Activo" los demás.
-// No toca el calendario de Google ni los flyers de Drive.
 function archivarEventos() {
   const sh = SpreadsheetApp.openById(SHEET_ID).getSheetByName("Eventos");
   const v = sh.getDataRange().getDisplayValues();
@@ -177,7 +167,6 @@ function archivarEventos() {
   Logger.log("Eventos actualizados: " + n);
 }
 
-// Ejecutar UNA vez desde el editor: deja todos los eventos vigentes como "Pendiente" para que el admin los apruebe
 function migrarAPendiente() {
   const sh = SpreadsheetApp.openById(SHEET_ID).getSheetByName("Eventos");
   const v = sh.getDataRange().getDisplayValues();
@@ -188,7 +177,7 @@ function migrarAPendiente() {
   Logger.log("Eventos pasados a Pendiente: " + n);
 }
 
-// Clave de administración: libro privado, pestaña ADMIN, celda A1 (con freno ante intentos repetidos)
+
 function verificarAdmin_(clave) {
   const cache = CacheService.getScriptCache();
   const n = Number(cache.get("int_admin") || 0);
@@ -199,7 +188,6 @@ function verificarAdmin_(clave) {
   return { ok: ok };
 }
 
-// Admin: modo listar (todos los eventos) | aprobar (fila -> Estado = Activo)
 function admin_(b) {
   const auth = verificarAdmin_(b.clave);
   if (!auth.ok) return auth;
@@ -223,7 +211,6 @@ function admin_(b) {
   return { ok: true, eventos: out };
 }
 
-// Ejecutar UNA vez desde el editor: programa archivarEventos() todos los días a las 3:00 a. m. (Bogotá)
 function programarArchivo() {
   ScriptApp.getProjectTriggers().filter(t => t.getHandlerFunction() === "archivarEventos").forEach(t => ScriptApp.deleteTrigger(t));
   ScriptApp.newTrigger("archivarEventos").timeBased().everyDays(1).atHour(3).inTimezone("America/Bogota").create();
@@ -241,7 +228,7 @@ function guardarFlyer_(b64) {
   return "https://lh3.googleusercontent.com/d/" + archivo.getId() + "=w1000";
 }
 
-// Calendario de Google del área: cada evento se refleja ahí (el dueño del script debe poder editarlo)
+
 const CALENDARIO_ID = "areabogota@nacolombia.org";
 const aFecha_ = m => Utilities.parseDate(m[0], "America/Bogota", "yyyy-MM-dd");
 const dmy_ = s => { const m = String(s || "").match(/^(\d{2})\/(\d{2})\/(\d{4})$/); return m ? Utilities.parseDate(m[3] + "-" + m[2] + "-" + m[1], "America/Bogota", "yyyy-MM-dd") : null; };
@@ -260,7 +247,7 @@ function buscarEnCalendario_(cal, previo, idCal) {
     .filter(e => posibles.indexOf(n(e.getTitle())) >= 0)[0] || null;
 }
 
-// accion: "crear" | "editar" | "eliminar". Devuelve el id del evento de calendario (o "" si falla)
+
 function sincronizarCalendario_(accion, previo, d, ini, fin, grupo, idCal) {
   try {
     const cal = CalendarApp.getCalendarById(CALENDARIO_ID);
@@ -276,8 +263,7 @@ function sincronizarCalendario_(accion, previo, d, ini, fin, grupo, idCal) {
   } catch (x) { return { id: "", error: String(x && x.message || x) }; }
 }
 
-// Eventos (POST con grupo+clave). modo: listar | crear | editar | eliminar
-// Columnas de la pestaña "Eventos": Fecha inicio, Fecha fin, Nombre, Mensaje, Flyer, Direccion, Contacto, Grupo
+
 function evento_(b) {
   const auth = verificar_(b.grupo, b.clave);
   if (!auth.ok) return auth;
@@ -322,7 +308,7 @@ function evento_(b) {
     const cambiaIni = !previo || previo["fecha inicio"] !== aDMY_(ini);
     if (cambiaIni && ini[0] < Utilities.formatDate(lim, "America/Bogota", "yyyy-MM-dd")) return { ok: false, error: "fecha" };
 
-    // Cruce de fechas con eventos de otros (o del mismo grupo): se avisa y solo se crea si confirman
+
     if (!b.confirmarCruce) {
       const iN = cols.indexOf("nombre"), iI = cols.indexOf("fecha inicio"), iF = cols.indexOf("fecha fin");
       const todas = sh.getDataRange().getDisplayValues();

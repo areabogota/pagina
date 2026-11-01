@@ -151,3 +151,19 @@ function render() {
     box.innerHTML = `<p class="status error">No se pudieron cargar las reuniones. ${esc(e.message)}</p>`;
   }
 })();
+
+// Si el texto completo del placeholder cabe en el select usa la frase completa; si no, la versión corta
+const medidor = document.createElement("canvas").getContext("2d");
+function cabeTexto(sel, texto) {
+  const cs = getComputedStyle(sel);
+  medidor.font = `${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
+  const disponible = sel.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
+  return medidor.measureText(texto).width <= disponible;
+}
+function ajustaPlaceholdersFiltros() {
+  document.querySelectorAll("option[data-largo]").forEach(o => {
+    o.textContent = cabeTexto(o.parentElement, o.dataset.largo) ? o.dataset.largo : o.dataset.corto;
+  });
+}
+ajustaPlaceholdersFiltros();
+window.addEventListener("resize", ajustaPlaceholdersFiltros);

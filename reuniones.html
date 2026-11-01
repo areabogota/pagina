@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Reuniones – Narcóticos Anónimos</title>
   <link rel="icon" href="https://res.cloudinary.com/dlspk9ipi/image/upload/v1776920336/LOGO-AZUL_1_uoqp92.png">
-  <link rel="stylesheet" href="css/styles.css?v=73">
+  <link rel="stylesheet" href="css/styles.css?v=83">
   <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-H0JF4NM30G"></script>
 <script>
@@ -49,10 +49,10 @@
   <main>
     <h1>Reuniones</h1>
     <div class="filters">
-      <select id="fGrupo" aria-label="Grupo"><option value="" selected disabled hidden>Selecciona un grupo</option><option value="">Todos los grupos</option></select>
-      <select id="fDia" aria-label="Día"><option value="" selected disabled hidden>Selecciona un día</option><option value="">Todos los días</option></select>
-      <select id="fHora" aria-label="Horario"><option value="" selected disabled hidden>Selecciona horario</option><option value="">Todo horario</option><option value="am">a.m. (mañana)</option><option value="pm">p.m. (tarde / noche)</option></select>
-      <select id="fUbic" aria-label="Ubicación"><option value="" selected disabled hidden>Selecciona ubicación</option><option value="">Toda ubicación</option></select>
+      <select id="fGrupo" aria-label="Grupo"><option value="" selected disabled hidden data-largo="Selecciona un grupo" data-corto="Grupo">Selecciona un grupo</option><option value="">Todos los grupos</option></select>
+      <select id="fDia" aria-label="Día"><option value="" selected disabled hidden data-largo="Selecciona un día" data-corto="Día">Selecciona un día</option><option value="">Todos los días</option></select>
+      <select id="fHora" aria-label="Horario"><option value="" selected disabled hidden data-largo="Selecciona horario" data-corto="Horario">Selecciona horario</option><option value="">Todo horario</option><option value="am">a.m. (mañana)</option><option value="pm">p.m. (tarde / noche)</option></select>
+      <select id="fUbic" aria-label="Ubicación"><option value="" selected disabled hidden data-largo="Selecciona ubicación" data-corto="Ubicación">Selecciona ubicación</option><option value="">Toda ubicación</option></select>
     </div>
     <div id="lista"><p class="status">Cargando…</p></div>
   </main>
@@ -72,11 +72,11 @@
     </div>
   </footer>
   <script src="js/config.js?v=51"></script>
-  <script src="js/tema.js?v=54"></script>
+  <script src="js/tema.js?v=55"></script>
   <script src="js/main.js?v=55"></script>
   <script src="js/auth.js?v=56"></script>
   <script src="js/modales.js?v=61"></script>
-  <script src="js/particulas.js?v=51"></script>
-  <script src="js/reuniones.js?v=55"></script>
+  <script src="js/particulas.js?v=52"></script>
+  <script src="js/reuniones.js?v=56"></script>
 </body>
 </html>

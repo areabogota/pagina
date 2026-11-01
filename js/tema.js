@@ -1,8 +1,16 @@
 // Modo claro/oscuro y botón flotante de WhatsApp (se inyectan en todas las páginas)
 (() => {
   const KEY = "na_tema";
+  // Poca memoria, pocos núcleos, modo ahorro de datos o movimiento reducido: se desactivan efectos pesados
+  const bajo = (navigator.deviceMemory && navigator.deviceMemory <= 3) ||
+    (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 2) ||
+    (navigator.connection && navigator.connection.saveData) ||
+    matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (bajo) document.documentElement.classList.add("gama-baja");
+
+  const guardado = (() => { try { return localStorage.getItem(KEY); } catch { return null; } })();
   const aplicar = t => { document.documentElement.dataset.tema = t; };
-  aplicar(localStorage.getItem(KEY) || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"));
+  aplicar(guardado || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"));
 
   document.addEventListener("DOMContentLoaded", () => {
     const b = document.createElement("button");

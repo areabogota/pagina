@@ -1,6 +1,6 @@
 // Partículas conectadas (efecto constelación) que reaccionan al mouse.
 (() => {
-  if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches || document.documentElement.classList.contains("gama-baja")) return;
 
   const mouse = { x: -999, y: -999 };
   addEventListener("pointermove", e => { mouse.x = e.clientX; mouse.y = e.clientY; }, { passive: true });

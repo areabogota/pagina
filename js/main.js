@@ -23,12 +23,14 @@ document.addEventListener("DOMContentLoaded", () => {
       nav.classList.remove("open");
       btn.classList.remove("open");
     }));
-    const lectura = nav.querySelector(".nav-dropdown-toggle");
-    const submenu = nav.querySelector(".nav-submenu");
-    if (lectura && submenu) lectura.addEventListener("click", () => {
-      const abierto = lectura.getAttribute("aria-expanded") !== "true";
-      lectura.setAttribute("aria-expanded", String(abierto));
-      submenu.hidden = !abierto;
+    nav.querySelectorAll(".nav-dropdown-toggle").forEach(toggle => {
+      const submenu = toggle.nextElementSibling;
+      if (!submenu) return;
+      toggle.addEventListener("click", () => {
+        const abierto = toggle.getAttribute("aria-expanded") !== "true";
+        toggle.setAttribute("aria-expanded", String(abierto));
+        submenu.hidden = !abierto;
+      });
     });
   }
   const redes = document.getElementById("redes-lista");

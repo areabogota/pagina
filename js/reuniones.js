@@ -89,7 +89,15 @@ function llenarSelects() {
     const sel = document.getElementById(id);
     valores.forEach(([v, t]) => sel.add(new Option(t, v)));
   };
-  llena("fGrupo", todos.map(g => [norm(g.nombre), g.nombre]).sort((a, b) => a[1].localeCompare(b[1], "es")));
+  const sel = document.getElementById("fGrupo");
+  const porSector = new Map();
+  todos.forEach(g => { if (!porSector.has(g.sector)) porSector.set(g.sector, []); porSector.get(g.sector).push(g); });
+  [...porSector].sort((a, b) => a[0].localeCompare(b[0], "es")).forEach(([sector, gs]) => {
+    const og = document.createElement("optgroup");
+    og.label = sector;
+    gs.sort((a, b) => a.nombre.localeCompare(b.nombre, "es")).forEach(g => og.appendChild(new Option(g.nombre, norm(g.nombre))));
+    sel.appendChild(og);
+  });
   const dias = [...new Set(todos.flatMap(g => g.horarios.map(h => norm(h.dia))).filter(Boolean))].sort((a, b) => diaIdx(a) - diaIdx(b));
   llena("fDia", dias.map(d => [d, (ABREV[d] ? { lunes: "Lunes", martes: "Martes", miercoles: "Miércoles", jueves: "Jueves", viernes: "Viernes", sabado: "Sábado", domingo: "Domingo", festivos: "Festivos" }[d] : d)]));
   const ubic = new Map(todos.map(g => [norm(ubicacion(g)), ubicacion(g)]).filter(([k]) => k));

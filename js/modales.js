@@ -211,6 +211,13 @@
     const minD = new Date(); minD.setDate(minD.getDate() + 15);
     const min = iso(minD);
     const aISO = s => { const m = String(s || "").match(/^(\d{2})\/(\d{2})\/(\d{4})$/); return m ? `${m[3]}-${m[2]}-${m[1]}` : ""; };
+    // Dirección del grupo (columna DIRECCIÓN de GRUPOS); se prellena en eventos nuevos y el usuario puede cambiarla
+    let dirGrupo = "";
+    fetchSheet(CONFIG.TAB_REUNIONES, true).then(rows => {
+      const g = rows.find(r => norm(r.nombre) === norm(grupo));
+      const d = g ? String(g.direccion || "").trim() : "";
+      dirGrupo = /^https?:\/\//i.test(d) ? "" : d;
+    }).catch(() => {});
     panel.hidden = false;
 
     // text/plain evita el preflight CORS con Apps Script
@@ -273,7 +280,7 @@
         `<label>Nombre del evento<input name="nombre" required maxlength="150" value="${esc(v.nombre || "")}"></label>` +
         `<label>Mensaje (aparece debajo del evento)<textarea name="mensaje" rows="3" maxlength="500" required>${esc(v.mensaje || "")}</textarea></label>` +
         `<label>Flyer (imagen)${nuevo ? "" : " — déjalo vacío para conservar el actual"}<input type="file" name="flyer" accept="image/*" ${nuevo ? "required" : ""}></label>` +
-        `<label>Dirección<input name="direccion" required maxlength="200" value="${esc(v.direccion || "")}"></label>` +
+        `<label>Dirección<input name="direccion" required maxlength="200" value="${esc(v.direccion || (nuevo ? dirGrupo : ""))}"></label>` +
         `<label>Número de contacto<input type="tel" name="contacto" required maxlength="30" pattern="[0-9+\\(\\)\\s\\-]{7,30}" value="${esc(v.contacto || "")}"></label>` +
         '<button class="btn" type="submit">Guardar</button> ' + (nuevo ? "" : '<button class="btn sec" type="button" data-del>Eliminar evento</button> ') +
         '<button class="btn sec" type="button" data-v>Volver</button><div class="res"></div></form>';

@@ -21,9 +21,16 @@ window.cargarEventos = async () => {
     const DIAS = ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"];
     const MESES = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
     const larga = s => { const d = parseDMY(s); return d ? `${DIAS[d.getDay()]}, ${d.getDate()} ${MESES[d.getMonth()]} ${d.getFullYear()}` : String(s || ""); };
+    // Hora en formato 12 h (a. m. / p. m.); si el valor no tiene formato HH:mm se deja tal cual
+    const hora12 = t => {
+      const m = String(t || "").match(/^(\d{1,2}):(\d{2})/);
+      if (!m) return String(t || "");
+      const h = Number(m[1]);
+      return `${h % 12 || 12}:${m[2]} ${h < 12 ? "a. m." : "p. m."}`;
+    };
     const fechas = e => {
       const ini = e["fecha inicio"] || "", fin = e["fecha fin"] || "";
-      const hora = e["hora inicio"] && e["hora fin"] && fin === ini ? ` · ${e["hora inicio"]} a ${e["hora fin"]}` : "";
+      const hora = e["hora inicio"] && e["hora fin"] && fin === ini ? ` · ${hora12(e["hora inicio"])} a ${hora12(e["hora fin"])}` : "";
       return ini ? larga(ini) + (fin && fin !== ini ? " al " + larga(fin) : "") + hora : "";
     };
 

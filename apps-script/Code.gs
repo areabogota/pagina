@@ -42,15 +42,31 @@ function escribirReunion_(t, fila, d) {
   });
 }
 
-function verificar_(grupo, clave) {
+// Tokens por dispositivo: se emiten tras validar la clave y se guardan en Script Properties (vencen a los 180 días)
+function nuevoToken_(grupo) {
+  const t = Utilities.getUuid();
+  PropertiesService.getScriptProperties().setProperty("tok_" + t, JSON.stringify({ g: String(grupo).trim(), exp: Date.now() + 180 * 86400000 }));
+  return t;
+}
+
+function grupoDeToken_(token) {
+  const raw = PropertiesService.getScriptProperties().getProperty("tok_" + String(token || ""));
+  if (!raw) return "";
+  const o = JSON.parse(raw);
+  return o.exp > Date.now() ? o.g : "";
+}
+
+function verificar_(grupo, clave, token) {
+  const g = String(grupo || "").trim();
+  if (token) return { ok: !!g && grupoDeToken_(token) === g };
   const cache = CacheService.getScriptCache();
-  const k = "int_" + Utilities.base64EncodeWebSafe(String(grupo || "")).slice(0, 80);
+  const k = "int_" + Utilities.base64EncodeWebSafe(g).slice(0, 80);
   const n = Number(cache.get(k) || 0);
   if (n >= 5) return { ok: false, bloqueado: true };
-  const x = claves_().filter(c => c.grupo === String(grupo || "").trim())[0];
+  const x = claves_().filter(c => c.grupo === g)[0];
   const ok = !!x && x.clave === String(clave || "").trim();
-  if (!ok) cache.put(k, String(n + 1), 600);
-  return { ok: ok };
+  if (!ok) { cache.put(k, String(n + 1), 600); return { ok: false }; }
+  return { ok: true, token: nuevoToken_(g) };
 }
 
 function tabla_() {
@@ -70,10 +86,10 @@ function doGet(e) {
     const p = e.parameter || {};
     if (p.accion === "version") return json_({ version: "2026-10-17-admin" });
     if (p.accion === "grupos") return json_({ grupos: claves_().map(x => x.grupo) });
-    if (p.accion === "verificar") return json_(verificar_(p.grupo, p.clave));
+    if (p.accion === "verificar") return json_(verificar_(p.grupo, p.clave, p.token));
 
     if (p.accion === "datos" || p.accion === "editar") {
-      const auth = verificar_(p.grupo, p.clave);
+      const auth = verificar_(p.grupo, p.clave, p.token);
       if (!auth.ok) return json_(auth);
       const t = tabla_();
       const propias = filasDe_(t, p.grupo);
@@ -265,7 +281,7 @@ function sincronizarCalendario_(accion, previo, d, ini, fin, grupo, idCal) {
 
 
 function evento_(b) {
-  const auth = verificar_(b.grupo, b.clave);
+  const auth = verificar_(b.grupo, b.clave, b.token);
   if (!auth.ok) return auth;
   const modo = b.modo || "crear";
   const sh = SpreadsheetApp.openById(SHEET_ID).getSheetByName("Eventos");

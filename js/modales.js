@@ -1,13 +1,22 @@
 // Ventanas modales cuyo contenido vive en modales/<nombre>.html y se carga al hacer clic en [data-modal="nombre"].
 (() => {
-  const modal = document.createElement("div");
-  modal.className = "auth-modal";
-  modal.hidden = true;
-  modal.innerHTML = '<div class="auth-box" role="dialog" aria-modal="true"><button type="button" class="auth-close" aria-label="Cerrar">&times;</button><div class="modal-body"></div></div>';
-  const body = modal.querySelector(".modal-body");
-  const cerrar = () => { modal.hidden = true; body.innerHTML = ""; };
-  modal.querySelector(".auth-close").addEventListener("click", cerrar); // solo se cierra con la X
-  document.addEventListener("DOMContentLoaded", () => document.body.appendChild(modal));
+  // Cada modal tiene su propio contenedor; el segundo se apila encima del primero (aparece después en el DOM)
+  const crear = () => {
+    const m = document.createElement("div");
+    m.className = "auth-modal";
+    m.hidden = true;
+    m.innerHTML = '<div class="auth-box" role="dialog" aria-modal="true"><button type="button" class="auth-close" aria-label="Cerrar">&times;</button><div class="modal-body"></div></div>';
+    const b = m.querySelector(".modal-body");
+    const c = () => { m.hidden = true; b.innerHTML = ""; };
+    m.querySelector(".auth-close").addEventListener("click", c); // solo se cierra con la X
+    return { m, b, c };
+  };
+  const principal = crear(), apilado = crear();
+  const { m: modal, b: body, c: cerrar } = principal;
+  document.addEventListener("DOMContentLoaded", () => {
+    document.body.appendChild(modal);
+    document.body.appendChild(apilado.m);
+  });
 
   const esSi = v => ["si", "s", "x", "true", "1", "virtual"].includes(norm(v));
   const DIAS = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo", "Festivos"];
@@ -23,8 +32,8 @@
   };
 
   // Panel de edición: pregunta si el cambio es de datos básicos (todo el grupo) o de una reunión (una sola fila)
-  function editor(panel, api, grupo, clave) {
-    const base = `${api}?grupo=${encodeURIComponent(grupo)}&clave=${encodeURIComponent(clave)}`;
+  function editor(panel, api, grupo, cred) {
+    const base = `${api}?grupo=${encodeURIComponent(grupo)}&${new URLSearchParams(cred)}`;
     let filas = [];
     const aviso = (t, x) => `<p class="msg ${t}">${esc(x)}</p>`;
     const titulo = `<h3>${esc(grupo)}</h3>`;
@@ -118,7 +127,7 @@
       const form = body.querySelector("#evento-acceso");
       const panel = body.querySelector("#evento-panel");
       if (!form) return;
-      accesoGrupo(form, (grupo, clave) => eventosPanel(panel, grupo, clave));
+      accesoGrupo(form, (grupo, cred) => eventosPanel(panel, grupo, cred));
     },
     admin() {
       if (!window.NA_USER) { cerrar(); return; }
@@ -193,8 +202,8 @@
     });
   }
 
-  // Panel de eventos del grupo: crear, editar o eliminar (todo pasa por el Apps Script con grupo+clave)
-  function eventosPanel(panel, grupo, clave) {
+  // Panel de eventos del grupo: crear, editar o eliminar (todo pasa por el Apps Script con grupo + clave o token)
+  function eventosPanel(panel, grupo, cred) {
     const api = CONFIG.API_URL;
     const titulo = `<h3>${esc(grupo)}</h3>`;
     const aviso = (t, x) => `<p class="msg ${t}">${esc(x)}</p>`;
@@ -206,7 +215,7 @@
 
     // text/plain evita el preflight CORS con Apps Script
     async function llamar(cuerpo) {
-      const r = await fetch(api, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify({ accion: "evento", grupo, clave, ...cuerpo }) });
+      const r = await fetch(api, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify({ accion: "evento", grupo, ...cred, ...cuerpo }) });
       const txt = await r.text();
       console.log("[evento] respuesta del servidor:", r.status, txt);
       let j;
@@ -312,7 +321,10 @@
     inicio();
   }
 
-  // Formulario grupo + clave: carga los grupos, verifica en el servidor y llama onOk(grupo, clave)
+  // Acceso recordado en este dispositivo: el token lo emite el servidor tras validar la clave (la clave no se guarda)
+  const leerAcceso = () => { try { return JSON.parse(localStorage.getItem("na_acceso")) || null; } catch { return null; } };
+
+  // Formulario grupo + clave: carga los grupos, verifica en el servidor y llama onOk(grupo, credencial)
   function accesoGrupo(form, onOk) {
     form.querySelector(".ojo").addEventListener("click", ev => {
       const ver = form.clave.type === "password";
@@ -333,6 +345,18 @@
       })
       .catch(() => { sel.innerHTML = '<option value="">No se pudieron cargar los grupos</option>'; });
 
+    // Si este dispositivo ya tiene acceso del mismo usuario, se oculta el formulario (grupo y clave)
+    const guardado = leerAcceso();
+    if (api && guardado && window.NA_USER && guardado.uid === window.NA_USER.uid) {
+      fetch(`${api}?accion=verificar&grupo=${encodeURIComponent(guardado.grupo)}&token=${encodeURIComponent(guardado.token)}`)
+        .then(r => r.json())
+        .then(j => {
+          if (j.ok) { form.hidden = true; onOk(guardado.grupo, { token: guardado.token }); }
+          else localStorage.removeItem("na_acceso");
+        })
+        .catch(() => {});
+    }
+
     form.addEventListener("submit", async e => {
       e.preventDefault();
       const btn = form.querySelector("[type=submit]");
@@ -343,7 +367,8 @@
         const j = await r.json();
         if (j.ok) {
           form.hidden = true;
-          onOk(sel.value, form.clave.value);
+          if (j.token && window.NA_USER) localStorage.setItem("na_acceso", JSON.stringify({ grupo: sel.value, token: j.token, uid: window.NA_USER.uid }));
+          onOk(sel.value, j.token ? { token: j.token } : { clave: form.clave.value });
         } else {
           msg.className = "msg err";
           msg.textContent = j.bloqueado ? "Demasiados intentos. Espera unos minutos." : "Grupo o clave incorrectos.";
@@ -370,15 +395,17 @@
     }
     document.querySelector(".nav")?.classList.remove("open");
     document.querySelector(".menu-toggle")?.classList.remove("open");
+    // Si el botón está dentro de un modal abierto, la nueva ventana se apila encima de ese
+    const destino = a.closest(".auth-modal") ? apilado : principal;
     try {
       const res = await fetch(`modales/${nombre}.html`, { cache: "no-store" });
       if (!res.ok) throw new Error();
-      body.innerHTML = await res.text();
-      modal.hidden = false;
-      iniciadores[nombre]?.();
+      destino.b.innerHTML = await res.text();
+      destino.m.hidden = false;
+      if (destino === principal) iniciadores[nombre]?.();
     } catch {
-      body.innerHTML = "<p>No se pudo cargar la ventana. Abre el sitio desde un servidor (http://localhost).</p>";
-      modal.hidden = false;
+      destino.b.innerHTML = "<p>No se pudo cargar la ventana. Abre el sitio desde un servidor (http://localhost).</p>";
+      destino.m.hidden = false;
     }
   });
 })();

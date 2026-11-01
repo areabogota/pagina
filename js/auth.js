@@ -22,7 +22,7 @@
     li.className = "auth-item";
     header.appendChild(li);
     // Opciones de cuenta que en celular aparecen dentro del menú hamburguesa (solo con sesión iniciada)
-    ul.insertAdjacentHTML("beforeend", '<li class="cuenta-movil"><a href="actas.html">Actas asambleas &amp; reuniones</a></li><li class="cuenta-movil"><a href="mociones.html">Historial mociones</a></li><li class="cuenta-movil"><a href="#" data-modal="admin">Admin</a></li><li class="cuenta-movil"><a href="#" id="salir-movil">Cerrar sesión</a></li>');
+    ul.insertAdjacentHTML("beforeend", '<li class="cuenta-movil"><a href="#" id="salir-movil">Cerrar sesión</a></li>');
 
     window.NA_USER = null;
     const ICONO = '<svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden="true"><path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10Zm0 2c-4.4 0-8 2.2-8 5v1h16v-1c0-2.8-3.6-5-8-5Z"/></svg>';

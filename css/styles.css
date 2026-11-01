@@ -231,6 +231,7 @@ footer { background: var(--blue-dark); color: #fff; text-align: left; position: 
   .auth-item { order: 1; }
   .menu-toggle { order: 2; }
   .user-dropdown { position: absolute; right: 0; top: calc(100% + 8px); }
+  .user-dropdown .user-name, .user-dropdown a, .user-dropdown button[data-modal] { display: none !important; }
   body.logueado .cuenta-movil { display: list-item; }
 }
 

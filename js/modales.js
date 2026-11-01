@@ -303,6 +303,8 @@
         if (fin < ini) return err("La fecha fin no puede ser anterior a la fecha inicio.");
         const mismo = mismoDia();
         if (mismo && f.elements["hora fin"].value <= f.elements["hora inicio"].value) return err("La hora fin debe ser posterior a la hora inicio.");
+        // Leer el check antes de limpiar el mensaje (al limpiarlo se elimina el checkbox)
+        const confirmarCruce = !!(f.elements.cruce && f.elements.cruce.checked);
         const btn = f.querySelector("[type=submit]");
         btn.disabled = true;
         res.innerHTML = "<p>Guardando…</p>";
@@ -313,7 +315,7 @@
           datos["hora fin"] = mismo ? f.elements["hora fin"].value : "";
           const file = f.elements.flyer.files[0];
           if (file) datos.flyer = await comprimir(file);
-          const r = await llamar({ modo: nuevo ? "crear" : "editar", fila: v.fila || 0, datos, confirmarCruce: !!(f.elements.cruce && f.elements.cruce.checked) });
+          const r = await llamar({ modo: nuevo ? "crear" : "editar", fila: v.fila || 0, datos, confirmarCruce });
           refrescar();
           if (r.errorCalendario) console.error("[evento] calendario:", r.errorCalendario);
           const base = nuevo ? "Evento agregado." : "Evento actualizado.";

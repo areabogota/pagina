@@ -17,7 +17,7 @@ body { margin: 0; font-family: system-ui, "Segoe UI", Roboto, sans-serif; color:
 a { color: var(--blue); }
 
 .header { background: var(--blue-dark); border-bottom: 4px solid var(--purple); color: #fff; position: sticky; top: 0; z-index: 10; }
-.header-inner { max-width: 1000px; margin: auto; padding: .75rem 1rem; display: flex; align-items: center; justify-content: space-between; }
+.header-inner { max-width: 1280px; margin: auto; padding: .75rem 1rem; display: flex; align-items: center; justify-content: space-between; }
 .brand { color: #fff; text-decoration: none; font-weight: 700; font-size: 1.1rem; }
 .brand span { color: var(--accent); }
 .menu-toggle { display: none; background: none; border: 0; padding: .5rem; cursor: pointer; }
@@ -29,7 +29,7 @@ a { color: var(--blue); }
 .nav a { color: #fff; text-decoration: none; padding: .5rem .9rem; border-radius: 8px; display: block; }
 .nav a:hover, .nav a.active { background: var(--blue); box-shadow: inset 0 -3px 0 var(--accent); }
 .nav-dropdown { position: relative; }
-.nav .nav-dropdown-toggle { color: #fff; background: transparent; border: 0; font: inherit; padding: .5rem .9rem; border-radius: 8px; display: block; cursor: pointer; }
+.nav .nav-dropdown-toggle { color: #fff; background: transparent; border: 0; font: inherit; padding: .5rem .9rem; border-radius: 8px; display: block; cursor: pointer; white-space: nowrap; }
 .nav .nav-dropdown-toggle:hover, .nav .nav-dropdown-toggle[aria-expanded="true"] { background: var(--blue); box-shadow: inset 0 -3px 0 var(--accent); }
 .nav ul.nav-submenu { position: absolute; top: 100%; left: 0; z-index: 70; min-width: 190px; padding: .35rem; list-style: none; display: grid; gap: .15rem; border-radius: 10px; background: var(--blue-dark); box-shadow: 0 8px 20px rgba(0,0,0,.25); }
 .nav ul.nav-submenu[hidden] { display: none; }

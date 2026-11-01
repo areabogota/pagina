@@ -145,6 +145,18 @@ function render() {
     todos = [...grupos.values()];
     todos.forEach(g => g.horarios.sort((a, b) => diaIdx(a.dia) - diaIdx(b.dia)));
     llenarSelects();
+    const contados = todos.filter(g => !norm(g.nombre).includes("grupo movil"));
+    const stats = document.getElementById("stats");
+    if (stats) {
+      const hdr = document.querySelector(".header");
+      if (hdr) stats.style.setProperty("--hdr-h", (hdr.offsetHeight + 8) + "px");
+      const esFest = h => norm(h.dia).startsWith("festivo");
+      const semana = contados.map(g => g.horarios.filter(h => !esFest(h)).length);
+      const nG = semana.filter(n => n > 0).length, nR = semana.reduce((s, n) => s + n, 0);
+      const nF = contados.filter(g => g.horarios.some(esFest)).length;
+      const nota = nF ? `<span class="stats-nota">En los festivos, ${nF === 1 ? "1 grupo también se reúne" : `${nF} grupos también se reúnen`} (esos días no están en el conteo).</span>` : "";
+      stats.innerHTML = `Esta semana te esperan <strong>${nG}</strong> grupos y <strong>${nR}</strong> reuniones.<span class="stats-lema">Lo hacemos para que ningún adicto, dondequiera que esté, tenga que morir a causa de los horrores de la adicción.</span>${nota}`;
+    }
     ["fGrupo", "fDia", "fHora", "fUbic"].forEach(id => document.getElementById(id).addEventListener("change", render));
     render();
   } catch (e) {

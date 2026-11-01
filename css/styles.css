@@ -389,8 +389,11 @@ html[data-tema="dark"] .zona-titulo { color: #fada88; }
 .qr-modal-box p { margin: 0; text-align: center; }
 .qr-close { position: absolute; z-index: 1; top: .4rem; right: .6rem; width: 40px; height: 40px; border: 0; border-radius: 50%; background: var(--blue-dark); color: #fff; font-size: 1.7rem; cursor: pointer; }
 @media (max-width: 700px) { .septima-layout { grid-template-columns: 1fr; gap: 1rem; } .septima-copy { order: 1; } .septima-qr { order: 2; max-width: 480px; margin: 0 auto; } }
-main .home-cards { display: flex; flex-wrap: wrap; justify-content: center; }
-main .home-cards > a.card { flex: 0 1 300px; text-align: center; }
+main .home-cards { display: flex; flex-wrap: wrap; justify-content: center; align-items: stretch; }
+main .home-cards > a.card { flex: 1 1 360px; max-width: 460px; text-align: center; display: flex; flex-direction: column; transition: transform .2s, box-shadow .2s; }
+main .home-cards > a.card:hover { transform: translateY(-3px); box-shadow: 0 8px 22px rgba(31,61,133,.25); }
+.card-mas { margin-top: auto !important; padding-top: .7rem; font-weight: 700; font-size: .9rem; color: var(--purple); }
+html[data-tema="dark"] .card-mas { color: var(--accent); }
 /* Footer más compacto */
 footer { padding: .6rem 1rem; }
 .foot-inner { gap: .6rem 1.5rem; }
@@ -444,3 +447,17 @@ html.gama-baja *:not(.spinner), html.gama-baja *:not(.spinner)::before, html.gam
 /* Contenido: títulos centrados y párrafos de las tarjetas justificados */
 main h1, main section.card > h2 { text-align: center; }
 main section.card > p:not(.status):not(.pdf-alt) { text-align: justify; }
+
+.stats-reuniones{position:sticky;top:var(--hdr-h,70px);z-index:40;max-width:760px;margin:.8rem auto 1rem;padding:.6rem 1rem;text-align:center;font-size:.95rem;line-height:1.35;color:#fff;background:linear-gradient(135deg,var(--blue-dark),var(--purple));border-radius:var(--radius);border-bottom:3px solid var(--accent);box-shadow:0 6px 18px rgba(31,61,133,.3)}
+.stats-reuniones strong{font-size:1.1em;color:var(--accent)}
+.stats-reuniones .stats-lema{display:block;margin-top:.2rem;font-size:.78rem;font-style:italic;opacity:.9}
+.stats-reuniones:empty{display:none}
+
+.reuniones-hoy-fecha{font-weight:700;font-size:.85rem;letter-spacing:.02em;margin-bottom:.3rem}
+#reuniones-hoy strong{color:var(--purple)}
+.reuniones-hoy-lema{font-style:italic;font-size:.85rem;margin-top:.4rem}
+html[data-tema="dark"] #reuniones-hoy strong{color:var(--accent)}
+.eventos-hoy:empty{display:none}
+.eventos-hoy strong{color:var(--purple)}
+html[data-tema="dark"] .eventos-hoy strong{color:var(--accent)}
+.stats-reuniones .stats-nota{display:block;margin-top:.25rem;font-size:.72rem;opacity:.8}

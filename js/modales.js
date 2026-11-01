@@ -110,6 +110,9 @@
   }
 
   const iniciadores = {
+    "suscribir-calendario"() {
+      body.querySelector("#confirmar-suscripcion")?.addEventListener("click", cerrar);
+    },
     evento() {
       if (!window.NA_USER) { cerrar(); return; }
       const form = body.querySelector("#evento-acceso");

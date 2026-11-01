@@ -239,6 +239,8 @@ footer { background: var(--blue-dark); color: #fff; text-align: left; position: 
 .horarios th { text-align: left; color: var(--blue-dark); border-bottom: 2px solid var(--sand); padding: .25rem .3rem; font-size: .75rem; text-transform: uppercase; }
 .horarios td { padding: .3rem; border-bottom: 1px solid #eee; vertical-align: top; }
 .btn-sm { padding: .4rem .9rem; font-size: .85rem; }
+.cal-head { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
+.cal-head h1 { margin: 0; }
 
 /* Mini mapa cuadrado */
 .grupo-head { display: flex; justify-content: space-between; align-items: flex-start; gap: .8rem; }
@@ -391,6 +393,8 @@ footer { padding: .6rem 1rem; }
 @media (max-width: 700px) { .foot-inner { grid-template-columns: 1fr 1fr; } .foot-area { grid-column: 1 / -1; } }
 /* Admin */
 .auth-box:has(.admin-wrap) { width: min(900px, 100%); }
+.auth-box:has(.modal-sync) { background: linear-gradient(rgba(255,255,255,.9), rgba(255,255,255,.9)), url("https://res.cloudinary.com/dlspk9ipi/image/upload/v1793505456/logo_del_servcio_negro_hyljxd.png") center / 60% no-repeat #fff; }
+html[data-tema="dark"] .auth-box:has(.modal-sync) { background: linear-gradient(rgba(29,40,72,.9), rgba(29,40,72,.9)), url("https://res.cloudinary.com/dlspk9ipi/image/upload/v1793505457/logo_del_servcio_blanco_hj4oex.png") center / 60% no-repeat var(--card); }
 .admin-wrap { overflow-x: auto; }
 .admin-tabla { width: 100%; border-collapse: collapse; font-size: .9rem; }
 .admin-tabla th, .admin-tabla td { padding: .5rem; border-bottom: 1px solid #ddd; text-align: left; vertical-align: top; }

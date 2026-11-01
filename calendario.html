@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Calendario – Narcóticos Anónimos</title>
   <link rel="icon" href="https://res.cloudinary.com/dlspk9ipi/image/upload/v1776920336/LOGO-AZUL_1_uoqp92.png">
-  <link rel="stylesheet" href="css/styles.css?v=63">
+  <link rel="stylesheet" href="css/styles.css?v=65">
   <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-H0JF4NM30G"></script>
 <script>
@@ -38,13 +38,14 @@
   </div></header>
 
   <main class="main-pdf">
-    <h1>Calendario</h1>
+    <div class="cal-head">
+      <h1>Calendario</h1>
+      <button type="button" class="btn btn-sm" data-modal="suscribir-calendario">Sincronizar calendario</button>
+    </div>
     <div class="pdf-wrap">
       <iframe src="https://calendar.google.com/calendar/embed?src=areabogota%40nacolombia.org&ctz=America%2FBogota" title="Calendario Área Bogotá" loading="lazy"></iframe>
     </div>
     <p class="pdf-alt"><a href="https://calendar.google.com/calendar/embed?src=areabogota%40nacolombia.org&ctz=America%2FBogota" target="_blank" rel="noopener noreferrer">Abrir en una pestaña nueva</a></p>
-    <p class="pdf-alt"><a class="btn-suscribir" href="webcal://calendar.google.com/calendar/ical/areabogota%40nacolombia.org/public/basic.ics">Suscribirse al calendario</a></p>
-    <p class="pdf-alt">Al suscribirte, los eventos se sincronizan solos con tu Google Calendar, Outlook o Apple Calendar.</p>
   </main>
   <footer>
     <div class="foot-inner">
@@ -65,7 +66,7 @@
   <script src="js/tema.js?v=54"></script>
   <script src="js/main.js?v=54"></script>
   <script src="js/auth.js?v=52"></script>
-  <script src="js/modales.js?v=54"></script>
+  <script src="js/modales.js?v=55"></script>
   <script src="js/particulas.js?v=51"></script>
 </body>
 </html>

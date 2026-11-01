@@ -21,7 +21,7 @@ async function descargarPdfEventos() {
       .filter(e => e.nombre && String(e.estado || "").trim().toLowerCase() === "activo")
       .sort((a, b) => (parseDMY(a["fecha inicio"]) || 0) - (parseDMY(b["fecha inicio"]) || 0));
     const filas = eventos.map((e, i) => `<tr>
-        <td>${i + 1}</td><td>${esc(e.grupo)}</td><td>${esc(e["fecha inicio"])}</td><td>${esc(e["hora inicio"] ? hora12(e["hora inicio"]) : "")}</td>
+        <td>${i + 1}</td><td>${esc(e.grupo)}</td><td>${esc(e["fecha inicio"])}</td><td>${e["hora inicio"] ? esc(hora12(e["hora inicio"])) : '<span style="color:#c00;font-weight:bold">EVENTO VARIOS DIAS</span>'}</td>
         <td>${esc(e.nombre)}</td><td>${esc(e.direccion)}</td><td>${esc(e.contacto)}</td></tr>`).join("");
     w.document.open();
     w.document.write(`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Eventos – NA Área Bogotá</title>

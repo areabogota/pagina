@@ -15,11 +15,14 @@
   });
 
   document.addEventListener("DOMContentLoaded", async () => {
+    const header = document.querySelector(".header-inner");
     const ul = document.querySelector(".nav ul");
-    if (!ul) return;
-    const li = document.createElement("li");
+    if (!header || !ul) return;
+    const li = document.createElement("div");
     li.className = "auth-item";
-    ul.appendChild(li);
+    header.appendChild(li);
+    // Opciones de cuenta que en celular aparecen dentro del menú hamburguesa (solo con sesión iniciada)
+    ul.insertAdjacentHTML("beforeend", '<li class="cuenta-movil"><a href="actas.html">Actas asambleas &amp; reuniones</a></li><li class="cuenta-movil"><a href="mociones.html">Historial mociones</a></li><li class="cuenta-movil"><a href="#" data-modal="admin">Admin</a></li><li class="cuenta-movil"><a href="#" id="salir-movil">Cerrar sesión</a></li>');
 
     window.NA_USER = null;
     const ICONO = '<svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden="true"><path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10Zm0 2c-4.4 0-8 2.2-8 5v1h16v-1c0-2.8-3.6-5-8-5Z"/></svg>';
@@ -98,7 +101,6 @@
             <div class="user-name">${nombre}</div>
             <a href="actas.html">Actas asambleas &amp; reuniones</a>
             <a href="mociones.html">Historial mociones</a>
-            <a href="septima.html">Séptima tradición Área</a>
             <button type="button" data-modal="admin">Admin</button>
             <button type="button" id="salir">${SALIR} Cerrar sesión</button>
           </div></div>`;
@@ -112,6 +114,8 @@
         li.querySelector("#entrar").addEventListener("click", () => { modal.hidden = false; });
       }
       document.dispatchEvent(new CustomEvent("na-auth", { detail: window.NA_USER }));
+      const salirMovil = document.getElementById("salir-movil");
+      if (salirMovil) salirMovil.onclick = e => { e.preventDefault(); auth.signOut(); };
     });
   });
 })();

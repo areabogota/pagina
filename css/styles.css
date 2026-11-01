@@ -226,9 +226,12 @@ footer { background: var(--blue-dark); color: #fff; text-align: left; position: 
 .user-dropdown .user-name { padding: .5rem .7rem; font-size: .8rem; color: #666; border-bottom: 1px solid #eee; margin-bottom: 2px; word-break: break-word; }
 .user-dropdown a, .user-dropdown button { display: flex; align-items: center; gap: .5rem; width: 100%; text-align: left; background: none; border: 0; font: inherit; font-size: .93rem; color: var(--blue-dark); padding: .55rem .7rem; border-radius: 8px; cursor: pointer; text-decoration: none; }
 .user-dropdown a:hover, .user-dropdown button:hover { background: #f0ebf8; }
+.cuenta-movil { display: none; }
 @media (max-width: 720px) {
-  .auth-item { padding: .3rem .9rem .6rem; }
-  .user-dropdown { position: static; box-shadow: none; margin-top: .4rem; }
+  .auth-item { order: 1; }
+  .menu-toggle { order: 2; }
+  .user-dropdown { position: absolute; right: 0; top: calc(100% + 8px); }
+  body.logueado .cuenta-movil { display: list-item; }
 }
 
 /* Reuniones por zona */

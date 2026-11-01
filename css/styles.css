@@ -422,3 +422,7 @@ html[data-tema="dark"] .admin-tabla th, html[data-tema="dark"] .admin-tabla td {
 .ev-lightbox .lb-cont { display: grid; gap: .8rem; justify-items: center; cursor: default; }
 .ev-lightbox .lb-desc { text-decoration: none; }
 .car-slide.active img { pointer-events: auto; }
+
+/* Contenido: títulos centrados y párrafos de las tarjetas justificados */
+main h1, main section.card > h2 { text-align: center; }
+main section.card > p:not(.status):not(.pdf-alt) { text-align: justify; }

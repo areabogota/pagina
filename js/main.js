@@ -144,3 +144,15 @@ async function leerHoja(tab) {
     return o;
   });
 }
+
+// Si el nombre del header ocupa más de 2 filas se oculta (ya están el logo y el footer)
+function ajustaMarca() {
+  const t = document.querySelector(".brand-text");
+  if (!t) return;
+  t.style.display = "";
+  const lh = parseFloat(getComputedStyle(t).lineHeight) || parseFloat(getComputedStyle(t).fontSize) * 1.15;
+  if (t.getBoundingClientRect().height > lh * 2.5) t.style.display = "none";
+}
+window.addEventListener("load", ajustaMarca);
+window.addEventListener("resize", ajustaMarca);
+document.addEventListener("DOMContentLoaded", ajustaMarca);

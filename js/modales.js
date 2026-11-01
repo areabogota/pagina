@@ -245,7 +245,8 @@
 
     function inicio(ok) {
       panel.innerHTML = titulo + (ok ? aviso("ok", ok) : "") + '<p><strong>¿Qué deseas hacer?</strong></p>' +
-        '<button type="button" class="btn" data-a="nuevo">Agregar evento</button> <button type="button" class="btn" data-a="editar">Editar o eliminar un evento</button>';
+        '<button type="button" class="btn" data-a="nuevo">Agregar evento</button> <button type="button" class="btn" data-a="editar">Editar o eliminar un evento</button>' +
+        '<p><button type="button" class="btn btn-sm" data-modal="create_flyer">Recomendación para crear flyers con IA</button></p>';
       panel.querySelector("[data-a=nuevo]").onclick = () => formulario(null);
       panel.querySelector("[data-a=editar]").onclick = lista;
     }

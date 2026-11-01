@@ -297,6 +297,8 @@ body:has(.zona) main, main:has(.zona) { max-width: 1200px; }
 .ev-detalle .tag { margin-bottom: .6rem; }
 
 #evento-panel .btn { margin: .4rem .6rem .4rem 0; }
+#evento-panel { text-align: center; }
+#evento-acceso[hidden] { display: none; }
 #evento-panel .btn.fila { display: block; width: 100%; text-align: left; margin-right: 0; }
 #evento-panel p { margin: .6rem 0; }
 

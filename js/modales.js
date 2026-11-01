@@ -246,7 +246,7 @@
     function inicio(ok) {
       panel.innerHTML = titulo + (ok ? aviso("ok", ok) : "") + '<p><strong>¿Qué deseas hacer?</strong></p>' +
         '<button type="button" class="btn" data-a="nuevo">Agregar evento</button> <button type="button" class="btn" data-a="editar">Editar o eliminar un evento</button>' +
-        '<p><button type="button" class="btn btn-sm" data-modal="create_flyer">Recomendación para crear flyers con IA</button></p>';
+        '<p><button type="button" class="btn" data-modal="create_flyer">Recomendación para crear flyers con IA</button></p>';
       panel.querySelector("[data-a=nuevo]").onclick = () => formulario(null);
       panel.querySelector("[data-a=editar]").onclick = lista;
     }
@@ -343,20 +343,14 @@
       .then(gs => {
         sel.innerHTML = '<option value="">Selecciona tu grupo</option>' +
           gs.map(g => `<option value="${esc(g)}">${esc(g)}</option>`).join("");
+        if (recordado) sel.value = recordado.grupo;
       })
       .catch(() => { sel.innerHTML = '<option value="">No se pudieron cargar los grupos</option>'; });
 
-    // Si este dispositivo ya tiene acceso del mismo usuario, se oculta el formulario (grupo y clave)
+    // Si este dispositivo guardó el acceso del mismo usuario, se rellenan grupo y clave; el usuario presiona "Ingresar"
     const guardado = leerAcceso();
-    if (api && guardado && window.NA_USER && guardado.uid === window.NA_USER.uid) {
-      fetch(`${api}?accion=verificar&grupo=${encodeURIComponent(guardado.grupo)}&token=${encodeURIComponent(guardado.token)}`)
-        .then(r => r.json())
-        .then(j => {
-          if (j.ok) { form.hidden = true; onOk(guardado.grupo, { token: guardado.token }); }
-          else localStorage.removeItem("na_acceso");
-        })
-        .catch(() => {});
-    }
+    const recordado = guardado && window.NA_USER && guardado.uid === window.NA_USER.uid ? guardado : null;
+    if (recordado) form.clave.value = recordado.clave;
 
     form.addEventListener("submit", async e => {
       e.preventDefault();
@@ -368,9 +362,10 @@
         const j = await r.json();
         if (j.ok) {
           form.hidden = true;
-          if (j.token && window.NA_USER) localStorage.setItem("na_acceso", JSON.stringify({ grupo: sel.value, token: j.token, uid: window.NA_USER.uid }));
+          if (window.NA_USER) localStorage.setItem("na_acceso", JSON.stringify({ grupo: sel.value, clave: form.clave.value, uid: window.NA_USER.uid }));
           onOk(sel.value, j.token ? { token: j.token } : { clave: form.clave.value });
         } else {
+          localStorage.removeItem("na_acceso");
           msg.className = "msg err";
           msg.textContent = j.bloqueado ? "Demasiados intentos. Espera unos minutos." : "Grupo o clave incorrectos.";
           form.clave.value = "";

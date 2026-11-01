@@ -365,10 +365,12 @@ function evento_(b) {
 
     const cs = sincronizarCalendario_(modo, previo, d, ini, fin, b.grupo, previo && previo["calendario id"], hIni, hFin);
     const idCal = cs.id;
+    // Al editar, un evento ya aprobado sigue aprobado; solo vuelve a Pendiente si se sube un flyer nuevo
+    const estado = modo === "editar" && previo && norm_(previo.estado) === "activo" && !d.flyer ? "Activo" : "Pendiente";
     const val = {
       id: previo && previo.id ? previo.id : Utilities.getUuid(),
       "fecha inicio": aDMY_(ini), "hora inicio": hIni, "fecha fin": aDMY_(fin), "hora fin": hFin, nombre: d.nombre, mensaje: d.mensaje,
-      flyer: flyer, direccion: d.direccion, contacto: d.contacto, grupo: b.grupo, "calendario id": idCal, estado: "Pendiente"
+      flyer: flyer, direccion: d.direccion, contacto: d.contacto, grupo: b.grupo, "calendario id": idCal, estado: estado
     };
     if (!fila) fila = sh.getLastRow() + 1;
     Object.keys(val).forEach(c => {

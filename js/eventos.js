@@ -2,6 +2,52 @@
 let eventosTimer;
 const parseDMY = s => { const m = String(s || "").match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/); return m ? new Date(+m[3], +m[2] - 1, +m[1]) : null; };
 
+// Hora en formato 12 h (a. m. / p. m.); si el valor no tiene formato HH:mm se deja tal cual
+const hora12 = t => {
+  const m = String(t || "").match(/^(\d{1,2}):(\d{2})/);
+  if (!m) return String(t || "");
+  const h = Number(m[1]);
+  return `${h % 12 || 12}:${m[2]} ${h < 12 ? "a. m." : "p. m."}`;
+};
+
+// PDF: tabla de eventos aprobados en una ventana de impresión (en ella se elige "Guardar como PDF")
+async function descargarPdfEventos() {
+  // Se abre la ventana antes del await: si no, el navegador la bloquea
+  const w = window.open("", "_blank");
+  if (!w) { alert("Permite las ventanas emergentes para descargar el PDF."); return; }
+  w.document.write("<p style='font-family:Arial'>Preparando PDF…</p>");
+  try {
+    const eventos = (await fetchSheet(CONFIG.TAB_EVENTOS, true))
+      .filter(e => e.nombre && String(e.estado || "").trim().toLowerCase() === "activo")
+      .sort((a, b) => (parseDMY(a["fecha inicio"]) || 0) - (parseDMY(b["fecha inicio"]) || 0));
+    const filas = eventos.map((e, i) => `<tr>
+        <td>${i + 1}</td><td>${esc(e.grupo)}</td><td>${esc(e["fecha inicio"])}</td><td>${esc(e["hora inicio"] ? hora12(e["hora inicio"]) : "")}</td>
+        <td>${esc(e.nombre)}</td><td>${esc(e.direccion)}</td><td>${esc(e.contacto)}</td></tr>`).join("");
+    w.document.open();
+    w.document.write(`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Eventos – NA Área Bogotá</title>
+      <style>
+        @page { size: A4 portrait; margin: 15mm; }
+        body { font-family: Arial, sans-serif; color: #000; font-size: 11px; }
+        header { display: flex; align-items: center; gap: 12px; border-bottom: 2px solid #000; padding-bottom: 8px; margin-bottom: 12px; }
+        header img { height: 60px; }
+        h1 { font-size: 18px; margin: 0; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { border: 1px solid #000; padding: 4px; text-align: left; vertical-align: top; }
+        th { background: #e5e5e5; }
+        td:first-child { text-align: center; }
+      </style></head><body>
+      <header><img src="https://res.cloudinary.com/dlspk9ipi/image/upload/v1776919815/Mesa_de_trabajo_2_cbxrik.png" alt="Logo NA Área Bogotá"><h1>Eventos – Narcóticos Anónimos Área Bogotá</h1></header>
+      <table><thead><tr><th>Nº</th><th>Grupo</th><th>Fecha inicio</th><th>Hora inicio</th><th>Nombre</th><th>Dirección</th><th>Contacto</th></tr></thead>
+      <tbody>${filas || '<tr><td colspan="7">No hay eventos aprobados.</td></tr>'}</tbody></table></body></html>`);
+    w.document.close();
+    w.addEventListener("load", () => w.print());
+  } catch (e) {
+    w.close();
+    alert("No se pudo generar el PDF: " + e.message);
+  }
+}
+document.getElementById("btn-pdf")?.addEventListener("click", descargarPdfEventos);
+
 window.cargarEventos = async () => {
   const box = document.getElementById("lista");
   clearInterval(eventosTimer);
@@ -21,16 +67,9 @@ window.cargarEventos = async () => {
     const DIAS = ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"];
     const MESES = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
     const larga = s => { const d = parseDMY(s); return d ? `${DIAS[d.getDay()]}, ${d.getDate()} ${MESES[d.getMonth()]} ${d.getFullYear()}` : String(s || ""); };
-    // Hora en formato 12 h (a. m. / p. m.); si el valor no tiene formato HH:mm se deja tal cual
-    const hora12 = t => {
-      const m = String(t || "").match(/^(\d{1,2}):(\d{2})/);
-      if (!m) return String(t || "");
-      const h = Number(m[1]);
-      return `${h % 12 || 12}:${m[2]} ${h < 12 ? "a. m." : "p. m."}`;
-    };
     const fechas = e => {
       const ini = e["fecha inicio"] || "", fin = e["fecha fin"] || "";
-      const hora = e["hora inicio"] && e["hora fin"] && fin === ini ? ` · ${hora12(e["hora inicio"])} a ${hora12(e["hora fin"])}` : "";
+      const hora = !e["hora inicio"] ? " · EVENTO VARIOS DIAS" : e["hora fin"] && fin === ini ? ` · ${hora12(e["hora inicio"])} a ${hora12(e["hora fin"])}` : "";
       return ini ? larga(ini) + (fin && fin !== ini ? " al " + larga(fin) : "") + hora : "";
     };
 

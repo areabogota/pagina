@@ -1,9 +1,12 @@
 // Columnas esperadas en la pestaña "Eventos": Fecha inicio, Fecha fin, Nombre, Mensaje, Flyer, Direccion, Contacto, Grupo
 let eventosTimer;
-const parseDMY = s => { const m = String(s || "").match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/); return m ? new Date(+m[3], +m[2] - 1, +m[1]) : null; };
+const parseDMY = (s) => {
+  const m = String(s || "").match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  return m ? new Date(+m[3], +m[2] - 1, +m[1]) : null;
+};
 
 // Hora en formato 12 h (a. m. / p. m.); si el valor no tiene formato HH:mm se deja tal cual
-const hora12 = t => {
+const hora12 = (t) => {
   const m = String(t || "").match(/^(\d{1,2}):(\d{2})/);
   if (!m) return String(t || "");
   const h = Number(m[1]);
@@ -14,17 +17,35 @@ const hora12 = t => {
 async function descargarPdfEventos() {
   // Se abre la ventana antes del await: si no, el navegador la bloquea
   const w = window.open("", "_blank");
-  if (!w) { alert("Permite las ventanas emergentes para descargar el PDF."); return; }
+  if (!w) {
+    alert("Permite las ventanas emergentes para descargar el PDF.");
+    return;
+  }
   w.document.write("<p style='font-family:Arial'>Preparando PDF…</p>");
   try {
     const eventos = (await fetchSheet(CONFIG.TAB_EVENTOS, true))
-      .filter(e => e.nombre && String(e.estado || "").trim().toLowerCase() === "activo")
-      .sort((a, b) => (parseDMY(a["fecha inicio"]) || 0) - (parseDMY(b["fecha inicio"]) || 0));
-    const filas = eventos.map((e, i) => `<tr>
+      .filter(
+        (e) =>
+          e.nombre &&
+          String(e.estado || "")
+            .trim()
+            .toLowerCase() === "activo",
+      )
+      .sort(
+        (a, b) =>
+          (parseDMY(a["fecha inicio"]) || 0) -
+          (parseDMY(b["fecha inicio"]) || 0),
+      );
+    const filas = eventos
+      .map(
+        (e, i) => `<tr>
         <td>${i + 1}</td><td>${esc(e.grupo)}</td><td>${esc(e["fecha inicio"])}</td><td>${e["hora inicio"] ? esc(hora12(e["hora inicio"])) : '<span style="color:#c00;font-weight:bold">EVENTO VARIOS DIAS</span>'}</td>
-        <td>${esc(e.nombre)}</td><td>${esc(e.direccion)}</td><td>${esc(e.contacto)}</td></tr>`).join("");
+        <td>${esc(e.nombre)}</td><td>${esc(e.direccion)}</td><td>${esc(e.contacto)}</td></tr>`,
+      )
+      .join("");
     w.document.open();
-    w.document.write(`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Eventos – NA Área Bogotá</title>
+    w.document
+      .write(`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Eventos – NA Área Bogotá</title>
       <style>
         @page { size: A4 portrait; margin: 15mm; }
         body { font-family: Arial, sans-serif; color: #000; font-size: 11px; }
@@ -36,7 +57,7 @@ async function descargarPdfEventos() {
         th { background: #e5e5e5; }
         td:first-child { text-align: center; }
       </style></head><body>
-      <header><img src="https://res.cloudinary.com/dlspk9ipi/image/upload/v1776919815/Mesa_de_trabajo_2_cbxrik.png" alt="Logo NA Área Bogotá"><h1>Eventos – Narcóticos Anónimos Área Bogotá</h1></header>
+      <header><img src="https://res.cloudinary.com/dlspk9ipi/image/upload/v1776919815/Mesa_de_trabajo_2_cbxrik.png" alt="Logo NA Área Bogotá"><h1>Eventos NA Bogotá Área Bogotá</h1></header>
       <table><thead><tr><th>Nº</th><th>Grupo</th><th>Fecha inicio</th><th>Hora inicio</th><th>Nombre</th><th>Dirección</th><th>Contacto</th></tr></thead>
       <tbody>${filas || '<tr><td colspan="7">No hay eventos aprobados.</td></tr>'}</tbody></table></body></html>`);
     w.document.close();
@@ -46,43 +67,101 @@ async function descargarPdfEventos() {
     alert("No se pudo generar el PDF: " + e.message);
   }
 }
-document.getElementById("btn-pdf")?.addEventListener("click", descargarPdfEventos);
+document
+  .getElementById("btn-pdf")
+  ?.addEventListener("click", descargarPdfEventos);
 
 window.cargarEventos = async () => {
   const box = document.getElementById("lista");
   clearInterval(eventosTimer);
   try {
-    const hoy = new Date(); hoy.setHours(0, 0, 0, 0);
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0);
     // Solo eventos que no han terminado, ordenados por fecha de inicio
-    const eventos = (await fetchSheet(CONFIG.TAB_EVENTOS, false, () => window.cargarEventos()))
-      .filter(e => e.nombre && String(e.estado || "").trim().toLowerCase() === "activo")
-      .filter(e => { const f = parseDMY(e["fecha fin"]) || parseDMY(e["fecha inicio"]); return !f || f >= hoy; })
-      .sort((a, b) => (parseDMY(a["fecha inicio"]) || 0) - (parseDMY(b["fecha inicio"]) || 0));
-    if (!eventos.length) { box.innerHTML = '<p class="status">No hay eventos próximos.</p>'; return; }
+    const eventos = (
+      await fetchSheet(CONFIG.TAB_EVENTOS, false, () => window.cargarEventos())
+    )
+      .filter(
+        (e) =>
+          e.nombre &&
+          String(e.estado || "")
+            .trim()
+            .toLowerCase() === "activo",
+      )
+      .filter((e) => {
+        const f = parseDMY(e["fecha fin"]) || parseDMY(e["fecha inicio"]);
+        return !f || f >= hoy;
+      })
+      .sort(
+        (a, b) =>
+          (parseDMY(a["fecha inicio"]) || 0) -
+          (parseDMY(b["fecha inicio"]) || 0),
+      );
+    if (!eventos.length) {
+      box.innerHTML = '<p class="status">No hay eventos próximos.</p>';
+      return;
+    }
 
-    const imgUrl = e => {
+    const imgUrl = (e) => {
       const id = String(e.flyer || "").match(/[?&]id=([\w-]+)|\/d\/([\w-]+)/);
-      return id ? `https://lh3.googleusercontent.com/d/${id[1] || id[2]}=w1000` : safeUrl(e.flyer);
+      return id
+        ? `https://lh3.googleusercontent.com/d/${id[1] || id[2]}=w1000`
+        : safeUrl(e.flyer);
     };
-    const DIAS = ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"];
-    const MESES = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
-    const larga = s => { const d = parseDMY(s); return d ? `${DIAS[d.getDay()]}, ${d.getDate()} ${MESES[d.getMonth()]} ${d.getFullYear()}` : String(s || ""); };
-    const fechas = e => {
-      const ini = e["fecha inicio"] || "", fin = e["fecha fin"] || "";
-      const hora = !e["hora inicio"] ? " · EVENTO VARIOS DIAS" : e["hora fin"] && fin === ini ? ` · ${hora12(e["hora inicio"])} a ${hora12(e["hora fin"])}` : "";
-      return ini ? larga(ini) + (fin && fin !== ini ? " al " + larga(fin) : "") + hora : "";
+    const DIAS = [
+      "domingo",
+      "lunes",
+      "martes",
+      "miércoles",
+      "jueves",
+      "viernes",
+      "sábado",
+    ];
+    const MESES = [
+      "enero",
+      "febrero",
+      "marzo",
+      "abril",
+      "mayo",
+      "junio",
+      "julio",
+      "agosto",
+      "septiembre",
+      "octubre",
+      "noviembre",
+      "diciembre",
+    ];
+    const larga = (s) => {
+      const d = parseDMY(s);
+      return d
+        ? `${DIAS[d.getDay()]}, ${d.getDate()} ${MESES[d.getMonth()]} ${d.getFullYear()}`
+        : String(s || "");
+    };
+    const fechas = (e) => {
+      const ini = e["fecha inicio"] || "",
+        fin = e["fecha fin"] || "";
+      const hora = !e["hora inicio"]
+        ? " · EVENTO VARIOS DIAS"
+        : e["hora fin"] && fin === ini
+          ? ` · ${hora12(e["hora inicio"])} a ${hora12(e["hora fin"])}`
+          : "";
+      return ini
+        ? larga(ini) + (fin && fin !== ini ? " al " + larga(fin) : "") + hora
+        : "";
     };
 
     // Mismo carrusel (clases car-*) que el de inicio
     box.innerHTML = `<section class="carousel" style="padding:0" aria-label="Eventos">
       <div class="car-frame">
-        <div class="car-track">${eventos.map((e, i) => {
-          const src = imgUrl(e);
-          return `<figure class="car-slide">
+        <div class="car-track">${eventos
+          .map((e, i) => {
+            const src = imgUrl(e);
+            return `<figure class="car-slide">
             ${src ? `<div class="car-bg" style="background-image:url('${src}')"></div><img src="${src}" referrerpolicy="no-referrer" alt="Flyer de ${esc(e.nombre)}" ${i ? 'loading="lazy"' : ""}>` : ""}
             <figcaption>${esc(e.nombre)}</figcaption>
           </figure>`;
-        }).join("")}</div>
+          })
+          .join("")}</div>
         ${eventos.length > 1 ? '<button type="button" class="car-arrow car-prev" aria-label="Anterior">&#10094;</button><button type="button" class="car-arrow car-next" aria-label="Siguiente">&#10095;</button>' : ""}
         <div class="car-dots">${eventos.length > 1 ? eventos.map((e, i) => `<button type="button" aria-label="Ir a ${esc(e.nombre)}"></button>`).join("") : ""}</div>
       </div>
@@ -108,16 +187,30 @@ window.cargarEventos = async () => {
         ${e.contacto ? `<p>${ICO.tel} <a href="tel:${esc(tel)}">${esc(e.contacto)}</a></p>` : ""}`;
     }
     const stop = () => clearInterval(eventosTimer);
-    const start = () => { stop(); if (slides.length > 1) eventosTimer = setInterval(() => go(cur + 1), ms); };
+    const start = () => {
+      stop();
+      if (slides.length > 1) eventosTimer = setInterval(() => go(cur + 1), ms);
+    };
 
-    box.querySelector(".car-prev")?.addEventListener("click", () => { go(cur - 1); start(); });
-    box.querySelector(".car-next")?.addEventListener("click", () => { go(cur + 1); start(); });
-    btns.forEach((b, i) => b.addEventListener("click", () => { go(i); start(); }));
+    box.querySelector(".car-prev")?.addEventListener("click", () => {
+      go(cur - 1);
+      start();
+    });
+    box.querySelector(".car-next")?.addEventListener("click", () => {
+      go(cur + 1);
+      start();
+    });
+    btns.forEach((b, i) =>
+      b.addEventListener("click", () => {
+        go(i);
+        start();
+      }),
+    );
     const frame = box.querySelector(".car-frame");
     frame.addEventListener("mouseenter", stop);
     frame.addEventListener("mouseleave", start);
     // Clic en el flyer: se amplía y se puede descargar
-    frame.addEventListener("click", ev => {
+    frame.addEventListener("click", (ev) => {
       const im = ev.target.closest(".car-slide img");
       if (!im) return;
       stop();
@@ -127,25 +220,45 @@ window.cargarEventos = async () => {
       lb.innerHTML = `<div class="lb-cont"><img src="${im.src}" alt="${esc(im.alt)}" referrerpolicy="no-referrer">
         <a class="btn lb-desc" href="${im.src}" target="_blank" rel="noopener noreferrer" download="${nombre}.jpg">Descargar</a></div>
         <button type="button" class="auth-close" aria-label="Cerrar">&times;</button>`;
-      const cerrar = () => { lb.remove(); start(); };
-      lb.addEventListener("click", async e2 => {
+      const cerrar = () => {
+        lb.remove();
+        start();
+      };
+      lb.addEventListener("click", async (e2) => {
         const d = e2.target.closest(".lb-desc");
-        if (!d) { cerrar(); return; }
+        if (!d) {
+          cerrar();
+          return;
+        }
         e2.preventDefault();
         try {
           const blob = await (await fetch(im.src)).blob();
           const a = document.createElement("a");
-          a.href = URL.createObjectURL(blob); a.download = nombre + ".jpg";
-          document.body.appendChild(a); a.click(); a.remove();
+          a.href = URL.createObjectURL(blob);
+          a.download = nombre + ".jpg";
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
           setTimeout(() => URL.revokeObjectURL(a.href), 2000);
-        } catch { window.open(im.src, "_blank", "noopener"); }
+        } catch {
+          window.open(im.src, "_blank", "noopener");
+        }
       });
       document.body.appendChild(lb);
     });
-    frame.addEventListener("touchstart", e => { frame._x = e.touches[0].clientX; }, { passive: true });
-    frame.addEventListener("touchend", e => {
+    frame.addEventListener(
+      "touchstart",
+      (e) => {
+        frame._x = e.touches[0].clientX;
+      },
+      { passive: true },
+    );
+    frame.addEventListener("touchend", (e) => {
       const d = e.changedTouches[0].clientX - frame._x;
-      if (Math.abs(d) > 40) { go(cur + (d < 0 ? 1 : -1)); start(); }
+      if (Math.abs(d) > 40) {
+        go(cur + (d < 0 ? 1 : -1));
+        start();
+      }
     });
     go(0);
     start();

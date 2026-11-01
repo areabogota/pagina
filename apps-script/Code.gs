@@ -183,6 +183,17 @@ function archivarEventos() {
   Logger.log("Eventos actualizados: " + n);
 }
 
+// Ejecutar una vez: asigna ID único y aleatorio a las filas de Eventos que no lo tienen
+function generarIdsEventos() {
+  const sh = SpreadsheetApp.openById(SHEET_ID).getSheetByName("Eventos");
+  const v = sh.getDataRange().getDisplayValues();
+  const iId = v[0].map(norm_).indexOf("id");
+  if (iId < 0) throw new Error('Falta la columna "Id" en la pestaña Eventos');
+  let n = 0;
+  for (let i = 1; i < v.length; i++) if (!String(v[i][iId]).trim() && v[i].join("").trim()) { sh.getRange(i + 1, iId + 1).setNumberFormat("@").setValue(Utilities.getUuid()); n++; }
+  Logger.log("IDs generados: " + n);
+}
+
 function migrarAPendiente() {
   const sh = SpreadsheetApp.openById(SHEET_ID).getSheetByName("Eventos");
   const v = sh.getDataRange().getDisplayValues();
@@ -355,6 +366,7 @@ function evento_(b) {
     const cs = sincronizarCalendario_(modo, previo, d, ini, fin, b.grupo, previo && previo["calendario id"], hIni, hFin);
     const idCal = cs.id;
     const val = {
+      id: previo && previo.id ? previo.id : Utilities.getUuid(),
       "fecha inicio": aDMY_(ini), "hora inicio": hIni, "fecha fin": aDMY_(fin), "hora fin": hFin, nombre: d.nombre, mensaje: d.mensaje,
       flyer: flyer, direccion: d.direccion, contacto: d.contacto, grupo: b.grupo, "calendario id": idCal, estado: "Pendiente"
     };

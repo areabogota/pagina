@@ -23,7 +23,8 @@ window.cargarEventos = async () => {
     const larga = s => { const d = parseDMY(s); return d ? `${DIAS[d.getDay()]}, ${d.getDate()} ${MESES[d.getMonth()]} ${d.getFullYear()}` : String(s || ""); };
     const fechas = e => {
       const ini = e["fecha inicio"] || "", fin = e["fecha fin"] || "";
-      return ini ? larga(ini) + (fin && fin !== ini ? " al " + larga(fin) : "") : "";
+      const hora = e["hora inicio"] && e["hora fin"] && fin === ini ? ` · ${e["hora inicio"]} a ${e["hora fin"]}` : "";
+      return ini ? larga(ini) + (fin && fin !== ini ? " al " + larga(fin) : "") + hora : "";
     };
 
     // Mismo carrusel (clases car-*) que el de inicio

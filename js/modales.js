@@ -267,7 +267,9 @@
       const nuevo = !ev, v = ev || {};
       panel.innerHTML = titulo + `<p><strong>${nuevo ? "Agregar evento" : "Editar evento"}</strong></p><p>La fecha de inicio debe ser con al menos 15 días de anticipación${nuevo ? "" : " (solo si la cambias)"}.</p><form class="ed">` +
         `<label>Fecha inicio<input type="date" name="fecha inicio" ${nuevo ? `min="${min}"` : ""} value="${esc(aISO(v["fecha inicio"]))}" required></label>` +
+        `<label data-hora>Hora inicio<input type="time" name="hora inicio" value="${esc(v["hora inicio"] || "")}"></label>` +
         `<label>Fecha fin<input type="date" name="fecha fin" value="${esc(aISO(v["fecha fin"]))}" required></label>` +
+        `<label data-hora>Hora fin<input type="time" name="hora fin" value="${esc(v["hora fin"] || "")}"></label>` +
         `<label>Nombre del evento<input name="nombre" required maxlength="150" value="${esc(v.nombre || "")}"></label>` +
         `<label>Mensaje (aparece debajo del evento)<textarea name="mensaje" rows="3" maxlength="500" required>${esc(v.mensaje || "")}</textarea></label>` +
         `<label>Flyer (imagen)${nuevo ? "" : " — déjalo vacío para conservar el actual"}<input type="file" name="flyer" accept="image/*" ${nuevo ? "required" : ""}></label>` +
@@ -277,6 +279,15 @@
         '<button class="btn sec" type="button" data-v>Volver</button><div class="res"></div></form>';
       const f = panel.querySelector("form"), res = f.querySelector(".res");
       const err = t => { res.innerHTML = aviso("err", t); };
+      // Las horas solo se piden si el evento inicia y termina el mismo día
+      const mismoDia = () => !!f.elements["fecha inicio"].value && f.elements["fecha inicio"].value === f.elements["fecha fin"].value;
+      const actualizarHoras = () => {
+        const s = mismoDia();
+        f.querySelectorAll("[data-hora]").forEach(l => { l.style.display = s ? "" : "none"; l.querySelector("input").required = s; });
+      };
+      f.elements["fecha inicio"].onchange = actualizarHoras;
+      f.elements["fecha fin"].onchange = actualizarHoras;
+      actualizarHoras();
       panel.querySelector("[data-v]").onclick = () => nuevo ? inicio() : lista();
       const del = panel.querySelector("[data-del]");
       if (del) del.onclick = async () => {
@@ -290,12 +301,16 @@
         const ini = f.elements["fecha inicio"].value, fin = f.elements["fecha fin"].value;
         if ((nuevo || ini !== aISO(v["fecha inicio"])) && ini < min) return err("El evento debe empezar con al menos 15 días de anticipación.");
         if (fin < ini) return err("La fecha fin no puede ser anterior a la fecha inicio.");
+        const mismo = mismoDia();
+        if (mismo && f.elements["hora fin"].value <= f.elements["hora inicio"].value) return err("La hora fin debe ser posterior a la hora inicio.");
         const btn = f.querySelector("[type=submit]");
         btn.disabled = true;
         res.innerHTML = "<p>Guardando…</p>";
         try {
           const datos = {};
           ["fecha inicio", "fecha fin", "nombre", "mensaje", "direccion", "contacto"].forEach(c => datos[c] = f.elements[c].value.trim());
+          datos["hora inicio"] = mismo ? f.elements["hora inicio"].value : "";
+          datos["hora fin"] = mismo ? f.elements["hora fin"].value : "";
           const file = f.elements.flyer.files[0];
           if (file) datos.flyer = await comprimir(file);
           const r = await llamar({ modo: nuevo ? "crear" : "editar", fila: v.fila || 0, datos, confirmarCruce: !!(f.elements.cruce && f.elements.cruce.checked) });

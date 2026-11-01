@@ -264,17 +264,23 @@ function buscarEnCalendario_(cal, previo, idCal) {
 }
 
 
-function sincronizarCalendario_(accion, previo, d, ini, fin, grupo, idCal) {
+function sincronizarCalendario_(accion, previo, d, ini, fin, grupo, idCal, hIni, hFin) {
   try {
     const cal = CalendarApp.getCalendarById(CALENDARIO_ID);
     if (!cal) return { id: "", error: "sin acceso al calendario " + CALENDARIO_ID + " (compártelo con la cuenta del script)" };
     if (accion === "eliminar") { const e = buscarEnCalendario_(cal, previo, idCal); if (!e) return { id: "", error: "no se encontró el evento en el calendario (bórralo a mano ahí)" }; e.deleteEvent(); return { id: "" }; }
     const inicio = aFecha_(ini), finExcl = new Date(aFecha_(fin).getTime() + 86400000); // fin exclusivo en eventos de día completo
+    const conHora = !!hIni;
+    const tIni = conHora ? Utilities.parseDate(ini[0] + " " + hIni, "America/Bogota", "yyyy-MM-dd HH:mm") : null;
+    const tFin = conHora ? Utilities.parseDate(fin[0] + " " + hFin, "America/Bogota", "yyyy-MM-dd HH:mm") : null;
     const opts = { location: String(d.direccion || ""), description: String(d.mensaje || "") + "\nContacto: " + d.contacto + "\nGrupo: " + grupo };
     const titulo = tituloCal_(d.nombre, grupo);
     let e = accion === "editar" ? buscarEnCalendario_(cal, previo, idCal) : null;
-    if (e) { e.setTitle(titulo); e.setAllDayDates(inicio, finExcl); e.setLocation(opts.location); e.setDescription(opts.description); }
-    else e = cal.createAllDayEvent(titulo, inicio, finExcl, opts);
+    if (e) {
+      e.setTitle(titulo);
+      if (conHora) e.setTime(tIni, tFin); else e.setAllDayDates(inicio, finExcl);
+      e.setLocation(opts.location); e.setDescription(opts.description);
+    } else e = conHora ? cal.createEvent(titulo, tIni, tFin, opts) : cal.createAllDayEvent(titulo, inicio, finExcl, opts);
     return { id: e.getId() };
   } catch (x) { return { id: "", error: String(x && x.message || x) }; }
 }
@@ -319,6 +325,10 @@ function evento_(b) {
     for (const c of ["nombre", "mensaje", "direccion", "contacto"]) if (!String(d[c] || "").trim()) return { ok: false, error: "datos incompletos" };
     if (!/^[0-9+()\s-]{7,30}$/.test(String(d.contacto).trim())) return { ok: false, error: "contacto invalido" };
     if (fin[0] < ini[0]) return { ok: false, error: "la fecha fin es anterior al inicio" };
+    // Horas solo para eventos de un mismo día; en varios días quedan vacías (día completo)
+    const mismoDia = ini[0] === fin[0];
+    const hIni = mismoDia ? String(d["hora inicio"] || "") : "", hFin = mismoDia ? String(d["hora fin"] || "") : "";
+    if (mismoDia && (!/^\d{2}:\d{2}$/.test(hIni) || !/^\d{2}:\d{2}$/.test(hFin) || hFin <= hIni)) return { ok: false, error: "horas invalidas" };
     // Mínimo 15 días de anticipación (hora de Bogotá); al editar solo si cambia la fecha de inicio
     const lim = new Date(); lim.setDate(lim.getDate() + 15);
     const cambiaIni = !previo || previo["fecha inicio"] !== aDMY_(ini);
@@ -342,10 +352,10 @@ function evento_(b) {
     if (d.flyer) flyer = guardarFlyer_(d.flyer);
     else if (!previo) return { ok: false, error: "flyer: no llegó la imagen al servidor" };
 
-    const cs = sincronizarCalendario_(modo, previo, d, ini, fin, b.grupo, previo && previo["calendario id"]);
+    const cs = sincronizarCalendario_(modo, previo, d, ini, fin, b.grupo, previo && previo["calendario id"], hIni, hFin);
     const idCal = cs.id;
     const val = {
-      "fecha inicio": aDMY_(ini), "fecha fin": aDMY_(fin), nombre: d.nombre, mensaje: d.mensaje,
+      "fecha inicio": aDMY_(ini), "hora inicio": hIni, "fecha fin": aDMY_(fin), "hora fin": hFin, nombre: d.nombre, mensaje: d.mensaje,
       flyer: flyer, direccion: d.direccion, contacto: d.contacto, grupo: b.grupo, "calendario id": idCal, estado: "Pendiente"
     };
     if (!fila) fila = sh.getLastRow() + 1;

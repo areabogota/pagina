@@ -20,8 +20,17 @@
     #private-content .logo-oscuro { display: none; }
     html[data-tema="dark"] #private-content .logo-claro { display: none; }
     html[data-tema="dark"] #private-content .logo-oscuro { display: block; }
+    #private-content .galeria-imgs { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 1rem; margin: 1rem 0; }
+    #private-content .img-tile { display: flex; flex-direction: column; align-items: center; gap: .5rem; padding: .8rem; border: 2px solid var(--muted); border-radius: 10px; cursor: pointer; font: inherit; }
+    #private-content .img-tile:hover { border-color: var(--accent); }
+    #private-content .img-tile img { width: 100%; height: 130px; object-fit: contain; }
+    #private-content .img-tile.tono-claro { background: #ffffff; color: #1d2848; }
+    #private-content .img-tile.tono-oscuro { background: #1d2848; color: #ffffff; }
+    #private-content .img-tile span { font-size: .85rem; }
     html[data-tema="dark"] #private-content h1, html[data-tema="dark"] #private-content h2, html[data-tema="dark"] #private-content h3 { color: var(--accent); }
     html[data-tema="dark"] #private-content h2 { color: var(--lilac); }
+    html[data-tema="dark"] #private-content details { background: var(--card); border-color: var(--lilac); }
+    html[data-tema="dark"] #private-content details > summary h2 { color: var(--accent); }
     #private-content details { margin: .6rem 0; border: 1px solid var(--muted); border-radius: 8px; padding: 0 1rem; }
     #private-content details[open] { padding-bottom: 1rem; }
     #private-content summary { cursor: pointer; list-style: none; display: flex; align-items: center; justify-content: space-between; padding: .7rem 0; }
@@ -29,6 +38,16 @@
     #private-content summary::after { content: "▾"; font-size: 1.1rem; transition: transform .2s; }
     #private-content details[open] > summary::after { transform: rotate(180deg); }
     #private-content summary h2 { display: inline; font-size: 1.1rem; margin: 0; }
+    #private-content details p, #private-content details li { text-align: justify; }
+  </style>
+  <style>
+    #ia-utiles .tabla-ia { overflow-x: auto; max-width: 100%; }
+    #ia-utiles table { border-collapse: collapse; width: 100%; min-width: 640px; }
+    #ia-utiles caption { text-align: left; font-weight: 600; padding: 0.5rem 0; }
+    #ia-utiles th,
+    #ia-utiles td { border: 1px solid currentColor; padding: 0.6rem 0.75rem; text-align: center; vertical-align: middle; }
+    #ia-utiles thead th { font-weight: 700; }
+    #ia-utiles tbody th { white-space: nowrap; }
   </style>
   <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-H0JF4NM30G"></script>
@@ -41,6 +60,7 @@
 </script>
 
 </head>
+
 <body>
   <header class="header"><div class="header-inner">
     <a class="brand" href="index.html"><img src="https://res.cloudinary.com/dlspk9ipi/image/upload/v1776919815/Mesa_de_trabajo_2_cbxrik.png" alt="Logo NA Área Bogotá" class="logo"><span class="brand-text">Narcóticos Anónimos <span>Área Bogotá</span></span></a>
@@ -70,207 +90,470 @@
       <p>Inicia sesión para consultar esta página.</p>
       <button class="btn" id="private-login" type="button">Iniciar sesión</button>
     </section>
+
     <section id="private-content" class="private-content card" hidden>
       <h1>Guía para crear Flyers con la IA</h1>
 
- <p class="intro">
-  Un flyer es como una invitación hecha con mucho cariño. Cuando lo compartimos,
-  es como si nuestro grupo extendiera la mano a un adicto que todavía sufre y le
-  dijera: "Aquí te esperamos". Ese flyer no lo hace una sola persona: representa la
-  voluntad de todo el grupo, de todos los que servimos juntos. Además, los logos y
-  los textos de NA no son de nadie en particular. Son de toda la Confraternidad,
-  como una casa que construimos entre todos, y por eso la cuidamos entre todos. A
-  eso se le llama <strong>propiedad intelectual</strong>. Si quieres aprender un
-  poco más, puedes leer esta página:
-  <a href="https://na.org/service-material/fipt/fipt-faq/"
-     target="_blank" rel="noopener noreferrer">FIPT FAQ – Narcotics Anonymous World Services</a>
-  y este documento completo en español:
-  <a href="https://na.org/wp-content/uploads/2025/03/FIPT-2023-Mar-25-Spanish.pdf"
-     target="_blank" rel="noopener noreferrer">2023_SP_FIPT (PDF)</a>.
-</p>
+      <p class="intro">
+        Un flyer es una invitación. Cuando lo compartimos, nuestro grupo le dice a un
+        adicto que todavía sufre: "Aquí te esperamos". No lo hace una sola persona:
+        expresa la voluntad de todos los que servimos juntos. Los logos y los textos de
+        NA tampoco son de nadie en particular. Pertenecen a toda la Confraternidad, y por
+        eso los cuidamos entre todos. A ese cuidado se le llama
+        <strong>propiedad intelectual</strong>. Gracias por servir y por querer hacerlo
+        bien. Si quieres profundizar, puedes leer esta página:
+        <a href="https://na.org/service-material/fipt/fipt-faq/"
+           target="_blank" rel="noopener noreferrer">FIPT FAQ – Narcotics Anonymous World Services</a>
+        y este documento completo en español:
+        <a href="https://na.org/wp-content/uploads/2025/03/FIPT-2023-Mar-25-Spanish.pdf"
+           target="_blank" rel="noopener noreferrer">2023_SP_FIPT (PDF)</a>.
+      </p>
 
-<details id="paleta-de-colores" name="guia-flyer">
-  <summary><h2>Paleta de colores</h2></summary>
+      <details id="paleta-de-colores" name="guia-flyer">
+        <summary><h2>Paleta de colores</h2></summary>
 
-  <h3>¿Qué es una paleta de colores?</h3>
+        <h3>¿Qué es una paleta de colores?</h3>
+        <p>
+          Es un grupo de colores elegidos para usarse juntos. En NA Área Bogotá tenemos
+          una paleta aprobada. Si la usamos en nuestros flyers, quien los vea reconocerá
+          que vienen de nuestra Área, igual que reconocemos a un equipo por su camiseta.
+        </p>
+
+        <p>
+          No es una obligación. Somos libres para crear y NA no nos limita, así que
+          podrías usar otros colores. Aun así, te pedimos con cariño que procuremos ser
+          fieles a esta paleta. Así, todo lo que publicamos se ve como parte de una misma
+          familia.
+        </p>
+
+        <h3>¿Cómo se nombra un color en una computadora?</h3>
+        <p>
+          Una computadora no entiende "azul claro" ni "morado suave". Necesita un código
+          para cada color. Existen varios sistemas, como CMYK, HSL, HSB y Pantone, y
+          cualquier computador, navegador o inteligencia artificial los entiende. Aun así,
+          dos se usan más porque son prácticos, y son los que usamos en esta guía:
+        </p>
+
+        <ul>
+          <li><strong>RGB:</strong> viene de rojo, verde y azul (Red, Green, Blue). El
+            color se forma mezclando esas tres luces, y cada una toma un valor entre 0 y
+            255. Con las tres en 255 sale el blanco; con las tres en 0, el negro.</li>
+          <li><strong>HEX (hexadecimal):</strong> es la misma información en forma
+            abreviada: el símbolo # seguido de seis letras o números, como #1C76BF.</li>
+        </ul>
+
+        <h3>Nuestros colores</h3>
+        <p>
+          Cada color tiene su número, su nombre, su código HEX y su código RGB. Copia el
+          que necesites y pégalo donde la herramienta te lo pida.
+        </p>
+
+        <table>
+          <thead>
+            <tr>
+              <th>N°</th>
+              <th>Muestra</th>
+              <th>Nombre</th>
+              <th>HEX</th>
+              <th>RGB</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>1</td><td><span class="swatch" style="background:#FFFFFF"></span></td><td>Blanco</td><td>#FFFFFF</td><td>(255, 255, 255)</td></tr>
+            <tr><td>2</td><td><span class="swatch" style="background:#000000"></span></td><td>Negro</td><td>#000000</td><td>(0, 0, 0)</td></tr>
+            <tr><td>3</td><td><span class="swatch" style="background:#999999"></span></td><td>Gris</td><td>#999999</td><td>(153, 153, 153)</td></tr>
+            <tr><td>4</td><td><span class="swatch" style="background:#E8CAAC"></span></td><td>Beige cálido</td><td>#E8CAAC</td><td>(232, 202, 172)</td></tr>
+            <tr><td>5</td><td><span class="swatch" style="background:#FADA88"></span></td><td>Amarillo suave</td><td>#FADA88</td><td>(250, 218, 136)</td></tr>
+            <tr><td>6</td><td><span class="swatch" style="background:#7256A6"></span></td><td>Morado profundo</td><td>#7256A6</td><td>(114, 86, 166)</td></tr>
+            <tr><td>7</td><td><span class="swatch" style="background:#B39FD5"></span></td><td>Lavanda</td><td>#B39FD5</td><td>(179, 159, 213)</td></tr>
+            <tr><td>8</td><td><span class="swatch" style="background:#FD8775"></span></td><td>Coral suave</td><td>#FD8775</td><td>(253, 135, 117)</td></tr>
+            <tr><td>9</td><td><span class="swatch" style="background:#1C76BF"></span></td><td>Azul medio</td><td>#1C76BF</td><td>(28, 118, 191)</td></tr>
+            <tr><td>10</td><td><span class="swatch" style="background:#1F3D85"></span></td><td>Azul profundo</td><td>#1F3D85</td><td>(31, 61, 133)</td></tr>
+          </tbody>
+        </table>
+      </details>
+
+      <details id="logos" name="guia-flyer">
+        <summary><h2>Logos institucionales</h2></summary>
+
+        <h3>¿Qué es un logo y por qué lo cuidamos?</h3>
+        <p>
+          Un logo es el símbolo que identifica a una organización, algo así como su
+          firma. Los logos de NA son la firma de toda la Confraternidad. Como nos
+          pertenecen a todos, los usamos con respeto y sin modificarlos.
+        </p>
+        <div class="logos-muestra">
+          <figure class="logo-claro">
+            <img src="https://res.cloudinary.com/dlspk9ipi/image/upload/v1793817292/Mesa_de_trabajo_7_1_v065ul.png" alt="Imagen decorativa para modo claro">
+          </figure>
+          <figure class="logo-oscuro">
+            <img src="https://res.cloudinary.com/dlspk9ipi/image/upload/v1793817293/Mesa_de_trabajo_8_2_k1qk9z.png" alt="Imagen decorativa para modo oscuro">
+          </figure>
+        </div>
+
+        <h3>Cómo cuidar los logos</h3>
+        <ul>
+          <li><strong>No se modifican.</strong> No se estiran, no se recortan, no se
+            redibujan ni se les agrega nada encima. Se usan tal como son.</li>
+          <li><strong>No se los pedimos a la IA.</strong> La inteligencia artificial
+            puede dibujarlos mal o cambiar detalles sin que nos demos cuenta. Primero
+            creamos el flyer y al final colocamos el logo original.</li>
+          <li><strong>Llevan su símbolo ®.</strong> Es una R dentro de un círculo e
+            indica que el logo es una marca registrada, propiedad de toda la
+            Confraternidad.</li>
+          <li><strong>Sus colores.</strong> Las iniciales estilizadas de NA y el logo de
+            servicio pueden ir del color que mejor combine con el diseño. El logo de
+            grupo y el masthead 2017 tienen colores definidos en la guía oficial, y esos
+            sí debemos respetarlos.</li>
+          <li><strong>Quién puede usarlos.</strong> Los grupos y comités de servicio
+            registrados ante NAWS. Si eres miembro y tienes dudas, puedes leer el
+            Boletín de Propiedad Intelectual #2 en
+            <a href="https://na.org/fipt"
+               target="_blank" rel="noopener noreferrer">na.org/fipt</a>
+            o consultar con tu servicio.</li>
+        </ul>
+      </details>
+
+      <details id="imagenes" name="guia-flyer">
+        <summary><h2>Imágenes</h2></summary>
+
+        <p>
+          El Área Bogotá de NA ya tiene imágenes autorizadas para que las usemos en
+          nuestros flyers. Están listas: solo hay que escoger la que mejor se adapte al
+          mensaje.
+        </p>
+
+        <h3>Cómo darle contexto a la IA</h3>
+        <p>
+          La inteligencia artificial no sabe qué queremos lograr, así que hay que
+          mostrárselo. Por eso, cuando trabajemos con ella,
+          <strong>le entregamos la imagen que más se adecúe a nuestro flyer</strong>.
+          Cuanto mejor sea la imagen que le damos, mejor entenderá lo que buscamos y más
+          fiel será el resultado.
+        </p>
+
+        <h3>¿Cómo sabemos si nuestro flyer es de calidad?</h3>
+        <p>
+          Piensa en alguien que nunca ha ido a nuestro grupo y recibe el flyer. Debe
+          poder entender quién lo invita, a qué y adónde ir. Un flyer de calidad cumple
+          con esto:
+        </p>
+
+        <ul>
+          <li><strong>Tiene el logo.</strong> Así se sabe quién invita. Es uno de los
+            criterios más importantes.</li>
+          <li><strong>El logo está intacto.</strong> Sin estirar, sin redibujar, sin
+            cambiar su color (salvo donde la guía oficial lo permite) y con su símbolo
+            ® al lado.</li>
+          <li><strong>Dice qué, cuándo y dónde.</strong> Incluye el nombre de la reunión
+            o evento, el día, la hora y el lugar. Si falta algo, la persona se pierde.</li>
+          <li><strong>Trae un contacto.</strong> Un número o medio para resolver dudas.</li>
+          <li><strong>Usa nuestros colores.</strong> Los de la paleta del Área.</li>
+          <li><strong>Se lee fácil.</strong> Letra clara y de buen tamaño, sin exceso de
+            adornos.</li>
+          <li><strong>Protege el anonimato.</strong> No muestra rostros de personas
+            reales.</li>
+        </ul>
+
+        <p>
+          Antes de publicar, revisa esta lista. Si tu flyer cumple todo, estás llevando
+          el mensaje con claridad y con cuidado. Gracias por tu servicio.
+        </p>
+
+        <h3>Nuestras imágenes autorizadas</h3>
+        <p>
+          Estas imágenes están listas para usar. Toca cualquiera y se descargará en tu
+          computador o celular.
+        </p>
+
+        <h4>¿Qué es un PNG?</h4>
+        <p>
+          Es un formato de imagen que permite fondos transparentes. Cuando colocas un PNG
+          sobre otro fondo, no aparece un recuadro alrededor: solo se ve el dibujo. Todas
+          nuestras imágenes vienen en este formato.
+        </p>
+
+        <div class="galeria-imgs">
+          <button type="button" class="img-tile tono-oscuro" data-url="https://res.cloudinary.com/dlspk9ipi/image/upload/v1793817293/Mesa_de_trabajo_4_2_uop7o3.png" data-nombre="Mesa_de_trabajo_4_2.png">
+            <img src="https://res.cloudinary.com/dlspk9ipi/image/upload/v1793817293/Mesa_de_trabajo_4_2_uop7o3.png" alt="Imagen autorizada blanca 1">
+            <span>Toca para descargar</span>
+          </button>
+          <button type="button" class="img-tile tono-claro" data-url="https://res.cloudinary.com/dlspk9ipi/image/upload/v1793817292/Mesa_de_trabajo_1_2_ybbidf.png" data-nombre="Mesa_de_trabajo_1_2.png">
+            <img src="https://res.cloudinary.com/dlspk9ipi/image/upload/v1793817292/Mesa_de_trabajo_1_2_ybbidf.png" alt="Imagen autorizada azul 1">
+            <span>Toca para descargar</span>
+          </button>
+          <button type="button" class="img-tile tono-claro" data-url="https://res.cloudinary.com/dlspk9ipi/image/upload/v1793817292/Mesa_de_trabajo_3_1_phoahq.png" data-nombre="Mesa_de_trabajo_3_1.png">
+            <img src="https://res.cloudinary.com/dlspk9ipi/image/upload/v1793817292/Mesa_de_trabajo_3_1_phoahq.png" alt="Imagen autorizada negra 1">
+            <span>Toca para descargar</span>
+          </button>
+          <button type="button" class="img-tile tono-claro" data-url="https://res.cloudinary.com/dlspk9ipi/image/upload/v1793817292/Mesa_de_trabajo_6_duyav9.png" data-nombre="Mesa_de_trabajo_6.png">
+            <img src="https://res.cloudinary.com/dlspk9ipi/image/upload/v1793817292/Mesa_de_trabajo_6_duyav9.png" alt="Imagen autorizada azul 2">
+            <span>Toca para descargar</span>
+          </button>
+          <button type="button" class="img-tile tono-oscuro" data-url="https://res.cloudinary.com/dlspk9ipi/image/upload/v1793817293/Mesa_de_trabajo_8_2_k1qk9z.png" data-nombre="Mesa_de_trabajo_8_2.png">
+            <img src="https://res.cloudinary.com/dlspk9ipi/image/upload/v1793817293/Mesa_de_trabajo_8_2_k1qk9z.png" alt="Imagen autorizada blanca 2">
+            <span>Toca para descargar</span>
+          </button>
+          <button type="button" class="img-tile tono-claro" data-url="https://res.cloudinary.com/dlspk9ipi/image/upload/v1793817292/Mesa_de_trabajo_7_1_v065ul.png" data-nombre="Mesa_de_trabajo_7_1.png">
+            <img src="https://res.cloudinary.com/dlspk9ipi/image/upload/v1793817292/Mesa_de_trabajo_7_1_v065ul.png" alt="Imagen autorizada negra 2">
+            <span>Toca para descargar</span>
+          </button>
+          <button type="button" class="img-tile tono-claro" data-url="https://res.cloudinary.com/dlspk9ipi/image/upload/v1793817292/LOGO-FONDO-AZUL_vnryxb.png" data-nombre="LOGO-FONDO-AZUL.png">
+            <img src="https://res.cloudinary.com/dlspk9ipi/image/upload/v1793817292/LOGO-FONDO-AZUL_vnryxb.png" alt="Logo cuadrado azul">
+            <span>Toca para descargar</span>
+          </button>
+          <button type="button" class="img-tile tono-claro" data-url="https://res.cloudinary.com/dlspk9ipi/image/upload/v1793817292/Mesa_de_trabajo_2_3_fhzqu0.png" data-nombre="Mesa_de_trabajo_2_3.png">
+            <img src="https://res.cloudinary.com/dlspk9ipi/image/upload/v1793817292/Mesa_de_trabajo_2_3_fhzqu0.png" alt="Imagen autorizada azul 3">
+            <span>Toca para descargar</span>
+          </button>
+          <button type="button" class="img-tile tono-claro" data-url="https://res.cloudinary.com/dlspk9ipi/image/upload/v1793817292/Mesa_de_trabajo_5_q29dtv.png" data-nombre="Mesa_de_trabajo_5.png">
+            <img src="https://res.cloudinary.com/dlspk9ipi/image/upload/v1793817292/Mesa_de_trabajo_5_q29dtv.png" alt="Imagen autorizada azul y gris">
+            <span>Toca para descargar</span>
+          </button>
+        </div>
+
+        <script>
+          document.querySelectorAll('.img-tile').forEach(function (b) {
+            b.addEventListener('click', async function () {
+              try {
+                const r = await fetch(b.dataset.url);
+                const blob = await r.blob();
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(blob);
+                a.download = b.dataset.nombre;
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                URL.revokeObjectURL(a.href);
+              } catch (e) {
+                window.open(b.dataset.url, '_blank', 'noopener');
+              }
+            });
+          });
+        </script>
+
+      </details>
+
+      <details id="prompt-engineering" name="guia-flyer">
+        <summary><h2>El prompt engineering en nuestra construcción de flyers</h2></summary>
+
+        <h3>¿Qué es un prompt?</h3>
+        <p>
+          Un prompt es la instrucción que le escribimos a la inteligencia artificial.
+          Es lo que le pedimos: "crea un flyer para esta reunión", por ejemplo.
+          <strong>Prompt engineering</strong> significa, simplemente, aprender a escribir
+          esas instrucciones de forma clara y completa para que el resultado se parezca a lo
+          que imaginamos.
+        </p>
+
+        <h3>¿Por qué importa?</h3>
+        <p>
+          La IA no conoce nuestro grupo, nuestra Área ni nuestras tradiciones. Solo sabe lo
+          que le decimos. Si la instrucción es corta o vaga, la IA rellena los vacíos por su
+          cuenta, y casi siempre lo hace de una forma que no queremos. Si la instrucción es
+          clara, el resultado es más fiel, más rápido y necesita menos correcciones.
+        </p>
+
+        <h3>Qué debe tener un buen prompt</h3>
+        <p>
+          Una instrucción completa responde estas preguntas. No hace falta usar todas cada
+          vez, pero mientras más cubras, mejor será el resultado:
+        </p>
+
+        <ol>
+          <li><strong>Qué queremos.</strong> El tipo de pieza y el formato. Por ejemplo: un
+            flyer para redes sociales, cuadrado, o una versión vertical para estados de
+            WhatsApp.</li>
+          <li><strong>Para qué es.</strong> El propósito: invitar a una reunión, anunciar un
+            evento, avisar un cambio de horario, celebrar un aniversario.</li>
+          <li><strong>Qué información debe aparecer.</strong> El nombre de la reunión o
+            evento, el día, la hora, el lugar y un contacto. Escríbela exactamente como debe
+            verse.</li>
+          <li><strong>Qué colores usar.</strong> Los códigos HEX de nuestra paleta, para que
+            la IA no escoja colores al azar.</li>
+          <li><strong>Qué imagen y qué logo usar.</strong> Adjuntamos la imagen autorizada
+            que mejor se adapte y el logo original, y le decimos cómo usarlos: la imagen de
+            fondo, en una esquina o como adorno, y el logo colocado sin cambios.</li>
+          <li><strong>Qué estilo y qué tono.</strong> Sobrio, cálido, sencillo, moderno. El
+            mensaje es de fortaleza, fe y esperanza, y de bienvenida.</li>
+          <li><strong>Qué NO queremos.</strong> Aquí ponemos nuestros límites. Esta parte es
+            tan importante como todo lo demás.</li>
+        </ol>
+
+        <h3>El espíritu de nuestros flyers</h3>
+        <p>
+          Cada flyer debe transmitir <strong>fortaleza, fe y esperanza</strong>. Conviene
+          escribir estas tres palabras en el prompt, como parte del tono que le pedimos a la
+          IA. Por ejemplo: "El mensaje debe transmitir fortaleza, fe y esperanza, con un tono
+          cálido y de bienvenida."
+        </p>
+
+        <h3>Lo que siempre incluimos en el prompt</h3>
+        <ul>
+          <li><strong>El logo original, adjunto.</strong> Subimos el logo a la IA y le
+            pedimos que lo coloque tal como es: sin estirarlo, sin redibujarlo, sin cambiar
+            su color (salvo donde la guía oficial lo permite) y con su símbolo ®. La IA no
+            inventa el logo: solo lo coloca.</li>
+          <li><strong>Textos de la literatura de NA: copiados y con su fuente.</strong> La IA
+            no los inventa ni los parafrasea. Si usamos un texto de nuestra literatura, lo
+            copiamos exactamente como está en el original y escribimos de dónde se tomó, con
+            el nombre de la publicación y la página. Por ejemplo:
+            <em>Texto Básico, pág. 23</em>.</li>
+          <li><strong>El lenguaje de Narcóticos Anónimos.</strong> Nos presentamos como
+            adictos, porque entendemos la adicción como un marco amplio que incluye muchos
+            aspectos. Le pedimos a la IA que use "adicto", "adicta" y "adicción", y que no use
+            frases ni palabras de otras confraternidades: nada de "alcohólico",
+            "codependiente" ni "sexólico", y ningún tema de alcohol o de codependencia. Las
+            IA suelen mezclar estos lenguajes, así que hay que decírselo de forma expresa.
+            También hablamos de "limpio" y de "tiempo limpio", tampoco hablamos de 24 horas, o de sobriedad</li>
+          <li><strong>Sin promesas ni frases dramáticas.</strong> Nuestro mensaje es de
+            invitación, fortaleza, fe y esperanza.</li>
+          <li><strong>Sin rostros de personas reales,</strong> salvo en los flyers de
+            aniversario (ver abajo).</li>
+        </ul>
+
+        <h3>Flyers de aniversario</h3>
+        <p>
+          Los flyers que celebran el aniversario de un compañero son la excepción. Pueden
+          llevar su foto, e incluso un "antes y después", aunque no es obligatorio. Para
+          cuidar esto:
+        </p>
+        <ul>
+          <li>Se publican <strong>solo en las redes internas del grupo</strong> y se
+            mantienen en el ámbito privado.</li>
+          <li>La foto la entrega la persona o se usa con su conocimiento.</li>
+          <li>Le pedimos a la IA que <strong>no modifique ni "embellezca" el rostro</strong>.</li>
+          <li>Si la persona decide romper su propio anonimato y compartir el flyer más allá
+            del grupo, esa decisión es suya y está fuera de lo que publicamos nosotros.</li>
+        </ul>
+
+        <h3>Pide, revisa y ajusta</h3>
+        <p>
+          Casi nunca el primer resultado queda perfecto, y está bien. Trabajar con IA es una
+          conversación: miras el resultado, dices qué cambiar y vuelves a pedir. Por
+          ejemplo: "Haz el texto más grande", "usa el morado profundo en el título" o "deja
+          más espacio abajo". Cambia una o dos cosas por vez, así sabes qué produjo cada
+          cambio.
+        </p>
+
+        <h3>Revisa siempre lo que escribió la IA</h3>
+        <p>
+          La IA puede equivocarse en textos, fechas, horas, direcciones y números de
+          contacto, aunque se los hayamos dado bien. También puede alterar un logo sin que
+          nos demos cuenta. Antes de publicar, compara cada dato del flyer con la información
+          original, letra por letra, y verifica que el logo se vea igual que el original. Un
+          error en la hora o en la dirección puede hacer que alguien que busca ayuda no
+          encuentre la reunión.
+        </p>
+
+        <h3>Resumen</h3>
+        <ul>
+          <li>Sé claro: dile qué, para qué y con qué información.</li>
+          <li>Dale nuestros colores (HEX) y nuestra imagen autorizada.</li>
+          <li>Adjunta el logo original y revisa que la IA lo haya colocado sin cambios.</li>
+          <li>Recuérdale los límites: no inventar logos ni literatura, y usar nuestro
+            lenguaje de adictos.</li>
+          <li>Pide que el mensaje transmita fortaleza, fe y esperanza.</li>
+          <li>Ajusta paso a paso.</li>
+          <li>Revisa todos los datos antes de publicar.</li>
+        </ul>
+
+        <p>
+          En las secciones siguientes verás ejemplos reales y prompts listos para copiar y
+          adaptar.
+        </p>
+      </details>
+
+        <details id="ia-utiles" name="guia-flyer">
+  <summary><h2>IAs útiles</h2></summary>
+
   <p>
-    Imagina una caja de crayones donde alguien ya escogió los colores que mejor
-    combinan entre sí. Eso es una paleta: un grupo de colores elegidos con cuidado
-    para usarlos juntos.
+    Estas son herramientas donde escribes tu prompt y recibes el flyer listo para
+    descargar. Todas tienen un plan gratuito con límites. Recuerda: ninguna garantiza
+    que el logo salga idéntico ni que cada letra, hora o dirección sea correcta.
+    <strong>Revisa siempre el resultado antes de publicar.</strong>
   </p>
 
-  <p>
-    En NA Área Bogotá tenemos nuestra propia paleta aprobada. Si todos los flyers
-    usan estos colores, cuando alguien los vea sabrá enseguida: "Ese flyer es de NA
-    Bogotá". Es como cuando un equipo de fútbol usa siempre la misma camiseta.
-  </p>
-
-  <p>
-    ¿Estamos obligados? No. Somos libres para crear y NA no nos limita, así que
-    podríamos usar otros colores. Pero te pedimos con cariño que
-    <strong>nos esforcemos por usar los colores de la paleta</strong>. Así todos
-    nuestros flyers se ven como de la misma familia.
-  </p>
-
-  <h3>¿Cómo se le dice un color a la computadora?</h3>
-  <p>
-    Las computadoras no entienden "azul clarito" ni "morado bonito". Necesitan un
-    código, como un nombre secreto para cada color. Hay muchas formas de escribir
-    ese código. Tienen nombres raros como CMYK, HSL, HSB y Pantone, y todas las
-    computadoras, navegadores e inteligencias artificiales las entienden. Pero hay
-    dos que se usan muchísimo y son las más fáciles. Por eso las usamos en esta guía:
-  </p>
-
-  <ul>
-    <li><strong>RGB:</strong> las letras son las iniciales de rojo, verde y azul
-      (en inglés: Red, Green, Blue). Es como mezclar tres luces de colores. Cada luz
-      va de 0 (apagada) a 255 (lo más fuerte). Si las tres están en 255, sale el
-      blanco; si las tres están en 0, sale el negro.</li>
-    <li><strong>HEX (hexadecimal):</strong> es lo mismo que RGB, pero escrito de
-      forma más corta: un símbolo # y seis letras o números, como #1C76BF. Es como
-      el apodo corto del color.</li>
-  </ul>
-
-
-
-  <h3>Nuestros colores</h3>
-  <p>
-    Esta tabla es como la lista de nuestros crayones. Cada color tiene su número, su
-    nombre, su código HEX y su código RGB. Puedes copiar el código y pegarlo donde
-    la herramienta te lo pida.
-  </p>
-
-  <table>
-    <thead>
-      <tr>
-        <th>N°</th>
-        <th>Muestra</th>
-        <th>Nombre</th>
-        <th>HEX</th>
-        <th>RGB</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr><td>1</td><td><span class="swatch" style="background:#FFFFFF"></span></td><td>Blanco</td><td>#FFFFFF</td><td>(255, 255, 255)</td></tr>
-      <tr><td>2</td><td><span class="swatch" style="background:#000000"></span></td><td>Negro</td><td>#000000</td><td>(0, 0, 0)</td></tr>
-      <tr><td>3</td><td><span class="swatch" style="background:#999999"></span></td><td>Gris</td><td>#999999</td><td>(153, 153, 153)</td></tr>
-      <tr><td>4</td><td><span class="swatch" style="background:#E8CAAC"></span></td><td>Beige cálido</td><td>#E8CAAC</td><td>(232, 202, 172)</td></tr>
-      <tr><td>5</td><td><span class="swatch" style="background:#FADA88"></span></td><td>Amarillo suave</td><td>#FADA88</td><td>(250, 218, 136)</td></tr>
-      <tr><td>6</td><td><span class="swatch" style="background:#7256A6"></span></td><td>Morado profundo</td><td>#7256A6</td><td>(114, 86, 166)</td></tr>
-      <tr><td>7</td><td><span class="swatch" style="background:#B39FD5"></span></td><td>Lavanda</td><td>#B39FD5</td><td>(179, 159, 213)</td></tr>
-      <tr><td>8</td><td><span class="swatch" style="background:#FD8775"></span></td><td>Coral suave</td><td>#FD8775</td><td>(253, 135, 117)</td></tr>
-      <tr><td>9</td><td><span class="swatch" style="background:#1C76BF"></span></td><td>Azul medio</td><td>#1C76BF</td><td>(28, 118, 191)</td></tr>
-      <tr><td>10</td><td><span class="swatch" style="background:#1F3D85"></span></td><td>Azul profundo</td><td>#1F3D85</td><td>(31, 61, 133)</td></tr>
-    </tbody>
-  </table>
-</details>
-
-<details id="logos" name="guia-flyer">
-  <summary><h2>Logos institucionales</h2></summary>
-
-  <h3>¿Qué es un logo?</h3>
-  <p>
-    Un logo es un dibujito especial que dice quiénes somos, como la firma al final
-    de una carta. Los logos de NA son la firma de toda nuestra Confraternidad. Como
-    son de todos, hay que tratarlos con mucho respeto.
-  </p>
-  <div class="logos-muestra">
-    <figure class="logo-claro">
-      <img src="https://res.cloudinary.com/dlspk9ipi/image/upload/v1793817292/Mesa_de_trabajo_7_1_v065ul.png" alt="Imagen decorativa para modo claro">
-    </figure>
-    <figure class="logo-oscuro">
-      <img src="https://res.cloudinary.com/dlspk9ipi/image/upload/v1793817293/Mesa_de_trabajo_8_2_k1qk9z.png" alt="Imagen decorativa para modo oscuro">
-    </figure>
+  <div class="tabla-ia">
+    <table>
+      <caption>IAs para crear flyers: qué hacen bien y qué límites tienen</caption>
+      <thead>
+        <tr>
+          <th scope="col">IA</th>
+          <th scope="col">Por qué es buena para flyers</th>
+          <th scope="col">Plan gratuito y límites</th>
+          <th scope="col">Enlace</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th scope="row">Ideogram</th>
+          <td>La que mejor escribe texto legible dentro de la imagen: títulos, fechas y lugares.</td>
+          <td>Gratis, con pocos créditos lentos (las fuentes difieren entre semanales y diarios, unos 10). Las imágenes son públicas, el plan gratis no incluye imágenes de referencia y descargar en PNG puede requerir plan de pago. Planes de pago desde unos US$7 al mes.</td>
+          <td><a href="https://ideogram.ai" target="_blank" rel="noopener">ideogram.ai</a></td>
+        </tr>
+        <tr>
+          <th scope="row">ChatGPT (imágenes)</th>
+          <td>Escribes el prompt, adjuntas el logo y pides ajustes en la misma conversación.</td>
+          <td>Gratis: unas 2 a 3 imágenes por día (ventana de 24 horas) y 3 archivos subidos por día. El cupo cambia según la demanda. Plan Go cerca de US$8 al mes y Plus US$20.</td>
+          <td><a href="https://chatgpt.com" target="_blank" rel="noopener">chatgpt.com</a></td>
+        </tr>
+        <tr>
+          <th scope="row">Gemini (Google)</th>
+          <td>Funciona de forma parecida: prompt, imagen adjunta y ajustes por chat.</td>
+          <td>Gratis, con un cupo diario de imágenes (una fuente indica unas 20 por día). Confirma el número actual en tu cuenta.</td>
+          <td><a href="https://gemini.google.com" target="_blank" rel="noopener">gemini.google.com</a></td>
+        </tr>
+        <tr>
+          <th scope="row">Canva (con IA)</th>
+          <td>Crea diseños completos desde una descripción y luego puedes editar el texto y colocar el logo a mano.</td>
+          <td>Plan gratuito permanente, pero con un cupo mensual limitado de usos de IA compartido entre herramientas (varias fuentes hablan de unos 50 al mes). Kit de marca gratis con solo 3 colores. Pro cerca de US$15 al mes.</td>
+          <td><a href="https://www.canva.com" target="_blank" rel="noopener">canva.com</a></td>
+        </tr>
+        <tr>
+          <th scope="row">Dreamina</th>
+          <td>Genera posters y flyers desde cero con variaciones rápidas.</td>
+          <td>Créditos gratis que se renuevan cada día (unos 120 por día en EE. UU.; en otros países puede variar). No es ilimitado y las descargas sin marca de agua pueden requerir plan de pago.</td>
+          <td><a href="https://dreamina.capcut.com" target="_blank" rel="noopener">dreamina.capcut.com</a></td>
+        </tr>
+        <tr>
+          <th scope="row">Adobe Express (Firefly)</th>
+          <td>Genera diseños desde un prompt y ayuda a mantener consistencia de marca.</td>
+          <td>Plan gratuito con créditos generativos limitados (unos 25 al mes según varias fuentes). Premium cerca de US$9.99 al mes, con 250 créditos y kits de marca.</td>
+          <td><a href="https://www.adobe.com/express" target="_blank" rel="noopener">adobe.com/express</a></td>
+        </tr>
+        <tr>
+          <th scope="row">Krumzi</th>
+          <td>Crea flyers a partir de una descripción de texto, con enfoque de chat.</td>
+          <td>Tiene plan gratuito; el plan Premium parte de unos US$9.99 al mes. Verifica los límites exactos dentro de la plataforma.</td>
+          <td><a href="https://www.krumzi.com" target="_blank" rel="noopener">krumzi.com</a></td>
+        </tr>
+        <tr>
+          <th scope="row">Recraft</th>
+          <td>Muy buena para flyers de estilo vectorial, limpio y gráfico.</td>
+          <td>Gratis, con créditos diarios (unos 50 según una fuente). Las imágenes del plan gratis son públicas y sin derechos comerciales.</td>
+          <td><a href="https://www.recraft.ai" target="_blank" rel="noopener">recraft.ai</a></td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 
-  <h3>Reglas fáciles para cuidar los logos</h3>
-  <ul>
-    <li><strong>No se cambian.</strong> Imagina una foto de tu familia: no la
-      estiras, no la recortas, no le dibujas encima. Con el logo es igual: se usa
-      tal como es.</li>
-    <li><strong>No se los pedimos a la IA.</strong> La inteligencia artificial no
-      debe inventar un logo ni "arreglarlo", porque lo puede dibujar mal. Primero
-      hacemos el flyer y al final ponemos el logo original, como quien pega una
-      estampilla en una carta.</li>
-    <li><strong>Llevan su símbolo ®.</strong> Es una R dentro de un circulito. Es
-      como un letrero que dice: "Este dibujo tiene dueño: toda la Confraternidad".</li>
-    <li><strong>Sus colores.</strong> Las iniciales estilizadas de NA y el logo de
-      servicio pueden ir del color que mejor combine con el flyer. El logo de grupo
-      y el masthead 2017 tienen colores definidos en la guía oficial, y esos sí hay
-      que respetarlos.</li>
-    <li><strong>Quién los usa.</strong> Los pueden usar los grupos y comités de
-      servicio que estén registrados ante NAWS. Si eres un miembro y tienes dudas,
-      puedes leer el Boletín de Propiedad Intelectual #2 en
-      <a href="https://na.org/fipt"
-         target="_blank" rel="noopener noreferrer">na.org/fipt</a>
-      o preguntar a tu servicio.</li>
-  </ul>
-</details>
-
-<details id="imagenes" name="guia-flyer">
-  <summary><h2>Imágenes</h2></summary>
-
   <p>
-    ¡Buenas noticias! El Área Bogotá de NA ya tiene imágenes preparadas para que las
-    usemos en nuestros flyers. Es como una caja de materiales para manualidades:
-    todo está listo y solo hay que escoger lo que más nos guste y combine.
+    <small>
+      Los límites y precios de estas herramientas cambian con frecuencia y los números
+      de esta tabla vienen de fuentes que no siempre coinciden. Antes de contar con un
+      límite, confírmalo en la página oficial de cada IA o dentro de tu cuenta. Los
+      precios están en dólares estadounidenses.
+    </small>
   </p>
 
-  <h3>¿Cómo le ayudo a la IA?</h3>
-  <p>
-    Piensa en la inteligencia artificial como un ayudante nuevo que acaba de llegar.
-    No sabe qué queremos hacer, así que hay que mostrárselo. Por eso, cuando
-    trabajemos con la IA, <strong>le damos la imagen que más combine con nuestro
-    flyer</strong>. Si le damos una imagen bonita y adecuada, ella entiende mejor y
-    el resultado queda mucho mejor.
-  </p>
 
-  <h3>¿Cómo sabemos si nuestro flyer es de calidad?</h3>
-  <p>
-    Imagina que el flyer es una carta para alguien que nunca ha venido a nuestro
-    grupo. Esa persona no sabe quién la invita ni a dónde ir. Entonces la carta debe
-    traer todo lo necesario. Un flyer de calidad cumple con esta lista:
-  </p>
-
-  <ul>
-    <li><strong>Tiene el logo.</strong> Es la firma de la carta. Así la persona sabe
-      de quién viene. Este es uno de los puntos más importantes.</li>
-    <li><strong>El logo está intacto.</strong> No está estirado, ni cambiado de
-      color (salvo donde la guía oficial lo permite), ni dibujado de nuevo. Y tiene
-      su símbolo ® al lado.</li>
-    <li><strong>Dice qué, cuándo y dónde.</strong> Trae el nombre de la reunión o
-      del evento, el día, la hora y el lugar. Si falta uno, la persona se pierde.</li>
-    <li><strong>Trae un contacto.</strong> Un número o un medio para preguntar si
-      tiene dudas, como un timbre para llamar a la puerta.</li>
-    <li><strong>Usa nuestros colores.</strong> Los de la paleta del Área, para que
-      se vea que es de nuestra familia.</li>
-    <li><strong>Se lee fácil.</strong> Las letras son grandes y claras, y no hay
-      tantos dibujos que confundan.</li>
-    <li><strong>Cuida el anonimato.</strong> No muestra la cara de personas reales.
-      En NA protegemos la privacidad de todos, como cuando guardamos un secreto.</li>
-  </ul>
-
-  <p>
-    Cuando termines tu flyer, revisa esta lista como si fuera un examen sencillo. Si
-    puedes marcar todas las casillas, ¡felicitaciones! Estás llevando el mensaje con
-    claridad y con mucho cuidado.
-  </p>
 </details>
 
-<details id="prompt-engineering" name="guia-flyer">
-  <summary><h2>El prompt engineering en nuestra construcción de flyers</h2></summary>
-  <p>Contenido sobre prompt engineering…</p>
-</details>
-
-<details id="ejemplos" name="guia-flyer">
-  <summary><h2>Ejemplos</h2></summary>
-  <p>Contenido con ejemplos…</p>
-</details>
-
-<details id="prompts" name="guia-flyer">
-  <summary><h2>Prompts que podemos usar</h2></summary>
-  <p>Contenido con prompts…</p>
-</details>
+      <details id="prompts" name="guia-flyer">
+        <summary><h2>Prompts que podemos usar</h2></summary>
+        <p>Contenido con prompts…</p>
+      </details>
 
       <p><a class="btn" href="eventos.html">Volver a eventos</a></p>
     </section>
@@ -286,4 +569,5 @@
   <script src="js/modales.js?v=64"></script>
   <script src="js/private-pages.js?v=51"></script>
 </body>
+
 </html>

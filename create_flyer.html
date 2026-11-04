@@ -14,6 +14,12 @@
     #private-content table th { background: var(--blue-dark); color: #fff; }
     #private-content table tbody tr:nth-child(even) { background: rgba(120, 180, 60, .12); }
     #private-content .swatch { display: inline-block; width: 2.4rem; height: 1.4rem; border-radius: 4px; border: 1px solid var(--blue); vertical-align: middle; }
+    #private-content .tabla-colores { overflow-x: auto; max-width: 100%; }
+    @media (max-width: 600px) {
+      #private-content .tabla-colores table { font-size: .8rem; }
+      #private-content .tabla-colores th, #private-content .tabla-colores td { padding: .35rem .25rem; }
+      #private-content .tabla-colores .swatch { width: 1.6rem; height: 1rem; }
+    }
     #private-content .logos-muestra { display: flex; justify-content: center; margin: 1rem 0; }
     #private-content .logos-muestra figure { margin: 0; width: min(320px, 100%); text-align: center; padding: .25rem; }
     #private-content .logos-muestra img { max-width: 100%; height: 130px; object-fit: contain; }
@@ -157,6 +163,7 @@
           que necesites y pégalo donde la herramienta te lo pida.
         </p>
 
+        <div class="tabla-colores">
         <table>
           <thead>
             <tr>
@@ -180,6 +187,7 @@
             <tr><td>10</td><td><span class="swatch" style="background:#1F3D85"></span></td><td>Azul profundo</td><td>#1F3D85</td><td>(31, 61, 133)</td></tr>
           </tbody>
         </table>
+        </div>
       </details>
 
       <details id="logos" name="guia-flyer">
@@ -1135,6 +1143,13 @@ Si falta algún dato, pregúntamelo antes de diseñar. No lo inventes.`
   <script src="js/auth.js?v=56"></script>
   <script src="js/modales.js?v=64"></script>
   <script src="js/private-pages.js?v=51"></script>
+  <script>
+    if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+    if (!location.hash) window.scrollTo(0, 0);
+    document.addEventListener("na-auth", () => {
+      if (!location.hash) window.scrollTo(0, 0);
+    }, { once: true });
+  </script>
 </body>
 
 </html>

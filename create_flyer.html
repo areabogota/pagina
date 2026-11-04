@@ -48,6 +48,15 @@
     #ia-utiles td { border: 1px solid currentColor; padding: 0.6rem 0.75rem; text-align: center; vertical-align: middle; }
     #ia-utiles thead th { font-weight: 700; }
     #ia-utiles tbody th { white-space: nowrap; }
+    #prompts .prompt-barra { display: flex; align-items: center; justify-content: center; gap: .75rem; }
+    #prompts .prompt-titulo { font-weight: 700; text-align: center; }
+    #prompts .prompt-nav { flex: 0 0 auto; width: 2.4rem; height: 2.4rem; border-radius: 50%; border: 2px solid var(--blue); background: transparent; color: inherit; font-size: 1.4rem; line-height: 1; cursor: pointer; }
+    #prompts .prompt-nav:hover { border-color: var(--accent); }
+    #prompts .prompt-nota { font-size: .9rem; margin: .4rem 0 0; }
+    #prompts .prompt-intro { margin: 0 0 .8rem; }
+    #prompts .prompt-code { background: #0f1730; color: #e6e9f5; border: 1px solid #2c3a66; border-radius: 8px; padding: 1rem; max-height: 420px; overflow: auto; white-space: pre-wrap; text-align: left; font-family: Consolas, ui-monospace, monospace; font-size: .85rem; line-height: 1.5; margin: .6rem 0; }
+    #prompts .ph { color: #ff5c5c; font-weight: 700; }
+    #prompts .prompt-pie { display: flex; justify-content: space-between; align-items: center; gap: .5rem; flex-wrap: wrap; }
   </style>
   <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-H0JF4NM30G"></script>
@@ -114,9 +123,9 @@
 
         <h3>¿Qué es una paleta de colores?</h3>
         <p>
-          Es un grupo de colores elegidos para usarse juntos. En NA Área Bogotá tenemos
+          Es un grupo de colores elegidos para usarse juntos. En NA tenemos
           una paleta aprobada. Si la usamos en nuestros flyers, quien los vea reconocerá
-          que vienen de nuestra Área, igual que reconocemos a un equipo por su camiseta.
+          que vienen de nuestra comunidad, igual que reconocemos a un equipo por su camiseta.
         </p>
 
         <p>
@@ -197,7 +206,7 @@
             redibujan ni se les agrega nada encima. Se usan tal como son.</li>
           <li><strong>No se los pedimos a la IA.</strong> La inteligencia artificial
             puede dibujarlos mal o cambiar detalles sin que nos demos cuenta. Primero
-            creamos el flyer y al final colocamos el logo original.</li>
+            creamos el flyer y pasamos el logo para que sea colocado en la creación.</li>
           <li><strong>Llevan su símbolo ®.</strong> Es una R dentro de un círculo e
             indica que el logo es una marca registrada, propiedad de toda la
             Confraternidad.</li>
@@ -218,7 +227,7 @@
         <summary><h2>Imágenes</h2></summary>
 
         <p>
-          El Área Bogotá de NA ya tiene imágenes autorizadas para que las usemos en
+          Ya tenemos imágenes autorizadas para que las usemos en
           nuestros flyers. Están listas: solo hay que escoger la que mejor se adapte al
           mensaje.
         </p>
@@ -248,7 +257,7 @@
           <li><strong>Dice qué, cuándo y dónde.</strong> Incluye el nombre de la reunión
             o evento, el día, la hora y el lugar. Si falta algo, la persona se pierde.</li>
           <li><strong>Trae un contacto.</strong> Un número o medio para resolver dudas.</li>
-          <li><strong>Usa nuestros colores.</strong> Los de la paleta del Área.</li>
+          <li><strong>Usa nuestros colores.</strong> Los de la paleta aprobada.</li>
           <li><strong>Se lee fácil.</strong> Letra clara y de buen tamaño, sin exceso de
             adornos.</li>
           <li><strong>Protege el anonimato.</strong> No muestra rostros de personas
@@ -348,7 +357,7 @@
 
         <h3>¿Por qué importa?</h3>
         <p>
-          La IA no conoce nuestro grupo, nuestra Área ni nuestras tradiciones. Solo sabe lo
+          La IA no conoce nuestro grupo ni nuestras tradiciones. Solo sabe lo
           que le decimos. Si la instrucción es corta o vaga, la IA rellena los vacíos por su
           cuenta, y casi siempre lo hace de una forma que no queremos. Si la instrucción es
           clara, el resultado es más fiel, más rápido y necesita menos correcciones.
@@ -552,7 +561,565 @@
 
       <details id="prompts" name="guia-flyer">
         <summary><h2>Prompts que podemos usar</h2></summary>
-        <p>Contenido con prompts…</p>
+        <div class="prompt-carrusel">
+          <p class="prompt-intro">Vamos a presentar 12 prompts. Cada grupo o diseñador se siente libre de explorarlos, modificarlos y cambiarlos según sus necesidades. Lo que aparece en <span class="ph">[rojo entre corchetes]</span> es información que debes reemplazar con tus datos.</p>
+          <div class="prompt-barra">
+            <button type="button" class="prompt-nav" data-dir="-1" aria-label="Prompt anterior">‹</button>
+            <span class="prompt-titulo"></span>
+            <button type="button" class="prompt-nav" data-dir="1" aria-label="Prompt siguiente">›</button>
+          </div>
+          <p class="prompt-nota" hidden></p>
+          <pre class="prompt-code"><code></code></pre>
+          <div class="prompt-pie">
+            <span class="prompt-contador"></span>
+            <button type="button" class="btn sec prompt-copiar">Copiar prompt</button>
+          </div>
+        </div>
+        <script>
+          (() => {
+            const PROMPTS = [
+              {
+                titulo: "1. Reunión semanal",
+                texto: `ROL
+Actúa como un diseñador gráfico profesional con experiencia en comunicación para organizaciones sin fines de lucro y en diseño editorial. Tu trabajo es limpio, sobrio y legible; no usas efectos ni adornos innecesarios.
+
+CONTEXTO
+Estoy creando un flyer para [NOMBRE DEL GRUPO], un grupo de Narcóticos Anónimos (NA) en Bogotá, Colombia. NA es una confraternidad de adictos en recuperación. Quien vea el flyer puede ser un adicto que todavía sufre o su familia, así que debe sentirse como una invitación cálida: "aquí te esperamos". Se compartirá por [WHATSAPP / INSTAGRAM / IMPRESO].
+
+TAREA
+Diseña un flyer en formato [FORMATO: cuadrado 1080 x 1080 px / vertical 1080 x 1350 px] para invitar a la reunión semanal del grupo. Propósito: que un recién llegado sepa cuándo y dónde es.
+
+TEXTO (escríbelo exactamente así, en español, con tildes. No agregues, quites ni cambies nada):
+[NOMBRE DEL GRUPO]
+Reunión de Narcóticos Anónimos
+[DÍA] a las [HORA]
+[LUGAR Y DIRECCIÓN]
+[TELÉFONO]
+[FRASE DE BIENVENIDA]
+
+COLORES
+Paleta de colores aprobada (usa solo colores de esta lista, con estos códigos exactos): Blanco #FFFFFF, Negro #000000, Gris #999999, Beige cálido #E8CAAC, Amarillo suave #FADA88, Morado profundo #7256A6, Lavanda #B39FD5, Coral suave #FD8775, Azul medio #1C76BF, Azul profundo #1F3D85.
+Para este flyer usa:
+- Fondo: [COLOR + HEX]
+- Textos principales: [COLOR + HEX]
+- Acento (detalles y resalte): [COLOR + HEX]
+Usa dos o tres colores en total. El texto debe leerse con facilidad sobre el fondo. No agregues degradados ni colores que no estén en la lista.
+
+IMAGEN
+Adjunto una imagen autorizada. Colócala [DÓNDE: de fondo / en una esquina / como adorno], sin deformarla.
+
+ESTILO
+[ESTILO: ej. sobrio, cálido, sencillo, moderno]. Fondos planos, mucho espacio en blanco, márgenes iguales y una jerarquía clara: título grande, datos medianos, contacto pequeño. Máximo dos tipografías de lectura fácil. El mensaje transmite fortaleza, fe y esperanza, con bienvenida.
+
+LOGO
+Adjunto el logo original de [TIPO DE LOGO: iniciales estilizadas de NA / logo de servicio / logo de grupo / masthead 2017]. Colócalo en la esquina [ESQUINA] con un tamaño de [TAMAÑO: ej. 20% del ancho]. No lo estires, no lo recortes, no lo redibujes, no le agregues nada encima y no cambies sus colores. Debe conservar su símbolo ®. Si no puedes colocarlo exactamente igual, deja el espacio vacío y no lo dibujes.
+
+LÍMITES
+- Sin personas ni rostros, sin efectos de brillo, sombras ni degradados llamativos, sin íconos de stock.
+- Sin promesas ni frases dramáticas.
+- Usa "adicto", "adicción" y "tiempo limpio". No uses "alcohólico", "sobriedad", "codependiente" ni "24 horas".
+
+Si falta algún dato, pregúntamelo antes de diseñar. No lo inventes.`
+              },
+              {
+                titulo: "2. Nueva reunión",
+                texto: `ROL
+Actúa como un diseñador gráfico profesional con experiencia en comunicación para organizaciones sin fines de lucro y en diseño editorial. Tu trabajo es limpio, sobrio y legible; no usas efectos ni adornos innecesarios.
+
+CONTEXTO
+Estoy creando un flyer para [NOMBRE DEL GRUPO], un grupo de Narcóticos Anónimos (NA) en Bogotá, Colombia. NA es una confraternidad de adictos en recuperación. Quien vea el flyer puede ser un adicto que todavía sufre o su familia, así que debe sentirse como una invitación cálida: "aquí te esperamos". Se compartirá por [WHATSAPP / INSTAGRAM / IMPRESO].
+
+TAREA
+Diseña un flyer en formato [FORMATO: cuadrado 1080 x 1080 px / vertical 1080 x 1350 px] para anunciar la apertura de una nueva reunión. Propósito: que se conozca y la gente asista.
+
+TEXTO (escríbelo exactamente así, en español, con tildes. No agregues, quites ni cambies nada):
+Nueva reunión
+[NOMBRE DEL GRUPO]
+Desde el [FECHA DE INICIO]
+[DÍA] a las [HORA]
+[LUGAR Y DIRECCIÓN]
+[TELÉFONO]
+[FRASE DE BIENVENIDA]
+
+COLORES
+Paleta de colores aprobada (usa solo colores de esta lista, con estos códigos exactos): Blanco #FFFFFF, Negro #000000, Gris #999999, Beige cálido #E8CAAC, Amarillo suave #FADA88, Morado profundo #7256A6, Lavanda #B39FD5, Coral suave #FD8775, Azul medio #1C76BF, Azul profundo #1F3D85.
+Para este flyer usa:
+- Fondo: [COLOR + HEX]
+- Textos principales: [COLOR + HEX]
+- Acento (detalles y resalte): [COLOR + HEX]
+Usa dos o tres colores en total. El texto debe leerse con facilidad sobre el fondo. No agregues degradados ni colores que no estén en la lista.
+
+IMAGEN
+Adjunto una imagen autorizada. Colócala [DÓNDE: de fondo / en una esquina / como adorno], sin deformarla.
+
+ESTILO
+[ESTILO: ej. sobrio, cálido, sencillo, moderno]. Fondos planos, mucho espacio en blanco, márgenes iguales y una jerarquía clara: título grande, datos medianos, contacto pequeño. Máximo dos tipografías de lectura fácil. El mensaje transmite fortaleza, fe y esperanza, con bienvenida.
+
+LOGO
+Adjunto el logo original de [TIPO DE LOGO: iniciales estilizadas de NA / logo de servicio / logo de grupo / masthead 2017]. Colócalo en la esquina [ESQUINA] con un tamaño de [TAMAÑO: ej. 20% del ancho]. No lo estires, no lo recortes, no lo redibujes, no le agregues nada encima y no cambies sus colores. Debe conservar su símbolo ®. Si no puedes colocarlo exactamente igual, deja el espacio vacío y no lo dibujes.
+
+LÍMITES
+- Sin personas ni rostros, sin efectos de brillo, sombras ni degradados llamativos, sin íconos de stock.
+- Sin promesas ni frases dramáticas.
+- Usa "adicto", "adicción" y "tiempo limpio". No uses "alcohólico", "sobriedad", "codependiente" ni "24 horas".
+
+Si falta algún dato, pregúntamelo antes de diseñar. No lo inventes.`
+              },
+              {
+                titulo: "3. Cambio de horario o de lugar",
+                texto: `ROL
+Actúa como un diseñador gráfico profesional con experiencia en comunicación para organizaciones sin fines de lucro y en diseño editorial. Tu trabajo es limpio, sobrio y legible; no usas efectos ni adornos innecesarios.
+
+CONTEXTO
+Estoy creando un aviso para [NOMBRE DEL GRUPO], un grupo de Narcóticos Anónimos (NA) en Bogotá, Colombia. NA es una confraternidad de adictos en recuperación. Quien vea el aviso puede ser un adicto que todavía sufre o un compañero del grupo, así que debe ser claro y tranquilo. Se compartirá por [WHATSAPP / INSTAGRAM / IMPRESO].
+
+TAREA
+Diseña un aviso en formato [FORMATO: cuadrado 1080 x 1080 px / vertical 1080 x 1350 px] para informar un cambio de [HORARIO / LUGAR] de la reunión. El dato nuevo debe leerse primero y resaltar sobre el anterior. Diseño muy ordenado, tipo aviso informativo. Propósito: que nadie llegue al lugar o a la hora equivocados.
+
+TEXTO (escríbelo exactamente así, en español, con tildes. No agregues, quites ni cambies nada):
+Aviso: cambio de [HORARIO / LUGAR]
+Antes: [DATO ANTERIOR]
+Ahora: [DATO NUEVO]
+Desde el [FECHA]
+[NOMBRE DEL GRUPO]
+[TELÉFONO]
+
+COLORES
+Paleta de colores aprobada (usa solo colores de esta lista, con estos códigos exactos): Blanco #FFFFFF, Negro #000000, Gris #999999, Beige cálido #E8CAAC, Amarillo suave #FADA88, Morado profundo #7256A6, Lavanda #B39FD5, Coral suave #FD8775, Azul medio #1C76BF, Azul profundo #1F3D85.
+Para este flyer usa:
+- Fondo: [COLOR + HEX]
+- Textos principales: [COLOR + HEX]
+- Recuadro que resalta el dato nuevo: [COLOR + HEX]
+Usa dos o tres colores en total. El texto debe leerse con facilidad sobre el fondo. No agregues degradados ni colores que no estén en la lista.
+
+IMAGEN
+Adjunto una imagen autorizada. Colócala [DÓNDE: de fondo / en una esquina / como adorno], pequeña y sin deformarla.
+
+ESTILO
+[ESTILO: ej. sobrio, claro, sencillo]. Fondos planos, mucho espacio en blanco, márgenes iguales y una jerarquía clara. Máximo dos tipografías de lectura fácil. El mensaje transmite serenidad y claridad.
+
+LOGO
+Adjunto el logo original de [TIPO DE LOGO: iniciales estilizadas de NA / logo de servicio / logo de grupo / masthead 2017]. Colócalo en la esquina [ESQUINA] con un tamaño de [TAMAÑO: ej. 20% del ancho]. No lo estires, no lo recortes, no lo redibujes, no le agregues nada encima y no cambies sus colores. Debe conservar su símbolo ®. Si no puedes colocarlo exactamente igual, deja el espacio vacío y no lo dibujes.
+
+LÍMITES
+- Sin personas ni rostros, sin efectos de brillo, sombras ni degradados llamativos, sin íconos de stock.
+- Sin promesas ni frases dramáticas.
+- Usa "adicto", "adicción" y "tiempo limpio". No uses "alcohólico", "sobriedad", "codependiente" ni "24 horas".
+
+Si falta algún dato, pregúntamelo antes de diseñar. No lo inventes.`
+              },
+              {
+                titulo: "4. Evento o actividad",
+                texto: `ROL
+Actúa como un diseñador gráfico profesional con experiencia en comunicación para organizaciones sin fines de lucro y en diseño editorial. Tu trabajo es limpio, sobrio y legible; no usas efectos ni adornos innecesarios.
+
+CONTEXTO
+Estoy creando un flyer para [NOMBRE DEL GRUPO], de Narcóticos Anónimos (NA) en Bogotá, Colombia. NA es una confraternidad de adictos en recuperación. Quien vea el flyer puede ser un adicto que todavía sufre, su familia o un compañero de la Confraternidad, así que debe sentirse como una invitación cálida. Se compartirá por [WHATSAPP / INSTAGRAM / IMPRESO].
+
+TAREA
+Diseña un flyer en formato [FORMATO: cuadrado 1080 x 1080 px / vertical 1080 x 1350 px] para invitar a un evento. Propósito: que asistan compañeros de la Confraternidad.
+
+TEXTO (escríbelo exactamente así, en español, con tildes. No agregues, quites ni cambies nada):
+[NOMBRE DEL EVENTO]
+Invita [NOMBRE DEL GRUPO]
+[DÍA Y FECHA], [HORA]
+[LUGAR Y DIRECCIÓN]
+[INFORMACIÓN ADICIONAL: ej. Entrada libre]
+[TELÉFONO]
+
+COLORES
+Paleta de colores aprobada (usa solo colores de esta lista, con estos códigos exactos): Blanco #FFFFFF, Negro #000000, Gris #999999, Beige cálido #E8CAAC, Amarillo suave #FADA88, Morado profundo #7256A6, Lavanda #B39FD5, Coral suave #FD8775, Azul medio #1C76BF, Azul profundo #1F3D85.
+Para este flyer usa:
+- Fondo: [COLOR + HEX]
+- Textos principales: [COLOR + HEX]
+- Acento (detalles y resalte): [COLOR + HEX]
+Usa dos o tres colores en total. El texto debe leerse con facilidad sobre el fondo. No agregues degradados ni colores que no estén en la lista.
+
+IMAGEN
+Adjunto una imagen autorizada. Colócala [DÓNDE: de fondo / en una esquina / como adorno], sin deformarla. El resto del diseño queda sobrio y despejado.
+
+ESTILO
+[ESTILO: ej. sobrio, cálido, festivo pero contenido]. Fondos planos, mucho espacio en blanco, márgenes iguales y una jerarquía clara: título grande, datos medianos, contacto pequeño. Máximo dos tipografías de lectura fácil. El mensaje transmite fortaleza, fe y esperanza, con bienvenida.
+
+LOGO
+Adjunto el logo original de [TIPO DE LOGO: iniciales estilizadas de NA / logo de servicio / logo de grupo / masthead 2017]. Colócalo en la esquina [ESQUINA] con un tamaño de [TAMAÑO: ej. 20% del ancho]. No lo estires, no lo recortes, no lo redibujes, no le agregues nada encima y no cambies sus colores. Debe conservar su símbolo ®. Si no puedes colocarlo exactamente igual, deja el espacio vacío y no lo dibujes.
+
+LÍMITES
+- Sin personas ni rostros, sin efectos de brillo, sombras ni degradados llamativos, sin íconos de stock.
+- Sin promesas ni frases dramáticas.
+- Usa "adicto", "adicción" y "tiempo limpio". No uses "alcohólico", "sobriedad", "codependiente" ni "24 horas".
+
+Si falta algún dato, pregúntamelo antes de diseñar. No lo inventes.`
+              },
+              {
+                titulo: "5. Aniversario (solo para redes internas del grupo)",
+                texto: `ROL
+Actúa como un diseñador gráfico profesional con experiencia en comunicación para organizaciones sin fines de lucro y en diseño editorial. Tu trabajo es limpio, sobrio y legible; no usas efectos ni adornos innecesarios.
+
+CONTEXTO
+Estoy creando un flyer para [NOMBRE DEL GRUPO], un grupo de Narcóticos Anónimos (NA) en Bogotá, Colombia. NA es una confraternidad de adictos en recuperación. El flyer celebra el aniversario en tiempo limpio de un compañero y se compartirá solo en las redes internas del grupo, así que debe sentirse cálido, respetuoso y agradecido.
+
+TAREA
+Diseña un flyer en formato [FORMATO: cuadrado 1080 x 1080 px / vertical 1080 x 1350 px] para celebrar el aniversario en tiempo limpio de [NOMBRE] como evento del grupo. Adjunto su foto: colócala dentro de un marco simple [RECTÁNGULO / CÍRCULO]. No modifiques, retoques ni embellezcas el rostro: debe verse tal como es, sin filtros.
+
+TEXTO (escríbelo exactamente así, en español, con tildes. No agregues, quites ni cambies nada):
+[NOMBRE] celebra [N] años limpio
+[MENSAJE DE GRATITUD]
+[FECHA], [HORA], [LUGAR]
+[NOMBRE DEL GRUPO]
+
+COLORES
+Paleta de colores aprobada (usa solo colores de esta lista, con estos códigos exactos): Blanco #FFFFFF, Negro #000000, Gris #999999, Beige cálido #E8CAAC, Amarillo suave #FADA88, Morado profundo #7256A6, Lavanda #B39FD5, Coral suave #FD8775, Azul medio #1C76BF, Azul profundo #1F3D85.
+Para este flyer usa:
+- Fondo: [COLOR + HEX]
+- Textos principales: [COLOR + HEX]
+- Acento (detalles y resalte): [COLOR + HEX]
+Usa dos o tres colores en total. El texto debe leerse con facilidad sobre el fondo. No agregues degradados ni colores que no estén en la lista.
+
+IMAGEN
+Además de la foto, adjunto una imagen autorizada. Colócala [DÓNDE: en una esquina / como adorno], sin deformarla. [Si no usarás imagen autorizada, borra esta sección.]
+
+ESTILO
+[ESTILO: ej. cálido, sobrio, agradecido]. Fondos planos, mucho espacio en blanco, márgenes iguales y una jerarquía clara: título grande, datos medianos. Máximo dos tipografías de lectura fácil. El mensaje transmite fortaleza, fe y esperanza.
+
+LOGO
+Adjunto el logo original de [TIPO DE LOGO: iniciales estilizadas de NA / logo de servicio / logo de grupo / masthead 2017]. Colócalo en la esquina [ESQUINA] con un tamaño de [TAMAÑO: ej. 20% del ancho]. No lo estires, no lo recortes, no lo redibujes, no le agregues nada encima y no cambies sus colores. Debe conservar su símbolo ®. Si no puedes colocarlo exactamente igual, deja el espacio vacío y no lo dibujes.
+
+LÍMITES
+- La única persona permitida es la de la foto adjunta. Sin otras personas, sin efectos de brillo, sombras ni degradados llamativos, sin íconos de stock.
+- Sin promesas ni frases dramáticas.
+- Usa "adicto", "adicción" y "tiempo limpio". No uses "alcohólico", "sobriedad", "codependiente" ni "24 horas".
+
+Si falta algún dato, pregúntamelo antes de diseñar. No lo inventes.`
+              },
+              {
+                titulo: "6. Cita de nuestra literatura",
+                nota: "Copia la cita tú mismo del original; no le pidas a la IA que la escriba.",
+                texto: `ROL
+Actúa como un diseñador gráfico profesional con experiencia en comunicación para organizaciones sin fines de lucro y en diseño editorial. Tu trabajo es limpio, sobrio y legible; no usas efectos ni adornos innecesarios.
+
+CONTEXTO
+Estoy creando un flyer para [NOMBRE DEL GRUPO], un grupo de Narcóticos Anónimos (NA) en Bogotá, Colombia. NA es una confraternidad de adictos en recuperación. El flyer comparte una frase de nuestra literatura para acompañar a quien lo lea, así que debe sentirse tranquilo y respetuoso. Se compartirá por [WHATSAPP / INSTAGRAM / IMPRESO].
+
+TAREA
+Diseña un flyer tipográfico en formato [FORMATO: cuadrado 1080 x 1080 px / vertical 1080 x 1350 px] donde la cita es la protagonista, para anunciar el evento [NOMBRE DEL EVENTO]. Sin imágenes ni ilustraciones. Usa una tipografía serif elegante para la cita y una sans serif pequeña para la fuente, con una línea fina que las separe.
+
+TEXTO (copia la cita tal cual, sin cambiar, quitar ni agregar ninguna palabra. No la parafrasees ni la completes):
+"[CITA COPIADA TEXTUALMENTE DEL ORIGINAL]"
+[PUBLICACIÓN], pág. [NÚMERO]
+[NOMBRE DEL GRUPO]
+
+COLORES
+Paleta de colores aprobada (usa solo colores de esta lista, con estos códigos exactos): Blanco #FFFFFF, Negro #000000, Gris #999999, Beige cálido #E8CAAC, Amarillo suave #FADA88, Morado profundo #7256A6, Lavanda #B39FD5, Coral suave #FD8775, Azul medio #1C76BF, Azul profundo #1F3D85.
+Para este flyer usa:
+- Fondo: [COLOR + HEX]
+- Texto de la cita: [COLOR + HEX]
+- Línea y detalles: [COLOR + HEX]
+Usa dos o tres colores en total. El texto debe leerse con facilidad sobre el fondo. No agregues degradados ni colores que no estén en la lista.
+
+ESTILO
+[ESTILO: ej. sobrio, sereno, minimalista]. Fondo plano, mucho espacio en blanco, márgenes amplios y la cita centrada o alineada a la izquierda con buen interlineado. El mensaje transmite fortaleza, fe y esperanza.
+
+LOGO
+Adjunto el logo original de [TIPO DE LOGO: iniciales estilizadas de NA / logo de servicio / logo de grupo / masthead 2017]. Colócalo en la esquina [ESQUINA] con un tamaño de [TAMAÑO: ej. 15% del ancho]. No lo estires, no lo recortes, no lo redibujes, no le agregues nada encima y no cambies sus colores. Debe conservar su símbolo ®. Si no puedes colocarlo exactamente igual, deja el espacio vacío y no lo dibujes.
+
+LÍMITES
+- Sin imágenes, personas ni rostros, sin efectos de brillo, sombras ni degradados llamativos, sin íconos de stock.
+- No modifiques ni resumas la cita.
+- Usa "adicto", "adicción" y "tiempo limpio". No uses "alcohólico", "sobriedad", "codependiente" ni "24 horas".
+
+Si falta algún dato, pregúntamelo antes de diseñar. No lo inventes.`
+              },
+              {
+                titulo: "7. Recién llegado",
+                texto: `ROL
+Actúa como un diseñador gráfico profesional con experiencia en comunicación para organizaciones sin fines de lucro y en diseño editorial. Tu trabajo es limpio, sobrio y legible; no usas efectos ni adornos innecesarios.
+
+CONTEXTO
+Estoy creando un flyer para [NOMBRE DEL GRUPO], de Narcóticos Anónimos (NA) en Bogotá, Colombia. NA es una confraternidad de adictos en recuperación. Quien vea el flyer puede ser un adicto que nunca ha ido a una reunión, quizá con miedo o dudas, así que debe sentirse tranquilo y acogedor, nada urgente. Se compartirá por [WHATSAPP / INSTAGRAM / IMPRESO].
+
+TAREA
+Diseña un flyer en formato [FORMATO: cuadrado 1080 x 1080 px / vertical 1080 x 1350 px] para alguien que nunca ha asistido a una reunión. Propósito: que dé el primer paso.
+
+TEXTO (escríbelo exactamente así, en español, con tildes. No agregues, quites ni cambies nada):
+¿Eres nuevo?
+[FRASE DE BIENVENIDA]
+Reunión para recién llegados
+[DÍA] a las [HORA]
+[LUGAR Y DIRECCIÓN]
+[TELÉFONO]
+[NOMBRE DEL GRUPO]
+
+COLORES
+Paleta de colores aprobada (usa solo colores de esta lista, con estos códigos exactos): Blanco #FFFFFF, Negro #000000, Gris #999999, Beige cálido #E8CAAC, Amarillo suave #FADA88, Morado profundo #7256A6, Lavanda #B39FD5, Coral suave #FD8775, Azul medio #1C76BF, Azul profundo #1F3D85.
+Para este flyer usa:
+- Fondo: [COLOR + HEX]
+- Bloque grande de apoyo: [COLOR + HEX]
+- Textos principales: [COLOR + HEX]
+Usa dos o tres colores en total. El texto debe leerse con facilidad sobre el fondo. No agregues degradados ni colores que no estén en la lista.
+
+IMAGEN
+Adjunto una imagen autorizada. Colócala [DÓNDE: de fondo / en una esquina / como adorno suave], sin deformarla.
+
+ESTILO
+[ESTILO: ej. cálido, tranquilo, sencillo]. Fondos planos, mucho espacio en blanco, márgenes iguales y una jerarquía clara: título grande, datos medianos, contacto pequeño. Máximo dos tipografías de lectura fácil. El mensaje transmite fortaleza, fe y esperanza, con bienvenida.
+
+LOGO
+Adjunto el logo original de [TIPO DE LOGO: iniciales estilizadas de NA / logo de servicio / logo de grupo / masthead 2017]. Colócalo en la esquina [ESQUINA] con un tamaño de [TAMAÑO: ej. 20% del ancho]. No lo estires, no lo recortes, no lo redibujes, no le agregues nada encima y no cambies sus colores. Debe conservar su símbolo ®. Si no puedes colocarlo exactamente igual, deja el espacio vacío y no lo dibujes.
+
+LÍMITES
+- Sin personas ni rostros, sin efectos de brillo, sombras ni degradados llamativos, sin íconos de stock.
+- Sin promesas ni frases dramáticas.
+- Usa "adicto", "adicción" y "tiempo limpio". No uses "alcohólico", "sobriedad", "codependiente" ni "24 horas".
+
+Si falta algún dato, pregúntamelo antes de diseñar. No lo inventes.`
+              },
+              {
+                titulo: "8. Convocatoria a servicio",
+                texto: `ROL
+Actúa como un diseñador gráfico profesional con experiencia en comunicación para organizaciones sin fines de lucro y en diseño editorial. Tu trabajo es limpio, sobrio y legible; no usas efectos ni adornos innecesarios.
+
+CONTEXTO
+Estoy creando un flyer para [NOMBRE DEL GRUPO], de Narcóticos Anónimos (NA) en Bogotá, Colombia. NA es una confraternidad de adictos en recuperación. Quien vea el flyer puede ser un miembro que quiere aportar más al grupo, así que debe sentirse invitado y valorado. Se compartirá por [WHATSAPP / INSTAGRAM / IMPRESO].
+
+TAREA
+Diseña un flyer en formato [FORMATO: cuadrado 1080 x 1080 px / vertical 1080 x 1350 px] para convocar voluntarios para el evento [NOMBRE DEL EVENTO], en la tarea de [TIPO DE TAREA: cafetería, cartelera, sonido, lectura]. Propósito: que alguien se anime a ofrecer su tiempo.
+
+TEXTO (escríbelo exactamente así, en español, con tildes. No agregues, quites ni cambies nada):
+Se necesitan voluntarios
+[TIPO DE TAREA]
+[DÍA] a las [HORA]
+[LUGAR Y DIRECCIÓN]
+Contacto: [TELÉFONO O CORREO]
+
+COLORES
+Paleta de colores aprobada (usa solo colores de esta lista, con estos códigos exactos): Blanco #FFFFFF, Negro #000000, Gris #999999, Beige cálido #E8CAAC, Amarillo suave #FADA88, Morado profundo #7256A6, Lavanda #B39FD5, Coral suave #FD8775, Azul medio #1C76BF, Azul profundo #1F3D85.
+Para este flyer usa:
+- Fondo: [COLOR + HEX]
+- Textos principales: [COLOR + HEX]
+- Acento (título o recuadro): [COLOR + HEX]
+Usa dos o tres colores en total. El texto debe leerse con facilidad sobre el fondo. No agregues degradados ni colores que no estén en la lista.
+
+IMAGEN
+Adjunto una imagen autorizada. Colócala [DÓNDE: de fondo / en una esquina / como adorno], sin deformarla.
+
+ESTILO
+[ESTILO: ej. sobrio, cálido, sencillo]. Fondos planos, mucho espacio en blanco, márgenes iguales y una jerarquía clara: título grande, datos medianos, contacto pequeño. Máximo dos tipografías de lectura fácil. El mensaje transmite compromiso, unidad y gratitud.
+
+LOGO
+Adjunto el logo original de [TIPO DE LOGO: iniciales estilizadas de NA / logo de servicio / logo de grupo / masthead 2017]. Colócalo en la esquina [ESQUINA] con un tamaño de [TAMAÑO: ej. 20% del ancho]. No lo estires, no lo recortes, no lo redibujes, no le agregues nada encima y no cambies sus colores. Debe conservar su símbolo ®. Si no puedes colocarlo exactamente igual, deja el espacio vacío y no lo dibujes.
+
+LÍMITES
+- Sin personas ni rostros, sin efectos de brillo, sombras ni degradados llamativos, sin íconos de stock.
+- Sin promesas ni frases dramáticas.
+- Usa "adicto", "adicción" y "tiempo limpio". No uses "alcohólico", "sobriedad", "codependiente" ni "24 horas".
+
+Si falta algún dato, pregúntamelo antes de diseñar. No lo inventes.`
+              },
+              {
+                titulo: "9. Taller o grupo de estudio",
+                texto: `ROL
+Actúa como un diseñador gráfico profesional con experiencia en comunicación para organizaciones sin fines de lucro y en diseño editorial. Tu trabajo es limpio, sobrio y legible; no usas efectos ni adornos innecesarios.
+
+CONTEXTO
+Estoy creando un flyer para [NOMBRE DEL GRUPO], de Narcóticos Anónimos (NA) en Bogotá, Colombia. NA es una confraternidad de adictos en recuperación. Quien vea el flyer puede ser un miembro que quiere profundizar en la literatura de NA, así que debe sentirse como una invitación a aprender en comunidad. Se compartirá por [WHATSAPP / INSTAGRAM / IMPRESO].
+
+TAREA
+Diseña un flyer en formato [FORMATO: cuadrado 1080 x 1080 px / vertical 1080 x 1350 px] para invitar a un taller o grupo de estudio sobre [TEMA: ej. el Libro Básico, el Paso 1, la Tradición 3]. Propósito: que la gente sepa de qué trata, cuándo y dónde.
+
+TEXTO (escríbelo exactamente así, en español, con tildes. No agregues, quites ni cambies nada):
+Taller de [TEMA]
+[NOMBRE DEL GRUPO]
+[DÍA] a las [HORA]
+[LUGAR Y DIRECCIÓN]
+[TELÉFONO]
+
+COLORES
+Paleta de colores aprobada (usa solo colores de esta lista, con estos códigos exactos): Blanco #FFFFFF, Negro #000000, Gris #999999, Beige cálido #E8CAAC, Amarillo suave #FADA88, Morado profundo #7256A6, Lavanda #B39FD5, Coral suave #FD8775, Azul medio #1C76BF, Azul profundo #1F3D85.
+Para este flyer usa:
+- Fondo: [COLOR + HEX]
+- Textos principales: [COLOR + HEX]
+- Acento (título o línea): [COLOR + HEX]
+Usa dos o tres colores en total. El texto debe leerse con facilidad sobre el fondo. No agregues degradados ni colores que no estén en la lista.
+
+IMAGEN
+Adjunto una imagen autorizada. Colócala [DÓNDE: de fondo / en una esquina / como adorno], sin deformarla.
+
+ESTILO
+[ESTILO: ej. sobrio, claro, sencillo]. Fondos planos, mucho espacio en blanco, márgenes iguales y una jerarquía clara: título grande, datos medianos, contacto pequeño. Máximo dos tipografías de lectura fácil. El mensaje transmite claridad, respeto y unidad.
+
+LOGO
+Adjunto el logo original de [TIPO DE LOGO: iniciales estilizadas de NA / logo de servicio / logo de grupo / masthead 2017]. Colócalo en la esquina [ESQUINA] con un tamaño de [TAMAÑO: ej. 20% del ancho]. No lo estires, no lo recortes, no lo redibujes, no le agregues nada encima y no cambies sus colores. Debe conservar su símbolo ®. Si no puedes colocarlo exactamente igual, deja el espacio vacío y no lo dibujes.
+
+LÍMITES
+- Sin personas ni rostros, sin efectos de brillo, sombras ni degradados llamativos, sin íconos de stock.
+- Sin promesas ni frases dramáticas.
+- Usa "adicto", "adicción" y "tiempo limpio". No uses "alcohólico", "sobriedad", "codependiente" ni "24 horas".
+
+Si falta algún dato, pregúntamelo antes de diseñar. No lo inventes.`
+              },
+              {
+                titulo: "10. Gratitud",
+                texto: `ROL
+Actúa como un diseñador gráfico profesional con experiencia en comunicación para organizaciones sin fines de lucro y en diseño editorial. Tu trabajo es limpio, sobrio y legible; no usas efectos ni adornos innecesarios.
+
+CONTEXTO
+Estoy creando un flyer para [NOMBRE DEL GRUPO], de Narcóticos Anónimos (NA) en Bogotá, Colombia. NA es una confraternidad de adictos en recuperación. Quien vea el flyer puede ser un miembro o su familia, así que el tono debe ser agradecido, humilde y sin dramatismo. Se compartirá por [WHATSAPP / INSTAGRAM / IMPRESO].
+
+TAREA
+Diseña un flyer en formato [FORMATO: cuadrado 1080 x 1080 px / vertical 1080 x 1350 px] para agradecer la asistencia y el apoyo a [NOMBRE DEL EVENTO]. Propósito: reconocer a quienes participaron y reforzar el sentido de comunidad.
+
+TEXTO (escríbelo exactamente así, en español, con tildes. No agregues, quites ni cambies nada):
+Gracias
+[MENSAJE DE AGRADECIMIENTO]
+[NOMBRE DEL GRUPO]
+[FECHA]
+
+COLORES
+Paleta de colores aprobada (usa solo colores de esta lista, con estos códigos exactos): Blanco #FFFFFF, Negro #000000, Gris #999999, Beige cálido #E8CAAC, Amarillo suave #FADA88, Morado profundo #7256A6, Lavanda #B39FD5, Coral suave #FD8775, Azul medio #1C76BF, Azul profundo #1F3D85.
+Para este flyer usa:
+- Fondo: [COLOR + HEX]
+- Textos principales: [COLOR + HEX]
+- Acento (título): [COLOR + HEX]
+Usa dos o tres colores en total. El texto debe leerse con facilidad sobre el fondo. No agregues degradados ni colores que no estén en la lista.
+
+IMAGEN
+Adjunto una imagen autorizada. Colócala [DÓNDE: de fondo / en una esquina / como adorno suave], sin deformarla.
+
+ESTILO
+[ESTILO: ej. cálido, sencillo, sereno]. Fondos planos, mucho espacio en blanco, márgenes iguales y una jerarquía clara: título grande, mensaje centrado, firma pequeña. Máximo dos tipografías de lectura fácil. El mensaje transmite gratitud, humildad y esperanza.
+
+LOGO
+Adjunto el logo original de [TIPO DE LOGO: iniciales estilizadas de NA / logo de servicio / logo de grupo / masthead 2017]. Colócalo en la esquina [ESQUINA] con un tamaño de [TAMAÑO: ej. 20% del ancho]. No lo estires, no lo recortes, no lo redibujes, no le agregues nada encima y no cambies sus colores. Debe conservar su símbolo ®. Si no puedes colocarlo exactamente igual, deja el espacio vacío y no lo dibujes.
+
+LÍMITES
+- Sin personas ni rostros, sin efectos de brillo, sombras ni degradados llamativos, sin íconos de stock.
+- Sin promesas ni frases dramáticas.
+- Usa "adicto", "adicción" y "tiempo limpio". No uses "alcohólico", "sobriedad", "codependiente" ni "24 horas".
+
+Si falta algún dato, pregúntamelo antes de diseñar. No lo inventes.`
+              },
+              {
+                titulo: "11. Story para redes (vertical)",
+                texto: `ROL
+Actúa como un diseñador gráfico profesional con experiencia en redes sociales para organizaciones sin fines de lucro. Tu trabajo es limpio, directo y legible en un teléfono; no usas efectos ni adornos innecesarios.
+
+CONTEXTO
+Estoy creando una story para [NOMBRE DEL GRUPO], de Narcóticos Anónimos (NA) en Bogotá, Colombia. NA es una confraternidad de adictos en recuperación. Quien la vea lo hace rápido desde el celular, así que el mensaje debe entenderse en dos segundos. Se compartirá en [INSTAGRAM / WHATSAPP ESTADO].
+
+TAREA
+Diseña una story en formato vertical 1080 x 1920 px para anunciar [MENSAJE: ej. la reunión de hoy, un evento, una nueva reunión]. Propósito: que la persona toque el enlace o llegue al lugar.
+
+TEXTO (escríbelo exactamente así, en español, con tildes. No agregues, quites ni cambies nada):
+[TÍTULO CORTO]
+[DÍA Y HORA]
+[LUGAR]
+[ENLACE O TELÉFONO]
+
+COLORES
+Paleta de colores aprobada (usa solo colores de esta lista, con estos códigos exactos): Blanco #FFFFFF, Negro #000000, Gris #999999, Beige cálido #E8CAAC, Amarillo suave #FADA88, Morado profundo #7256A6, Lavanda #B39FD5, Coral suave #FD8775, Azul medio #1C76BF, Azul profundo #1F3D85.
+Para este flyer usa:
+- Fondo: [COLOR + HEX]
+- Textos principales: [COLOR + HEX]
+- Acento (botón o franja): [COLOR + HEX]
+Usa dos o tres colores en total. El texto debe leerse con facilidad sobre el fondo. No agregues degradados ni colores que no estén en la lista.
+
+IMAGEN
+Adjunto una imagen autorizada. Colócala [DÓNDE: en la parte superior / de fondo / como adorno], sin deformarla.
+
+ESTILO
+[ESTILO: ej. moderno, sencillo, directo]. Fondos planos, textos grandes, mucho espacio en blanco y una jerarquía clara. Máximo dos tipografías de lectura fácil. Deja libre la franja superior e inferior de la story para que no las tape la interfaz de la app.
+
+LOGO
+Adjunto el logo original de [TIPO DE LOGO: iniciales estilizadas de NA / logo de servicio / logo de grupo / masthead 2017]. Colócalo en la esquina [ESQUINA] con un tamaño de [TAMAÑO: ej. 20% del ancho]. No lo estires, no lo recortes, no lo redibujes, no le agregues nada encima y no cambies sus colores. Debe conservar su símbolo ®. Si no puedes colocarlo exactamente igual, deja el espacio vacío y no lo dibujes.
+
+LÍMITES
+- Sin personas ni rostros, sin efectos de brillo, sombras ni degradados llamativos, sin íconos de stock.
+- Sin promesas ni frases dramáticas.
+- Usa "adicto", "adicción" y "tiempo limpio". No uses "alcohólico", "sobriedad", "codependiente" ni "24 horas".
+
+Si falta algún dato, pregúntamelo antes de diseñar. No lo inventes.`
+              },
+              {
+                titulo: "12. Recordatorio semanal",
+                texto: `ROL
+Actúa como un diseñador gráfico profesional con experiencia en comunicación para organizaciones sin fines de lucro y en diseño editorial. Tu trabajo es limpio, sobrio y legible; no usas efectos ni adornos innecesarios.
+
+CONTEXTO
+Estoy creando un recordatorio para [NOMBRE DEL GRUPO], de Narcóticos Anónimos (NA) en Bogotá, Colombia. NA es una confraternidad de adictos en recuperación. Quien lo vea ya conoce el grupo o lo visita con frecuencia, así que debe ser breve y cercano. Se compartirá por [WHATSAPP / INSTAGRAM / IMPRESO].
+
+TAREA
+Diseña un recordatorio en formato [FORMATO: cuadrado 1080 x 1080 px / vertical 1080 x 1350 px] para recordar la reunión de cada semana. Propósito: que la gente no olvide la cita y se anime a volver.
+
+TEXTO (escríbelo exactamente así, en español, con tildes. No agregues, quites ni cambies nada):
+Te esperamos
+[DÍA] a las [HORA]
+[NOMBRE DEL GRUPO]
+[LUGAR Y DIRECCIÓN]
+
+COLORES
+Paleta de colores aprobada (usa solo colores de esta lista, con estos códigos exactos): Blanco #FFFFFF, Negro #000000, Gris #999999, Beige cálido #E8CAAC, Amarillo suave #FADA88, Morado profundo #7256A6, Lavanda #B39FD5, Coral suave #FD8775, Azul medio #1C76BF, Azul profundo #1F3D85.
+Para este flyer usa:
+- Fondo: [COLOR + HEX]
+- Textos principales: [COLOR + HEX]
+- Acento (día y hora): [COLOR + HEX]
+Usa dos o tres colores en total. El texto debe leerse con facilidad sobre el fondo. No agregues degradados ni colores que no estén en la lista.
+
+IMAGEN
+Adjunto una imagen autorizada. Colócala [DÓNDE: de fondo / en una esquina / como adorno], sin deformarla.
+
+ESTILO
+[ESTILO: ej. cálido, sencillo, sereno]. Fondos planos, mucho espacio en blanco, márgenes iguales y una jerarquía clara: "Te esperamos" grande, día y hora destacados, lugar pequeño. Máximo dos tipografías de lectura fácil. El mensaje transmite cercanía y constancia.
+
+LOGO
+Adjunto el logo original de [TIPO DE LOGO: iniciales estilizadas de NA / logo de servicio / logo de grupo / masthead 2017]. Colócalo en la esquina [ESQUINA] con un tamaño de [TAMAÑO: ej. 20% del ancho]. No lo estires, no lo recortes, no lo redibujes, no le agregues nada encima y no cambies sus colores. Debe conservar su símbolo ®. Si no puedes colocarlo exactamente igual, deja el espacio vacío y no lo dibujes.
+
+LÍMITES
+- Sin personas ni rostros, sin efectos de brillo, sombras ni degradados llamativos, sin íconos de stock.
+- Sin promesas ni frases dramáticas.
+- Usa "adicto", "adicción" y "tiempo limpio". No uses "alcohólico", "sobriedad", "codependiente" ni "24 horas".
+
+Si falta algún dato, pregúntamelo antes de diseñar. No lo inventes.`
+              }
+            ];
+
+            const raiz = document.querySelector("#prompts .prompt-carrusel");
+            const titulo = raiz.querySelector(".prompt-titulo");
+            const nota = raiz.querySelector(".prompt-nota");
+            const codigo = raiz.querySelector(".prompt-code code");
+            const contador = raiz.querySelector(".prompt-contador");
+            const copiar = raiz.querySelector(".prompt-copiar");
+            let actual = 0;
+
+            const escapar = (s) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+            function mostrar() {
+              const p = PROMPTS[actual];
+              titulo.textContent = p.titulo;
+              nota.textContent = p.nota || "";
+              nota.hidden = !p.nota;
+              codigo.innerHTML = escapar(p.texto).replace(/\[[^\]]*\]/g, (m) => `<span class="ph">${m}</span>`);
+              contador.textContent = `${actual + 1} / ${PROMPTS.length}`;
+              copiar.textContent = "Copiar prompt";
+            }
+
+            raiz.querySelectorAll(".prompt-nav").forEach((b) => b.addEventListener("click", () => {
+              actual = (actual + Number(b.dataset.dir) + PROMPTS.length) % PROMPTS.length;
+              mostrar();
+            }));
+
+            copiar.addEventListener("click", async () => {
+              try {
+                await navigator.clipboard.writeText(PROMPTS[actual].texto);
+                copiar.textContent = "¡Copiado!";
+              } catch (e) {
+                copiar.textContent = "No se pudo copiar";
+              }
+            });
+
+            mostrar();
+          })();
+        </script>
       </details>
 
       <p><a class="btn" href="eventos.html">Volver a eventos</a></p>

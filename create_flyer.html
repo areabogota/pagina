@@ -54,6 +54,16 @@
     #ia-utiles td { border: 1px solid currentColor; padding: 0.6rem 0.75rem; text-align: center; vertical-align: middle; }
     #ia-utiles thead th { font-weight: 700; }
     #ia-utiles tbody th { white-space: nowrap; }
+    @media (max-width: 600px) {
+      #ia-utiles table { min-width: 0; }
+      #ia-utiles thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+      #ia-utiles tr { display: block; border: 1px solid currentColor; border-radius: 8px; margin-bottom: .8rem; padding: .5rem .75rem; }
+      #ia-utiles th, #ia-utiles td { display: block; border: none; text-align: center; padding: .35rem 0; }
+      #ia-utiles tbody th { white-space: normal; font-size: 1.05rem; border-bottom: 1px solid currentColor; margin-bottom: .3rem; padding-bottom: .4rem; }
+      #ia-utiles td:nth-of-type(1)::before { content: "Por qué es buena: "; font-weight: 700; }
+      #ia-utiles td:nth-of-type(2)::before { content: "Plan gratuito y límites: "; font-weight: 700; }
+      #ia-utiles td:nth-of-type(3)::before { content: "Enlace: "; font-weight: 700; }
+    }
     #prompts .prompt-barra { display: flex; align-items: center; justify-content: center; gap: .75rem; }
     #prompts .prompt-titulo { font-weight: 700; text-align: center; }
     #prompts .prompt-nav { flex: 0 0 auto; width: 2.4rem; height: 2.4rem; border-radius: 50%; border: 2px solid var(--blue); background: transparent; color: inherit; font-size: 1.4rem; line-height: 1; cursor: pointer; }

@@ -160,15 +160,15 @@
     return j;
   }
 
-  // Tabla de todos los eventos con botón Aprobar para los pendientes
+  // Tabla de eventos pendientes con botón Aprobar
   function adminPanel(panel, clave, eventos) {
     panel.hidden = false;
     const est = e => { const s = norm(e.estado); return s === "activo" ? "Aprobado" : s === "archivado" ? "Archivado" : "Pendiente"; };
     const fechas = e => e["fecha fin"] && e["fecha fin"] !== e["fecha inicio"] ? `${esc(e["fecha inicio"])} al ${esc(e["fecha fin"])}` : esc(e["fecha inicio"]);
-    const orden = eventos.filter(e => est(e) !== "Archivado").sort((a, b) => (est(a) === "Pendiente" ? 0 : 1) - (est(b) === "Pendiente" ? 0 : 1));
+    const pendientes = eventos.filter(e => est(e) === "Pendiente");
     panel.innerHTML = `<div class="admin-wrap"><table class="admin-tabla">
       <thead><tr><th>Flyer</th><th>Evento</th><th>Información</th><th>Estado</th></tr></thead>
-      <tbody>${orden.map(e => {
+      <tbody>${pendientes.map(e => {
         const img = safeUrl(e.flyer);
         const s = est(e);
         return `<tr data-fila="${Number(e.fila)}">
@@ -253,7 +253,7 @@
     function inicio(ok) {
       panel.innerHTML = titulo + (ok ? aviso("ok", ok) : "") + '<p><strong>¿Qué deseas hacer?</strong></p>' +
         '<button type="button" class="btn" data-a="nuevo">Agregar evento</button> <button type="button" class="btn" data-a="editar">Editar o eliminar un evento</button>' +
-        '<p><button type="button" class="btn" data-modal="create_flyer">Recomendación para crear flyers con IA</button></p>';
+        '<p><a class="btn" href="create_flyer.html">Recomendación para crear flyers con IA</a></p>';
       panel.querySelector("[data-a=nuevo]").onclick = () => formulario(null);
       panel.querySelector("[data-a=editar]").onclick = lista;
     }

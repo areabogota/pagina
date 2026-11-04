@@ -1,4 +1,5 @@
-﻿:root {
+﻿@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap");
+:root {
   --blue: #1C76BF;
   --blue-dark: #1f3d85;
   --accent: #FADA88;
@@ -13,7 +14,7 @@
   --radius: 12px;
 }
 * { box-sizing: border-box; }
-body { margin: 0; font-family: system-ui, "Segoe UI", Roboto, sans-serif; color: var(--text); background: var(--bg); line-height: 1.5; }
+body { margin: 0; font-family: "Montserrat", system-ui, "Segoe UI", Roboto, sans-serif; color: var(--text); background: var(--bg); line-height: 1.5; }
 a { color: var(--blue); }
 
 .header { background: var(--blue-dark); border-bottom: 4px solid var(--purple); color: #fff; position: sticky; top: 0; z-index: 10; }

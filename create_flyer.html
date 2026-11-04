@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Crear flyers con IA – NA Bogotá</title>
+  <link rel="icon" href="https://res.cloudinary.com/dlspk9ipi/image/upload/v1776920336/LOGO-AZUL_1_uoqp92.png">
+  <link rel="stylesheet" href="css/styles.css?v=84">
+  <style>
+    #private-content h1 { text-transform: capitalize; font-size: 2.2rem; }
+    #private-content h2 { color: var(--purple); }
+    #private-content table { width: 100%; border-collapse: collapse; margin: 1rem 0; text-align: center; border: 2px solid var(--blue); }
+    #private-content table th, #private-content table td { border: 1px solid var(--blue); padding: .5rem; }
+    #private-content table th { background: var(--blue-dark); color: #fff; }
+    #private-content table tbody tr:nth-child(even) { background: rgba(120, 180, 60, .12); }
+    #private-content .swatch { display: inline-block; width: 2.4rem; height: 1.4rem; border-radius: 4px; border: 1px solid var(--blue); vertical-align: middle; }
+    #private-content .logos-muestra { display: flex; justify-content: center; margin: 1rem 0; }
+    #private-content .logos-muestra figure { margin: 0; width: min(320px, 100%); text-align: center; padding: .25rem; }
+    #private-content .logos-muestra img { max-width: 100%; height: 130px; object-fit: contain; }
+    #private-content .logo-oscuro { display: none; }
+    html[data-tema="dark"] #private-content .logo-claro { display: none; }
+    html[data-tema="dark"] #private-content .logo-oscuro { display: block; }
+    html[data-tema="dark"] #private-content h1, html[data-tema="dark"] #private-content h2, html[data-tema="dark"] #private-content h3 { color: var(--accent); }
+    html[data-tema="dark"] #private-content h2 { color: var(--lilac); }
+    #private-content details { margin: .6rem 0; border: 1px solid var(--muted); border-radius: 8px; padding: 0 1rem; }
+    #private-content details[open] { padding-bottom: 1rem; }
+    #private-content summary { cursor: pointer; list-style: none; display: flex; align-items: center; justify-content: space-between; padding: .7rem 0; }
+    #private-content summary::-webkit-details-marker { display: none; }
+    #private-content summary::after { content: "▾"; font-size: 1.1rem; transition: transform .2s; }
+    #private-content details[open] > summary::after { transform: rotate(180deg); }
+    #private-content summary h2 { display: inline; font-size: 1.1rem; margin: 0; }
+  </style>
+  <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-H0JF4NM30G"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-H0JF4NM30G');
+</script>
+
+</head>
+<body>
+  <header class="header"><div class="header-inner">
+    <a class="brand" href="index.html"><img src="https://res.cloudinary.com/dlspk9ipi/image/upload/v1776919815/Mesa_de_trabajo_2_cbxrik.png" alt="Logo NA Área Bogotá" class="logo"><span class="brand-text">Narcóticos Anónimos <span>Área Bogotá</span></span></a>
+    <button class="menu-toggle" aria-label="Menú" aria-expanded="false"><span></span><span></span><span></span></button>
+    <nav class="nav"><ul>
+      <li><a href="index.html">Inicio</a></li><li><a href="soy-adicto.html">¿Soy recién llegado?</a></li><li><a href="reuniones.html">Reuniones</a></li><li><a href="eventos.html">Eventos</a></li><li><a href="calendario.html">Calendario</a></li><li><a href="guia.html">GPICSAB</a></li>
+      <li><a href="septima.html">7ª Tradición</a></li>      <li class="nav-dropdown">
+        <button class="nav-dropdown-toggle" type="button" aria-expanded="false">Lecturas</button>
+        <ul class="nav-submenu" hidden>
+          <li><a href="https://fzla.org/sxh/" target="_blank" rel="noopener noreferrer">Solo por hoy</a></li>
+          <li><a href="https://fzla.org/principio-diario/" target="_blank" rel="noopener noreferrer">Principio Espiritual</a></li>
+        </ul>
+      </li>
+      <li class="nav-dropdown solo-auth">
+        <button class="nav-dropdown-toggle" type="button" aria-expanded="false">Miembros de CSAB</button>
+        <ul class="nav-submenu" hidden>
+          <li><a href="mociones.html">Mociones</a></li>
+          <li><a href="actas.html">Actas asambleas &amp; reuniones</a></li>
+          <li><a href="#" data-modal="admin">Admin</a></li>
+        </ul>
+      </li>
+    </ul></nav>
+  </div></header>
+  <main>
+    <section id="private-lock" class="private-lock card">
+      <h1>Contenido para miembros</h1>
+      <p>Inicia sesión para consultar esta página.</p>
+      <button class="btn" id="private-login" type="button">Iniciar sesión</button>
+    </section>
+    <section id="private-content" class="private-content card" hidden>
+      <h1>Guía para crear Flyers con la IA</h1>
+
+ <p class="intro">
+  Un flyer es como una invitación hecha con mucho cariño. Cuando lo compartimos,
+  es como si nuestro grupo extendiera la mano a un adicto que todavía sufre y le
+  dijera: "Aquí te esperamos". Ese flyer no lo hace una sola persona: representa la
+  voluntad de todo el grupo, de todos los que servimos juntos. Además, los logos y
+  los textos de NA no son de nadie en particular. Son de toda la Confraternidad,
+  como una casa que construimos entre todos, y por eso la cuidamos entre todos. A
+  eso se le llama <strong>propiedad intelectual</strong>. Si quieres aprender un
+  poco más, puedes leer esta página:
+  <a href="https://na.org/service-material/fipt/fipt-faq/"
+     target="_blank" rel="noopener noreferrer">FIPT FAQ – Narcotics Anonymous World Services</a>
+  y este documento completo en español:
+  <a href="https://na.org/wp-content/uploads/2025/03/FIPT-2023-Mar-25-Spanish.pdf"
+     target="_blank" rel="noopener noreferrer">2023_SP_FIPT (PDF)</a>.
+</p>
+
+<details id="paleta-de-colores" name="guia-flyer">
+  <summary><h2>Paleta de colores</h2></summary>
+
+  <h3>¿Qué es una paleta de colores?</h3>
+  <p>
+    Imagina una caja de crayones donde alguien ya escogió los colores que mejor
+    combinan entre sí. Eso es una paleta: un grupo de colores elegidos con cuidado
+    para usarlos juntos.
+  </p>
+
+  <p>
+    En NA Área Bogotá tenemos nuestra propia paleta aprobada. Si todos los flyers
+    usan estos colores, cuando alguien los vea sabrá enseguida: "Ese flyer es de NA
+    Bogotá". Es como cuando un equipo de fútbol usa siempre la misma camiseta.
+  </p>
+
+  <p>
+    ¿Estamos obligados? No. Somos libres para crear y NA no nos limita, así que
+    podríamos usar otros colores. Pero te pedimos con cariño que
+    <strong>nos esforcemos por usar los colores de la paleta</strong>. Así todos
+    nuestros flyers se ven como de la misma familia.
+  </p>
+
+  <h3>¿Cómo se le dice un color a la computadora?</h3>
+  <p>
+    Las computadoras no entienden "azul clarito" ni "morado bonito". Necesitan un
+    código, como un nombre secreto para cada color. Hay muchas formas de escribir
+    ese código. Tienen nombres raros como CMYK, HSL, HSB y Pantone, y todas las
+    computadoras, navegadores e inteligencias artificiales las entienden. Pero hay
+    dos que se usan muchísimo y son las más fáciles. Por eso las usamos en esta guía:
+  </p>
+
+  <ul>
+    <li><strong>RGB:</strong> las letras son las iniciales de rojo, verde y azul
+      (en inglés: Red, Green, Blue). Es como mezclar tres luces de colores. Cada luz
+      va de 0 (apagada) a 255 (lo más fuerte). Si las tres están en 255, sale el
+      blanco; si las tres están en 0, sale el negro.</li>
+    <li><strong>HEX (hexadecimal):</strong> es lo mismo que RGB, pero escrito de
+      forma más corta: un símbolo # y seis letras o números, como #1C76BF. Es como
+      el apodo corto del color.</li>
+  </ul>
+
+
+
+  <h3>Nuestros colores</h3>
+  <p>
+    Esta tabla es como la lista de nuestros crayones. Cada color tiene su número, su
+    nombre, su código HEX y su código RGB. Puedes copiar el código y pegarlo donde
+    la herramienta te lo pida.
+  </p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>N°</th>
+        <th>Muestra</th>
+        <th>Nombre</th>
+        <th>HEX</th>
+        <th>RGB</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>1</td><td><span class="swatch" style="background:#FFFFFF"></span></td><td>Blanco</td><td>#FFFFFF</td><td>(255, 255, 255)</td></tr>
+      <tr><td>2</td><td><span class="swatch" style="background:#000000"></span></td><td>Negro</td><td>#000000</td><td>(0, 0, 0)</td></tr>
+      <tr><td>3</td><td><span class="swatch" style="background:#999999"></span></td><td>Gris</td><td>#999999</td><td>(153, 153, 153)</td></tr>
+      <tr><td>4</td><td><span class="swatch" style="background:#E8CAAC"></span></td><td>Beige cálido</td><td>#E8CAAC</td><td>(232, 202, 172)</td></tr>
+      <tr><td>5</td><td><span class="swatch" style="background:#FADA88"></span></td><td>Amarillo suave</td><td>#FADA88</td><td>(250, 218, 136)</td></tr>
+      <tr><td>6</td><td><span class="swatch" style="background:#7256A6"></span></td><td>Morado profundo</td><td>#7256A6</td><td>(114, 86, 166)</td></tr>
+      <tr><td>7</td><td><span class="swatch" style="background:#B39FD5"></span></td><td>Lavanda</td><td>#B39FD5</td><td>(179, 159, 213)</td></tr>
+      <tr><td>8</td><td><span class="swatch" style="background:#FD8775"></span></td><td>Coral suave</td><td>#FD8775</td><td>(253, 135, 117)</td></tr>
+      <tr><td>9</td><td><span class="swatch" style="background:#1C76BF"></span></td><td>Azul medio</td><td>#1C76BF</td><td>(28, 118, 191)</td></tr>
+      <tr><td>10</td><td><span class="swatch" style="background:#1F3D85"></span></td><td>Azul profundo</td><td>#1F3D85</td><td>(31, 61, 133)</td></tr>
+    </tbody>
+  </table>
+</details>
+
+<details id="logos" name="guia-flyer">
+  <summary><h2>Logos institucionales</h2></summary>
+
+  <h3>¿Qué es un logo?</h3>
+  <p>
+    Un logo es un dibujito especial que dice quiénes somos, como la firma al final
+    de una carta. Los logos de NA son la firma de toda nuestra Confraternidad. Como
+    son de todos, hay que tratarlos con mucho respeto.
+  </p>
+  <div class="logos-muestra">
+    <figure class="logo-claro">
+      <img src="https://res.cloudinary.com/dlspk9ipi/image/upload/v1793817292/Mesa_de_trabajo_7_1_v065ul.png" alt="Imagen decorativa para modo claro">
+    </figure>
+    <figure class="logo-oscuro">
+      <img src="https://res.cloudinary.com/dlspk9ipi/image/upload/v1793817293/Mesa_de_trabajo_8_2_k1qk9z.png" alt="Imagen decorativa para modo oscuro">
+    </figure>
+  </div>
+
+  <h3>Reglas fáciles para cuidar los logos</h3>
+  <ul>
+    <li><strong>No se cambian.</strong> Imagina una foto de tu familia: no la
+      estiras, no la recortas, no le dibujas encima. Con el logo es igual: se usa
+      tal como es.</li>
+    <li><strong>No se los pedimos a la IA.</strong> La inteligencia artificial no
+      debe inventar un logo ni "arreglarlo", porque lo puede dibujar mal. Primero
+      hacemos el flyer y al final ponemos el logo original, como quien pega una
+      estampilla en una carta.</li>
+    <li><strong>Llevan su símbolo ®.</strong> Es una R dentro de un circulito. Es
+      como un letrero que dice: "Este dibujo tiene dueño: toda la Confraternidad".</li>
+    <li><strong>Sus colores.</strong> Las iniciales estilizadas de NA y el logo de
+      servicio pueden ir del color que mejor combine con el flyer. El logo de grupo
+      y el masthead 2017 tienen colores definidos en la guía oficial, y esos sí hay
+      que respetarlos.</li>
+    <li><strong>Quién los usa.</strong> Los pueden usar los grupos y comités de
+      servicio que estén registrados ante NAWS. Si eres un miembro y tienes dudas,
+      puedes leer el Boletín de Propiedad Intelectual #2 en
+      <a href="https://na.org/fipt"
+         target="_blank" rel="noopener noreferrer">na.org/fipt</a>
+      o preguntar a tu servicio.</li>
+  </ul>
+</details>
+
+<details id="imagenes" name="guia-flyer">
+  <summary><h2>Imágenes</h2></summary>
+
+  <p>
+    ¡Buenas noticias! El Área Bogotá de NA ya tiene imágenes preparadas para que las
+    usemos en nuestros flyers. Es como una caja de materiales para manualidades:
+    todo está listo y solo hay que escoger lo que más nos guste y combine.
+  </p>
+
+  <h3>¿Cómo le ayudo a la IA?</h3>
+  <p>
+    Piensa en la inteligencia artificial como un ayudante nuevo que acaba de llegar.
+    No sabe qué queremos hacer, así que hay que mostrárselo. Por eso, cuando
+    trabajemos con la IA, <strong>le damos la imagen que más combine con nuestro
+    flyer</strong>. Si le damos una imagen bonita y adecuada, ella entiende mejor y
+    el resultado queda mucho mejor.
+  </p>
+
+  <h3>¿Cómo sabemos si nuestro flyer es de calidad?</h3>
+  <p>
+    Imagina que el flyer es una carta para alguien que nunca ha venido a nuestro
+    grupo. Esa persona no sabe quién la invita ni a dónde ir. Entonces la carta debe
+    traer todo lo necesario. Un flyer de calidad cumple con esta lista:
+  </p>
+
+  <ul>
+    <li><strong>Tiene el logo.</strong> Es la firma de la carta. Así la persona sabe
+      de quién viene. Este es uno de los puntos más importantes.</li>
+    <li><strong>El logo está intacto.</strong> No está estirado, ni cambiado de
+      color (salvo donde la guía oficial lo permite), ni dibujado de nuevo. Y tiene
+      su símbolo ® al lado.</li>
+    <li><strong>Dice qué, cuándo y dónde.</strong> Trae el nombre de la reunión o
+      del evento, el día, la hora y el lugar. Si falta uno, la persona se pierde.</li>
+    <li><strong>Trae un contacto.</strong> Un número o un medio para preguntar si
+      tiene dudas, como un timbre para llamar a la puerta.</li>
+    <li><strong>Usa nuestros colores.</strong> Los de la paleta del Área, para que
+      se vea que es de nuestra familia.</li>
+    <li><strong>Se lee fácil.</strong> Las letras son grandes y claras, y no hay
+      tantos dibujos que confundan.</li>
+    <li><strong>Cuida el anonimato.</strong> No muestra la cara de personas reales.
+      En NA protegemos la privacidad de todos, como cuando guardamos un secreto.</li>
+  </ul>
+
+  <p>
+    Cuando termines tu flyer, revisa esta lista como si fuera un examen sencillo. Si
+    puedes marcar todas las casillas, ¡felicitaciones! Estás llevando el mensaje con
+    claridad y con mucho cuidado.
+  </p>
+</details>
+
+<details id="prompt-engineering" name="guia-flyer">
+  <summary><h2>El prompt engineering en nuestra construcción de flyers</h2></summary>
+  <p>Contenido sobre prompt engineering…</p>
+</details>
+
+<details id="ejemplos" name="guia-flyer">
+  <summary><h2>Ejemplos</h2></summary>
+  <p>Contenido con ejemplos…</p>
+</details>
+
+<details id="prompts" name="guia-flyer">
+  <summary><h2>Prompts que podemos usar</h2></summary>
+  <p>Contenido con prompts…</p>
+</details>
+
+      <p><a class="btn" href="eventos.html">Volver a eventos</a></p>
+    </section>
+  </main>
+  <footer><div class="foot-inner">
+    <div class="foot-area"><img src="https://res.cloudinary.com/dlspk9ipi/image/upload/v1776919815/Mesa_de_trabajo_2_cbxrik.png" alt="NA Área Bogotá" class="logo-foot"><div><strong>Narcóticos Anónimos Área Bogotá</strong><small>Todos los derechos reservados &copy; <span id="year"></span></small></div></div>
+    <div class="foot-redes" id="redes"><h2>Enlaces de Interés</h2><div class="redes-lista" id="redes-lista"></div></div>
+  </div></footer>
+  <script src="js/config.js?v=51"></script>
+  <script src="js/tema.js?v=55"></script>
+  <script src="js/main.js?v=55"></script>
+  <script src="js/auth.js?v=56"></script>
+  <script src="js/modales.js?v=64"></script>
+  <script src="js/private-pages.js?v=51"></script>
+</body>
+</html>

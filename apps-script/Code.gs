@@ -230,7 +230,9 @@ function admin_(b) {
   }
   const v = sh.getDataRange().getDisplayValues(), out = [];
   for (let i = 1; i < v.length; i++) {
-    if (!v[i].join("").trim() || norm_(v[i][iE]) === "archivado") continue;
+    if (!v[i].join("").trim()) continue;
+    const st = norm_(v[i][iE]);
+    if (st === "activo" || st === "archivado") continue;
     const o = { fila: i + 1 };
     cols.forEach((c, j) => o[c] = v[i][j]);
     out.push(o);

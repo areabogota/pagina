@@ -138,6 +138,13 @@ body::before { content: ""; position: fixed; inset: 0; z-index: 0; pointer-event
 .auth-box { position: relative; background: #fff; color: #000; border-radius: 16px; padding: 1.5rem; width: min(380px, 100%); display: grid; gap: .7rem; border-top: 5px solid var(--purple); }
 .auth-box h2 { margin: 0; color: var(--blue-dark); }
 .auth-box p { margin: 0; color: #555; font-size: .9rem; }
+.auth-box .aviso { border-left: 6px solid var(--coral); background: #fff4f0; padding: 1rem; border-radius: 8px; display: grid; gap: .8rem; }
+.auth-box .aviso p { color: #222; font-size: 1rem; font-weight: 500; text-align: justify; }
+.auth-box .aviso-leido { display: flex; gap: .5rem; align-items: center; color: #222; font-weight: 700; cursor: pointer; }
+.auth-box .aviso-leido input { width: 1.2rem; height: 1.2rem; }
+.auth-box .prov:disabled { opacity: .45; cursor: not-allowed; }
+html[data-tema="dark"] .auth-box .aviso { background: var(--card); color: var(--text); }
+html[data-tema="dark"] .auth-box .aviso p, html[data-tema="dark"] .auth-box .aviso-leido { color: var(--text); }
 .auth-close { position: absolute; top: .4rem; right: .7rem; background: none; border: 0; font-size: 1.8rem; cursor: pointer; color: #666; }
 .prov { padding: .75rem; border-radius: 10px; border: 1px solid #ccc; background: #fff; font: inherit; font-weight: 600; cursor: pointer; }
 .prov:hover { filter: brightness(.95); }

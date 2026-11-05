@@ -7,5 +7,9 @@ document.addEventListener("na-auth", e => {
 });
 
 document.addEventListener("click", e => {
-  if (e.target.closest("#private-login")) document.getElementById("entrar")?.click();
+  const login = e.target.closest("#private-login");
+  if (!login) return;
+  const entrar = document.getElementById("entrar");
+  if (entrar) entrar.dataset.motivo = document.getElementById("private-lock")?.dataset.motivo || "";
+  entrar?.click();
 });

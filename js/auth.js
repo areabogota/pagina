@@ -8,6 +8,13 @@
     { id: "twitter", nombre: "X (Twitter)", cls: "twitter", make: () => new firebase.auth.TwitterAuthProvider() }
   ].filter(p => !cfg.PROVEEDORES || cfg.PROVEEDORES.includes(p.id));
 
+  // Aviso que se muestra en la ventana de inicio de sesión según la sección que lo pide
+  const AVISOS = {
+    evento: "Para crear eventos y publicar flyers, iniciamos sesión con una cuenta de Google. Lo hacemos para que lo que se publica venga de los grupos y servicios, y para que alguien responda por esa información. El anonimato es la base espiritual de nuestras tradiciones, y la responsabilidad con lo que compartimos también es parte de servir. Quien publica se asegura de que los datos estén correctos, de que el logo esté intacto y de que se sigan las recomendaciones para la publicación. Cuida tu cuenta y no compartas tu clave con nadie.",
+    actas: "Aquí está el archivo de las actas de nuestras asambleas y reuniones: el registro de lo que hemos decidido entre todos a lo largo del tiempo. Según nuestra Guía de Procedimientos, las actas deben estar a disposición de los miembros del CSAB, y por eso para consultarlas pedimos iniciar sesión. Cada acta refleja lo que se decidió en su momento, así que al leerla ten presente su fecha y su contexto. Cuídalas y úsalas para el servicio, con la responsabilidad que merece esta información.",
+    mociones: "Aquí puedes consultar el historial de mociones: qué se propuso, cuándo y qué se decidió. Es la memoria de nuestro servicio. Nos ayuda a no repetir discusiones, a entender por qué se tomó una decisión y a mantener la continuidad cuando cambian los servidores de confianza. Consúltalo con respeto y sin personalizar: como nos recuerda la Duodécima Tradición, ( [...] los principios  antes que las personalidades). Las mociones se miran por sus ideas, no por quién las presentó."
+  };
+
   const cargar = src => new Promise((ok, fail) => {
     const s = document.createElement("script");
     s.src = src; s.onload = ok; s.onerror = fail;
@@ -50,6 +57,10 @@
     modal.innerHTML = `<div class="auth-box" role="dialog" aria-modal="true" aria-label="Ingresar">
       <button type="button" class="auth-close" aria-label="Cerrar">&times;</button>
       <h2>Ingresar</h2>
+      <div class="aviso" hidden>
+        <p></p>
+        <label class="aviso-leido"><input type="checkbox" id="aviso-leido"> He leído y acepto este aviso</label>
+      </div>
       <p>Selecciona ingresar por google. Recordaremos tu sesión en este dispositivo.</p>
       ${PROVEEDORES.map(p => `<button type="button" class="prov ${p.cls}" data-id="${p.id}">Continuar con ${p.nombre}</button>`).join("")}
       <p class="auth-err" role="alert"></p>
@@ -108,7 +119,19 @@
         li.querySelector("#salir").addEventListener("click", () => auth.signOut());
       } else {
         li.innerHTML = `<button type="button" class="auth-btn icon" id="entrar" title="Ingresar" aria-label="Ingresar">${ICONO}</button>`;
-        li.querySelector("#entrar").addEventListener("click", () => { modal.hidden = false; });
+        li.querySelector("#entrar").addEventListener("click", e => {
+          const texto = AVISOS[e.currentTarget.dataset.motivo];
+          const avisoEl = modal.querySelector(".aviso");
+          avisoEl.hidden = !texto;
+          avisoEl.querySelector("p").textContent = texto || "";
+          const leido = modal.querySelector("#aviso-leido");
+          leido.checked = false;
+          modal.querySelectorAll(".prov").forEach(b => { b.disabled = !!texto; });
+          modal.hidden = false;
+        });
+        modal.querySelector("#aviso-leido").addEventListener("change", e => {
+          modal.querySelectorAll(".prov").forEach(b => { b.disabled = !e.target.checked; });
+        });
       }
       document.dispatchEvent(new CustomEvent("na-auth", { detail: window.NA_USER }));
       const salirMovil = document.getElementById("salir-movil");

@@ -410,7 +410,7 @@
     // Agregar/editar eventos exige sesión iniciada: si no la hay, abre el inicio de sesión
     if (nombre === "evento" && !window.NA_USER) {
       const entrar = document.getElementById("entrar");
-      if (entrar) entrar.click(); else alert("Inicia sesión para agregar o editar eventos.");
+      if (entrar) { entrar.dataset.motivo = "evento"; entrar.click(); } else alert("Inicia sesión para agregar o editar eventos.");
       return;
     }
     document.querySelector(".nav")?.classList.remove("open");

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Administración – NA Bogotá</title>
+  <link rel="icon" href="https://res.cloudinary.com/dlspk9ipi/image/upload/v1776920336/LOGO-AZUL_1_uoqp92.png">
+  <link rel="stylesheet" href="css/styles.css?v=88">
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-H0JF4NM30G"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-H0JF4NM30G');
+  </script>
+</head>
+<body data-auth-motivo="admin">
+  <header class="header"><div class="header-inner">
+    <a class="brand" href="index.html"><img src="https://res.cloudinary.com/dlspk9ipi/image/upload/v1776919815/Mesa_de_trabajo_2_cbxrik.png" alt="Logo NA Área Bogotá" class="logo"><span class="brand-text">Narcóticos Anónimos <span>Área Bogotá</span></span></a>
+    <button class="menu-toggle" aria-label="Menú" aria-expanded="false"><span></span><span></span><span></span></button>
+    <nav class="nav"><ul>
+      <li><a href="index.html">Inicio</a></li><li><a href="soy-adicto.html">¿Soy recién llegado?</a></li><li><a href="reuniones.html">Reuniones</a></li><li><a href="eventos.html">Eventos</a></li><li><a href="calendario.html">Calendario</a></li><li><a href="guia.html">GPICSAB</a></li><li><a href="septima.html">7ª Tradición</a></li>
+      <li class="nav-dropdown">
+        <button class="nav-dropdown-toggle" type="button" aria-expanded="false">Lecturas</button>
+        <ul class="nav-submenu" hidden>
+          <li><a href="https://fzla.org/sxh/" target="_blank" rel="noopener noreferrer">Solo por hoy</a></li>
+          <li><a href="https://fzla.org/principio-diario/" target="_blank" rel="noopener noreferrer">Principio Espiritual</a></li>
+        </ul>
+      </li>
+      <li class="nav-dropdown solo-auth">
+        <button class="nav-dropdown-toggle" type="button" aria-expanded="false">Miembros de CSAB</button>
+        <ul class="nav-submenu" hidden>
+          <li><a href="mociones.html">Mociones</a></li>
+          <li><a href="actas.html">Actas asambleas &amp; reuniones</a></li>
+          <li><a href="admin.html" class="active" aria-current="page">Admin</a></li>
+        </ul>
+      </li>
+    </ul></nav>
+  </div></header>
+  <main>
+    <section id="admin-login" class="card admin-login">
+      <h1>Administración</h1>
+      <p id="admin-auth-status">Inicia sesión y luego ingresa la clave de administrador.</p>
+      <button class="btn" id="admin-sign-in" type="button">Iniciar sesión</button>
+      <form id="admin-acceso" hidden>
+        <label>Clave de administrador
+          <span class="clave-wrap">
+            <input type="password" name="clave" required autocomplete="current-password">
+            <button type="button" class="ojo" aria-label="Mostrar clave" title="Mostrar clave"><svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12Z"/><circle cx="12" cy="12" r="3"/></svg></button>
+          </span>
+        </label>
+        <button type="submit" class="btn">Ingresar</button>
+        <p class="msg err" role="alert" hidden></p>
+      </form>
+    </section>
+    <section id="admin-content" hidden>
+      <h1>Administración</h1>
+      <div class="grid admin-cards">
+        <article class="card">
+          <svg class="admin-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4M17 3v4M3 10h18M8 16l2.5 2.5L16 13"/></svg>
+          <h3>Aprobación de diseño de eventos</h3><button class="btn" id="admin-eventos" type="button">Ver eventos pendientes</button>
+        </article>
+        <article class="card">
+          <svg class="admin-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zM14 2v6h6M12 18v-6M9 15l3-3 3 3"/></svg>
+          <h3>Cargue de actas</h3><p>Próximamente</p>
+        </article>
+        <article class="card">
+          <svg class="admin-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
+          <h3>Registro de mociones</h3><p>Próximamente</p>
+        </article>
+        <article class="card">
+          <svg class="admin-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3"/><path d="M3 20v-1a6 6 0 0 1 12 0v1M18 11v6M15 14h6"/></svg>
+          <h3>Creación de grupo en directorio</h3><p>Próximamente</p>
+        </article>
+        <article class="card">
+          <svg class="admin-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3"/><path d="M3 20v-1a6 6 0 0 1 12 0v1M15 14h6"/></svg>
+          <h3>Inactivación de grupo en directorio</h3><p>Próximamente</p>
+        </article>
+        <article class="card">
+          <svg class="admin-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h16v16H4zM8 8h5M8 12h3M8 16h3M14 16l5-5 2 2-5 5-2 .5z"/></svg>
+          <h3>Modificación de datos de grupo en directorio</h3><p>Próximamente</p>
+        </article>
+        <article class="card">
+          <svg class="admin-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+          <h3>Modificación de horarios en directorio</h3><p>Próximamente</p>
+        </article>
+      </div>
+      <section id="admin-panel" class="card admin-panel" hidden>
+        <h2>Eventos pendientes</h2>
+        <div id="admin-eventos-lista"></div>
+      </section>
+    </section>
+  </main>
+  <footer><div class="foot-inner">
+    <div class="foot-area"><img src="https://res.cloudinary.com/dlspk9ipi/image/upload/v1776919815/Mesa_de_trabajo_2_cbxrik.png" alt="NA Área Bogotá" class="logo-foot"><div><strong>Narcóticos Anónimos Área Bogotá</strong><small>Todos los derechos reservados &copy; <span id="year"></span></small></div></div>
+    <div class="foot-redes" id="redes"><h2>Enlaces de Interés</h2><div class="redes-lista" id="redes-lista"></div></div>
+  </div></footer>
+  <script src="js/config.js?v=51"></script>
+  <script src="js/tema.js?v=55"></script>
+  <script src="js/main.js?v=55"></script>
+  <script src="js/auth.js?v=63"></script>
+  <script src="js/admin.js?v=1"></script>
+</body>
+</html>

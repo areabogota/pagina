@@ -429,7 +429,13 @@ footer { padding: .6rem 1rem; }
 .foot-area { align-self: center; }
 @media (max-width: 700px) { .foot-inner { grid-template-columns: 1fr 1fr; } .foot-area { grid-column: 1 / -1; } }
 /* Admin */
-.auth-box:has(.admin-wrap) { width: min(900px, 100%); }
+.admin-login { max-width: 480px; margin: auto; }
+.admin-login form { box-shadow: none; padding: 1rem 0 0; }
+.admin-login form[hidden], .admin-login .msg[hidden], .admin-panel[hidden], .admin-panel .msg[hidden] { display: none; }
+.admin-icon { display: block; width: 3rem; height: 3rem; padding: .6rem; margin-bottom: .8rem; color: var(--blue-dark); background: #e8ecf5; border-radius: 12px; }
+html[data-tema="dark"] .admin-icon { color: var(--accent); background: #303c60; }
+.admin-panel { margin-top: 1.5rem; }
+.admin-panel h2 { color: var(--blue-dark); }
 .auth-box:has(.modal-logo) { background: linear-gradient(rgba(255,255,255,.9), rgba(255,255,255,.9)), url("https://res.cloudinary.com/dlspk9ipi/image/upload/v1793505456/logo_del_servcio_negro_hyljxd.png") center / 60% no-repeat #fff; }
 html[data-tema="dark"] .auth-box:has(.modal-logo) { background: linear-gradient(rgba(29,40,72,.9), rgba(29,40,72,.9)), url("https://res.cloudinary.com/dlspk9ipi/image/upload/v1793505457/logo_del_servcio_blanco_hj4oex.png") center / 60% no-repeat var(--card); }
 .admin-wrap { overflow-x: auto; }

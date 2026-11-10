@@ -185,7 +185,7 @@ function iniciarBusquedaCercana() {
     ubicacionUsuario = null;
     radio.disabled = true;
     boton.textContent = "Reuniones cerca de mí";
-    estado.textContent = "Tu ubicación solo se consulta si pulsas «Reuniones cerca de mí»; no se guarda ni se envía.";
+    estado.textContent = "Amparados en nuestra 12ª tradición, que dice que el anonimato es la base espiritual de todas nuestras tradiciones, tu ubicación no se guarda ni se envía.";
     render();
     return;
   }

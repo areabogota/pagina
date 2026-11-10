@@ -145,7 +145,7 @@ function render() {
   });
   if (ubicacionActiva) {
     estadoCercanas.textContent = res.length
-      ? `${res.length} ${res.length === 1 ? "grupo encontrado" : "grupos encontrados"} dentro de ${radio} km. La ubicación se procesa solo en este dispositivo.`
+      ? `${res.length} ${res.length === 1 ? "grupo encontrado" : "grupos encontrados"} dentro de ${radio} km. `
       : `No encontramos reuniones dentro de ${radio} km con los filtros elegidos. Solo se pueden medir grupos con coordenadas exactas.`;
   }
   if (!res.length) {

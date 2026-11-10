@@ -1490,6 +1490,14 @@ main:has(.zona) {
   font: inherit;
   font-weight: 600;
 }
+.nearby-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.nearby-controls [hidden] {
+  display: none;
+}
 .filters .btn:disabled {
   cursor: wait;
 }
@@ -1527,6 +1535,18 @@ html[data-tema="dark"] .distancia-cercana {
     grid-column: 1 / -1;
     width: 100%;
     font-size: 0.9rem;
+  }
+  .nearby-controls {
+    grid-column: 1 / -1;
+    width: 100%;
+  }
+  .filters .nearby-controls .btn {
+    flex: 1;
+    width: auto;
+  }
+  .filters .nearby-controls select {
+    width: auto;
+    flex: 0 0 auto;
   }
 }
 .filters select:focus {

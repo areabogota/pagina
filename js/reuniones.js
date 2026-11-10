@@ -184,6 +184,7 @@ function iniciarBusquedaCercana() {
     ubicacionActiva = false;
     ubicacionUsuario = null;
     radio.disabled = true;
+    radio.hidden = true;
     boton.textContent = "Reuniones cerca de mí";
     estado.textContent = "Amparados en nuestra 12ª tradición, que dice que el anonimato es la base espiritual de todas nuestras tradiciones, tu ubicación no se guarda ni se envía.";
     render();
@@ -200,6 +201,7 @@ function iniciarBusquedaCercana() {
       ubicacionUsuario = [posicion.coords.latitude, posicion.coords.longitude];
       ubicacionActiva = true;
       radio.disabled = false;
+      radio.hidden = false;
       boton.disabled = false;
       boton.textContent = "Desactivar búsqueda cercana";
       render();

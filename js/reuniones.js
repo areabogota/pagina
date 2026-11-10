@@ -104,7 +104,7 @@ function llenarSelects() {
   llena("fUbic", [...ubic].sort((a, b) => a[1].localeCompare(b[1], "es")));
 }
 
-// Aplica los 4 filtros; en cada grupo solo deja los horarios que cumplen día y am/pm
+// Aplica los filtros; en cada grupo solo deja los horarios que cumplen día y horario.
 function render() {
   const box = document.getElementById("lista");
   const fg = document.getElementById("fGrupo").value, fd = document.getElementById("fDia").value;
@@ -113,10 +113,19 @@ function render() {
   todos.forEach(g => {
     if (fg && norm(g.nombre) !== fg) return;
     if (fu && norm(ubicacion(g)) !== fu) return;
-    const hs = g.horarios.filter(h => (!fd || norm(h.dia) === fd) && (!fh || periodo(h) === fh));
+    const hs = g.horarios.filter(h => (!fd || norm(h.dia) === fd) && (
+      fh === "ahora"
+        ? ReunionesTiempo.estaEnCurso(h.dia, h.horaInicio, h.horaFin)
+        : (!fh || periodo(h) === fh)
+    ));
     if (hs.length) res.push({ ...g, horarios: hs });
   });
-  if (!res.length) { box.innerHTML = '<p class="status">No hay reuniones con esos filtros.</p>'; return; }
+  if (!res.length) {
+    box.innerHTML = fh === "ahora"
+      ? '<p class="status">Ahora no hay reuniones en curso.</p>'
+      : '<p class="status">No hay reuniones con esos filtros.</p>';
+    return;
+  }
   const zonas = new Map();
   res.sort((a, b) => a.nombre.localeCompare(b.nombre, "es")).forEach(g => {
     if (!zonas.has(g.sector)) zonas.set(g.sector, []);
@@ -138,13 +147,20 @@ function render() {
         localidad: r.localidad, virtual: esSi(r.virtual),         maps: r["link maps"],
                 intereses: r["intereses comunes"], horarios: []
               });
-              grupos.get(key).horarios.push({ dia: r.dia, hora: horario(r), inicio: horaHumana(r["hora inicio"]), tipo: String(r.tipo || "").trim(), formato: r.formato, intereses: r["intereses comunes"] });
+      grupos.get(key).horarios.push({
+        dia: r.dia, hora: horario(r), inicio: horaHumana(r["hora inicio"]),
+        horaInicio: r["hora inicio"], horaFin: r["hora fin"],
+        tipo: String(r.tipo || "").trim(), formato: r.formato, intereses: r["intereses comunes"]
+      });
     });
     if (!grupos.size) { box.innerHTML = '<p class="status">No hay reuniones para mostrar.</p>'; return; }
 
     todos = [...grupos.values()];
     todos.forEach(g => g.horarios.sort((a, b) => diaIdx(a.dia) - diaIdx(b.dia)));
     llenarSelects();
+    if (new URLSearchParams(window.location.search).get("horario") === "ahora") {
+      document.getElementById("fHora").value = "ahora";
+    }
     const contados = todos.filter(g => !norm(g.nombre).includes("grupo movil"));
     const stats = document.getElementById("stats");
     if (stats) {
@@ -159,6 +175,9 @@ function render() {
     }
     ["fGrupo", "fDia", "fHora", "fUbic"].forEach(id => document.getElementById(id).addEventListener("change", render));
     render();
+    window.setInterval(() => {
+      if (document.getElementById("fHora").value === "ahora") render();
+    }, 30000);
   } catch (e) {
     box.innerHTML = `<p class="status error">No se pudieron cargar las reuniones. ${esc(e.message)}</p>`;
   }

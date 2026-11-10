@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Administración – NA Bogotá</title>
   <link rel="icon" href="https://res.cloudinary.com/dlspk9ipi/image/upload/v1776920336/LOGO-AZUL_1_uoqp92.png">
-  <link rel="stylesheet" href="css/styles.css?v=88">
+  <link rel="stylesheet" href="css/styles.css?v=90">
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-H0JF4NM30G"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -62,32 +62,70 @@
         </article>
         <article class="card">
           <svg class="admin-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zM14 2v6h6M12 18v-6M9 15l3-3 3 3"/></svg>
-          <h3>Cargue de actas</h3><p>Próximamente</p>
+          <h3>Cargue de <br> actas</h3><button class="btn" id="admin-actas" type="button">Explorar carpetas</button>
+        </article>
+        <article class="card">
+          <svg class="admin-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zM14 2v6h6M12 18v-6M9 15l3-3 3 3"/></svg>
+          <h3>Cargue actas de asambleas anuales</h3><p>Próximamente</p><button class="btn" type="button" data-admin-proximamente>Ver sección</button>
         </article>
         <article class="card">
           <svg class="admin-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
-          <h3>Registro de mociones</h3><p>Próximamente</p>
+          <h3>Registro de <br> mociones</h3><p>Próximamente</p><button class="btn" type="button" data-admin-proximamente>Ver sección</button>
         </article>
         <article class="card">
           <svg class="admin-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3"/><path d="M3 20v-1a6 6 0 0 1 12 0v1M18 11v6M15 14h6"/></svg>
-          <h3>Creación de grupo en directorio</h3><p>Próximamente</p>
+          <h3>Creación de grupo en directorio</h3><p>Próximamente</p><button class="btn" type="button" data-admin-proximamente>Ver sección</button>
         </article>
         <article class="card">
           <svg class="admin-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3"/><path d="M3 20v-1a6 6 0 0 1 12 0v1M15 14h6"/></svg>
-          <h3>Inactivación de grupo en directorio</h3><p>Próximamente</p>
+          <h3>Inactivación de grupo en directorio</h3><p>Próximamente</p><button class="btn" type="button" data-admin-proximamente>Ver sección</button>
         </article>
         <article class="card">
           <svg class="admin-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h16v16H4zM8 8h5M8 12h3M8 16h3M14 16l5-5 2 2-5 5-2 .5z"/></svg>
-          <h3>Modificación de datos de grupo en directorio</h3><p>Próximamente</p>
+          <h3>Modificación de datos de grupo en directorio</h3><p>Próximamente</p><button class="btn" type="button" data-admin-proximamente>Ver sección</button>
         </article>
         <article class="card">
           <svg class="admin-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
-          <h3>Modificación de horarios en directorio</h3><p>Próximamente</p>
+          <h3>Modificación de horarios en directorio</h3><p>Próximamente</p><button class="btn" type="button" data-admin-proximamente>Ver sección</button>
         </article>
       </div>
+      <button class="btn" id="admin-volver-panel" type="button" hidden>Volver al panel de admin</button>
       <section id="admin-panel" class="card admin-panel" hidden>
         <h2>Eventos pendientes</h2>
         <div id="admin-eventos-lista"></div>
+      </section>
+      <section id="admin-carpetas-panel" class="card admin-panel" hidden>
+        <h2>Carpetas de actas</h2>
+        <p id="admin-carpetas-ruta"></p>
+        <div class="admin-carpetas-acciones">
+          <button type="button" class="btn" id="admin-carpetas-volver">Volver</button>
+          <button type="button" class="btn" id="admin-carpetas-crear">Crear año/carpeta</button>
+        </div>
+        <form id="admin-carpetas-form" hidden>
+          <label><span id="admin-carpetas-nombre-label">Nombre del año o carpeta</span><input name="nombre" maxlength="100" required></label>
+          <p id="admin-carpetas-destino"></p>
+          <div class="admin-carpetas-acciones">
+            <button type="submit" class="btn">Crear carpeta</button>
+            <button type="button" class="btn" id="admin-carpetas-cancelar">Cancelar</button>
+          </div>
+        </form>
+        <p id="admin-carpetas-mensaje" role="status" aria-live="polite"></p>
+        <div id="admin-carpetas-lista"></div>
+        <section id="admin-acta-subida" hidden>
+          <h3>Acta de esta carpeta</h3>
+          <p id="admin-acta-actual"></p>
+          <form id="admin-acta-form">
+            <label>Selecciona un archivo PDF (máximo 5 MB)
+              <input type="file" name="archivo" accept=".pdf,application/pdf" required>
+            </label>
+            <p>Se permite un PDF por carpeta. Al reemplazarlo, el anterior se moverá a la papelera de Drive.</p>
+            <button type="submit" class="btn">Subir acta</button>
+          </form>
+        </section>
+      </section>
+      <section id="admin-proximamente" class="card admin-panel" hidden>
+        <h2 tabindex="-1"></h2>
+        <p>Esta sección estará disponible próximamente.</p>
       </section>
     </section>
   </main>
@@ -99,6 +137,6 @@
   <script src="js/tema.js?v=55"></script>
   <script src="js/main.js?v=55"></script>
   <script src="js/auth.js?v=63"></script>
-  <script src="js/admin.js?v=1"></script>
+  <script src="js/admin.js?v=5"></script>
 </body>
 </html>

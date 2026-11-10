@@ -215,6 +215,134 @@ function verificarAdmin_(clave) {
   return { ok: ok };
 }
 
+const CARPETA_ACTAS_ID = "1NKvw6qkbdinNgoacZ6byNcCwJdon2xuU";
+
+function carpetaActas_(id) {
+  const carpeta = DriveApp.getFolderById(id);
+  const pendientes = [carpeta];
+  const vistos = {};
+  while (pendientes.length) {
+    const actual = pendientes.pop();
+    const actualId = actual.getId();
+    if (vistos[actualId]) continue;
+    vistos[actualId] = true;
+    if (actual.isTrashed()) continue;
+    if (actualId === CARPETA_ACTAS_ID) return carpeta;
+    const padres = actual.getParents();
+    while (padres.hasNext()) pendientes.push(padres.next());
+  }
+  throw new Error("La carpeta no pertenece a la carpeta de actas.");
+}
+
+function carpetaMesActas_(id) {
+  const mes = carpetaActas_(id);
+  if (mes.getId() === CARPETA_ACTAS_ID) throw new Error("Selecciona primero una carpeta de año y después una de mes.");
+  const padres = mes.getParents();
+  while (padres.hasNext()) {
+    const anio = padres.next();
+    if (anio.isTrashed() || anio.getId() === CARPETA_ACTAS_ID) continue;
+    const abuelos = anio.getParents();
+    while (abuelos.hasNext()) {
+      const abuelo = abuelos.next();
+      if (abuelo.getId() === CARPETA_ACTAS_ID && !abuelo.isTrashed()) return mes;
+    }
+  }
+  throw new Error("Solo se pueden subir actas en una carpeta de mes dentro de un año.");
+}
+
+function pdfsActas_(carpeta) {
+  const archivos = carpeta.getFiles();
+  const pdfs = [];
+  while (archivos.hasNext()) {
+    const archivo = archivos.next();
+    if (!archivo.isTrashed() && (archivo.getMimeType() === "application/pdf" || /\.pdf$/i.test(archivo.getName()))) pdfs.push(archivo);
+  }
+  return pdfs;
+}
+
+function adminActas_(b) {
+  const auth = verificarAdmin_(b.clave);
+  if (!auth.ok) return auth;
+  const carpeta = carpetaMesActas_(String(b.carpeta || ""));
+  if (b.modo === "consultar") {
+    const pdfs = pdfsActas_(carpeta);
+    if (pdfs.length > 1) return { ok: false, error: "Hay varios PDF en esta carpeta. Revísalos en Drive antes de subir otro." };
+    return { ok: true, archivo: pdfs.length ? { id: pdfs[0].getId(), nombre: pdfs[0].getName() } : null };
+  }
+  if (b.modo === "subir") {
+    const nombre = String(b.nombre || "").trim();
+    const base64 = String(b.contenido || "");
+    if (!nombre || nombre.length > 200 || !/\.pdf$/i.test(nombre) || /[\/\\\u0000-\u001f\u007f]/.test(nombre)) {
+      return { ok: false, error: "El nombre del archivo PDF no es válido." };
+    }
+    if (!base64 || base64.length > 6990508 || !/^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/.test(base64)) {
+      return { ok: false, error: "El archivo debe ser un PDF válido de máximo 5 MB." };
+    }
+    const bytes = Utilities.base64Decode(base64);
+    if (bytes.length > 5 * 1024 * 1024 || bytes.length < 5 ||
+        String.fromCharCode(...bytes.slice(0, 5).map(x => x & 255)) !== "%PDF-") {
+      return { ok: false, error: "El archivo debe ser un PDF válido de máximo 5 MB." };
+    }
+    const lock = LockService.getScriptLock();
+    lock.waitLock(10000);
+    try {
+      const destino = carpetaMesActas_(String(b.carpeta || ""));
+      const pdfs = pdfsActas_(destino);
+      if (pdfs.length > 1) return { ok: false, error: "Hay varios PDF en esta carpeta. Revísalos en Drive antes de subir otro." };
+      const anterior = pdfs[0];
+      if ((anterior ? anterior.getId() : "") !== String(b.anterior || "")) {
+        return { ok: false, error: "El acta de esta carpeta cambió. Vuelve a abrir la carpeta antes de intentarlo." };
+      }
+      const nuevo = destino.createFile(Utilities.newBlob(bytes, "application/pdf", nombre));
+      if (anterior) {
+        try {
+          anterior.setTrashed(true);
+        } catch (error) {
+          try { nuevo.setTrashed(true); }
+          catch (limpieza) { throw new Error("No se pudo reemplazar ni retirar el nuevo archivo. Revisa la carpeta en Drive: " + limpieza.message); }
+          throw new Error("No se pudo reemplazar el acta anterior: " + error.message);
+        }
+      }
+      return { ok: true, archivo: { id: nuevo.getId(), nombre: nuevo.getName() } };
+    } finally { lock.releaseLock(); }
+  }
+  return { ok: false, error: "Acción de actas no válida." };
+}
+
+function adminCarpetas_(b, permitirSubcarpetas) {
+  const auth = verificarAdmin_(b.clave);
+  if (!auth.ok) return auth;
+  if (b.modo === "listar") {
+    const carpeta = carpetaActas_(String(b.carpeta || CARPETA_ACTAS_ID));
+    const iter = carpeta.getFolders();
+    const carpetas = [];
+    while (iter.hasNext()) {
+      const hija = iter.next();
+      if (!hija.isTrashed()) carpetas.push({ id: hija.getId(), nombre: hija.getName() });
+    }
+    carpetas.sort((a, b) => a.nombre.localeCompare(b.nombre, "es", { numeric: true, sensitivity: "base" }));
+    return { ok: true, carpeta: { id: carpeta.getId(), nombre: carpeta.getName() }, carpetas: carpetas };
+  }
+  if (b.modo === "crear") {
+    const nombre = String(b.nombre || "").trim();
+    if (!nombre || nombre.length > 100 || /[\u0000-\u001f\u007f]/.test(nombre)) {
+      return { ok: false, error: "Ingresa un nombre válido de hasta 100 caracteres." };
+    }
+    const lock = LockService.getScriptLock();
+    lock.waitLock(10000);
+    try {
+      const carpeta = carpetaActas_(permitirSubcarpetas ? String(b.carpeta || CARPETA_ACTAS_ID) : CARPETA_ACTAS_ID);
+      const existentes = carpeta.getFoldersByName(nombre);
+      while (existentes.hasNext()) {
+        if (!existentes.next().isTrashed()) return { ok: false, error: "Ya existe una carpeta con ese nombre." };
+      }
+      const creada = carpeta.createFolder(nombre);
+      return { ok: true, carpeta: { id: creada.getId(), nombre: creada.getName() } };
+    } finally { lock.releaseLock(); }
+  }
+  return { ok: false, error: "Acción de carpetas no válida." };
+}
+
 function admin_(b) {
   const auth = verificarAdmin_(b.clave);
   if (!auth.ok) return auth;
@@ -393,6 +521,18 @@ function doPost(e) {
     if (d.accion === "admin") {
       try { return json_(admin_(d)); }
       catch (err3) { return json_({ ok: false, error: "servidor: " + err3.message }); }
+    }
+    if (d.accion === "admin_carpetas") {
+      try { return json_(adminCarpetas_(d)); }
+      catch (err4) { return json_({ ok: false, error: "servidor: " + err4.message }); }
+    }
+    if (d.accion === "admin_carpetas_v2") {
+      try { return json_(adminCarpetas_(d, true)); }
+      catch (err5) { return json_({ ok: false, error: "servidor: " + err5.message }); }
+    }
+    if (d.accion === "admin_actas") {
+      try { return json_(adminActas_(d)); }
+      catch (err6) { return json_({ ok: false, error: "servidor: " + err6.message }); }
     }
     return json_({ ok: false, error: "accion no valida" });
   } catch (err) {

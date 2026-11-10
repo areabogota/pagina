@@ -247,8 +247,6 @@
         if (fin < ini) return err("La fecha fin no puede ser anterior a la fecha inicio.");
         const mismo = mismoDia();
         if (mismo && f.elements["hora fin"].value <= f.elements["hora inicio"].value) return err("La hora fin debe ser posterior a la hora inicio.");
-        // Leer el check antes de limpiar el mensaje (al limpiarlo se elimina el checkbox)
-        const confirmarCruce = !!(f.elements.cruce && f.elements.cruce.checked);
         const btn = f.querySelector("[type=submit]");
         btn.disabled = true;
         res.innerHTML = "<p>Guardando…</p>";
@@ -259,7 +257,7 @@
           datos["hora fin"] = mismo ? f.elements["hora fin"].value : "";
           const file = f.elements.flyer.files[0];
           if (file) datos.flyer = await comprimir(file);
-          const r = await llamar({ modo: nuevo ? "crear" : "editar", fila: v.fila || 0, datos, confirmarCruce });
+          const r = await llamar({ modo: nuevo ? "crear" : "editar", fila: v.fila || 0, datos });
           refrescar();
           if (r.errorCalendario) console.error("[evento] calendario:", r.errorCalendario);
           const base = nuevo ? "Evento agregado." : "Evento actualizado.";
@@ -268,10 +266,7 @@
           btn.disabled = false;
           if (e2.cruce) {
             const c = e2.cruce, fechas = c.fin && c.fin !== c.inicio ? `del ${c.inicio} al ${c.fin}` : `el ${c.inicio}`;
-            res.innerHTML = aviso("err", `Se sugiere crear el evento en otra fecha, ya que el grupo ${c.grupo} tiene el evento "${c.nombre}" ${fechas}.`) +
-              '<label class="chk"><input type="checkbox" name="cruce"> Comprendí el mensaje y deseo crear el evento de todos modos</label>';
-            f.elements.cruce.onchange = () => { btn.disabled = !f.elements.cruce.checked; };
-            btn.disabled = true;
+            res.innerHTML = aviso("err", `No se puede guardar el evento: esas fechas ya están ocupadas. El grupo ${c.grupo} tiene el evento "${c.nombre}" ${fechas}. Elige otra fecha.`);
             return;
           }
           console.error("[evento] error al guardar:", e2);

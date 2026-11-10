@@ -482,7 +482,7 @@ function evento_(b) {
     if (cambiaIni && ini[0] < Utilities.formatDate(lim, "America/Bogota", "yyyy-MM-dd")) return { ok: false, error: "fecha" };
 
 
-    if (!b.confirmarCruce) {
+    {
       const iN = cols.indexOf("nombre"), iI = cols.indexOf("fecha inicio"), iF = cols.indexOf("fecha fin");
       const todas = sh.getDataRange().getDisplayValues();
       const aIso = s => { const m = String(s || "").match(/^(\d{2})\/(\d{2})\/(\d{4})$/); return m ? m[3] + "-" + m[2] + "-" + m[1] : ""; };

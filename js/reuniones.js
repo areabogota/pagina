@@ -29,15 +29,26 @@ function horario(r) {
   return ini && fin ? `${ini} - ${fin}` : ini || fin;
 }
 
+function coordenadas(g) {
+  const link = String(g.maps || "");
+  const c = link.match(/@(-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?)/)
+    || link.match(/[?&](?:q|ll|query|destination)=(-?\d+(?:\.\d+)?)(?:,|%2C)(-?\d+(?:\.\d+)?)/i)
+    || link.match(/!3d(-?\d+(?:\.\d+)?)!4d(-?\d+(?:\.\d+)?)/)
+    || link.match(/^\s*(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)\s*$/);
+  if (!c) return null;
+  const lat = Number(c[1]), lon = Number(c[2]);
+  return Number.isFinite(lat) && Number.isFinite(lon) && Math.abs(lat) <= 90 && Math.abs(lon) <= 180
+    ? [lat, lon]
+    : null;
+}
+
 // Mini mapa: solo se muestra si el link de la hoja trae coordenadas exactas (evita mapas con error)
 function miniMapa(g) {
-  const link = String(g.maps || "");
-  const c = link.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/)
-    || link.match(/[?&](?:q|ll|query|destination)=(-?\d+\.\d+)(?:,|%2C)(-?\d+\.\d+)/i)
-    || link.match(/!3d(-?\d+\.\d+)!4d(-?\d+\.\d+)/);
+  const c = coordenadas(g);
   if (!c) return "";
-  const src = `https://maps.google.com/maps?q=${c[1]},${c[2]}&z=16&output=embed`;
-  const href = safeUrl(link) || `https://www.google.com/maps/search/?api=1&query=${c[1]},${c[2]}`;
+  const link = String(g.maps || "");
+  const src = `https://maps.google.com/maps?q=${c[0]},${c[1]}&z=16&output=embed`;
+  const href = safeUrl(link) || `https://www.google.com/maps/search/?api=1&query=${c[0]},${c[1]}`;
   return `<div class="minimapa"><iframe src="${esc(src)}" title="Mapa de ${esc(g.nombre)}" loading="lazy" tabindex="-1" referrerpolicy="no-referrer-when-downgrade"></iframe>
     <a href="${href}" target="_blank" rel="noopener noreferrer" aria-label="Abrir ${esc(g.nombre)} en Google Maps"></a></div>`;
 }
@@ -59,6 +70,7 @@ function cardGrupo(g) {
     <div class="grupo-head">
       <div class="grupo-info">
         <h3>${esc(g.nombre)}</h3>
+        ${Number.isFinite(g.distanciaKm) ? `<p class="distancia-cercana">A ${g.distanciaKm.toLocaleString("es-CO", { maximumFractionDigits: 1 })} km de ti</p>` : ""}
         ${lugar && !(bare && !g.barrio && !g.localidad) ? `<p class="direccion">${vlink ? "" : ICO.pin + " "}${lugar}</p>` : ""}
         ${g.virtual ? '<p><span class="tag tag-virtual">Virtual</span></p>' : ""}
       </div>
@@ -72,6 +84,8 @@ function cardGrupo(g) {
 }
 
 let todos = [];
+let ubicacionUsuario = null;
+let ubicacionActiva = false;
 
 // Tocar la card de un grupo con link virtual abre el link (sin interferir con otros enlaces o texto seleccionado)
 document.addEventListener("click", e => {
@@ -109,21 +123,40 @@ function render() {
   const box = document.getElementById("lista");
   const fg = document.getElementById("fGrupo").value, fd = document.getElementById("fDia").value;
   const fh = document.getElementById("fHora").value, fu = document.getElementById("fUbic").value;
+  const radio = Number(document.getElementById("radio-cercanas").value);
+  const estadoCercanas = document.getElementById("estado-cercanas");
   const res = [];
   todos.forEach(g => {
     if (fg && norm(g.nombre) !== fg) return;
     if (fu && norm(ubicacion(g)) !== fu) return;
+    let distanciaKm;
+    if (ubicacionActiva) {
+      const coords = coordenadas(g);
+      if (!coords) return;
+      distanciaKm = distanciaEntre(ubicacionUsuario, coords);
+      if (distanciaKm > radio) return;
+    }
     const hs = g.horarios.filter(h => (!fd || norm(h.dia) === fd) && (
       fh === "ahora"
         ? ReunionesTiempo.estaEnCurso(h.dia, h.horaInicio, h.horaFin)
         : (!fh || periodo(h) === fh)
     ));
-    if (hs.length) res.push({ ...g, horarios: hs });
+    if (hs.length) res.push({ ...g, horarios: hs, distanciaKm });
   });
+  if (ubicacionActiva) {
+    estadoCercanas.textContent = res.length
+      ? `${res.length} ${res.length === 1 ? "grupo encontrado" : "grupos encontrados"} dentro de ${radio} km. La ubicación se procesa solo en este dispositivo.`
+      : `No encontramos reuniones dentro de ${radio} km con los filtros elegidos. Solo se pueden medir grupos con coordenadas exactas.`;
+  }
   if (!res.length) {
     box.innerHTML = fh === "ahora"
       ? '<p class="status">Ahora no hay reuniones en curso.</p>'
       : '<p class="status">No hay reuniones con esos filtros.</p>';
+    return;
+  }
+  if (ubicacionActiva) {
+    res.sort((a, b) => a.distanciaKm - b.distanciaKm || a.nombre.localeCompare(b.nombre, "es"));
+    box.innerHTML = `<section class="zona"><h2 class="zona-titulo">Reuniones cercanas</h2><div class="grid">${res.map(cardGrupo).join("")}</div></section>`;
     return;
   }
   const zonas = new Map();
@@ -133,6 +166,55 @@ function render() {
   });
   box.innerHTML = [...zonas.entries()].sort((a, b) => a[0].localeCompare(b[0], "es")).map(([zona, gs]) =>
     `<section class="zona"><h2 class="zona-titulo">${esc(zona)}</h2><div class="grid">${gs.map(cardGrupo).join("")}</div></section>`).join("");
+}
+
+function distanciaEntre(origen, destino) {
+  const rad = grados => grados * Math.PI / 180;
+  const [lat1, lon1] = origen, [lat2, lon2] = destino;
+  const dLat = rad(lat2 - lat1), dLon = rad(lon2 - lon1);
+  const a = Math.sin(dLat / 2) ** 2 + Math.cos(rad(lat1)) * Math.cos(rad(lat2)) * Math.sin(dLon / 2) ** 2;
+  return 6371 * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
+function iniciarBusquedaCercana() {
+  const boton = document.getElementById("buscar-cercanas");
+  const radio = document.getElementById("radio-cercanas");
+  const estado = document.getElementById("estado-cercanas");
+  if (ubicacionActiva) {
+    ubicacionActiva = false;
+    ubicacionUsuario = null;
+    radio.disabled = true;
+    boton.textContent = "Reuniones cerca de mí";
+    estado.textContent = "Tu ubicación solo se consulta si pulsas «Reuniones cerca de mí»; no se guarda ni se envía.";
+    render();
+    return;
+  }
+  if (!navigator.geolocation) {
+    estado.textContent = "Este navegador no permite consultar la ubicación. Puedes seguir usando los filtros de reuniones.";
+    return;
+  }
+  boton.disabled = true;
+  estado.textContent = "Solicitando permiso para consultar tu ubicación…";
+  navigator.geolocation.getCurrentPosition(
+    posicion => {
+      ubicacionUsuario = [posicion.coords.latitude, posicion.coords.longitude];
+      ubicacionActiva = true;
+      radio.disabled = false;
+      boton.disabled = false;
+      boton.textContent = "Desactivar búsqueda cercana";
+      render();
+    },
+    error => {
+      boton.disabled = false;
+      const mensajes = {
+        1: "No se concedió permiso para la ubicación. Puedes autorizarlo en la configuración del navegador.",
+        2: "No fue posible determinar tu ubicación. Inténtalo de nuevo o usa los filtros.",
+        3: "La consulta de ubicación tardó demasiado. Inténtalo de nuevo."
+      };
+      estado.textContent = mensajes[error.code] || "No se pudo consultar la ubicación. Inténtalo de nuevo.";
+    },
+    { enableHighAccuracy: false, maximumAge: 60000, timeout: 15000 }
+  );
 }
 
 (async () => {
@@ -173,7 +255,8 @@ function render() {
       const nota = nF ? `<span class="stats-nota">En los festivos, ${nF === 1 ? "1 grupo también se reúne" : `${nF} grupos también se reúnen`} (esos días no están en el conteo).</span>` : "";
       stats.innerHTML = `Esta semana te esperan <strong>${nG}</strong> grupos y <strong>${nR}</strong> reuniones.<span class="stats-lema">Lo hacemos para que ningún adicto, dondequiera que esté, tenga que morir a causa de los horrores de la adicción.</span>${nota}`;
     }
-    ["fGrupo", "fDia", "fHora", "fUbic"].forEach(id => document.getElementById(id).addEventListener("change", render));
+    ["fGrupo", "fDia", "fHora", "fUbic", "radio-cercanas"].forEach(id => document.getElementById(id).addEventListener("change", render));
+    document.getElementById("buscar-cercanas").addEventListener("click", iniciarBusquedaCercana);
     render();
     window.setInterval(() => {
       if (document.getElementById("fHora").value === "ahora") render();

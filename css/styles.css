@@ -1484,6 +1484,28 @@ main:has(.zona) {
     box-shadow 0.2s,
     transform 0.2s;
 }
+.filters .btn {
+  border-radius: 999px;
+  padding: 0.65rem 1rem;
+  font: inherit;
+  font-weight: 600;
+}
+.filters .btn:disabled {
+  cursor: wait;
+}
+.estado-cercanas {
+  margin: -0.35rem 0 0.75rem;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+.distancia-cercana {
+  color: var(--purple);
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+html[data-tema="dark"] .distancia-cercana {
+  color: var(--accent);
+}
 .filters select:hover {
   border-color: var(--purple);
   transform: translateY(-1px);
@@ -1500,6 +1522,11 @@ main:has(.zona) {
     font-size: 0.85rem;
     padding: 0.55rem 1.9rem 0.55rem 0.7rem;
     background-position: right 0.7rem center;
+  }
+  .filters .btn {
+    grid-column: 1 / -1;
+    width: 100%;
+    font-size: 0.9rem;
   }
 }
 .filters select:focus {

@@ -203,7 +203,7 @@ function iniciarBusquedaCercana() {
       radio.disabled = false;
       radio.hidden = false;
       boton.disabled = false;
-      boton.textContent = "Desactivar búsqueda cercana";
+      boton.textContent = "Desactivar búsqueda";
       render();
     },
     error => {

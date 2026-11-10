@@ -65,6 +65,9 @@ const norm = s => String(s || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "
 
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
+try { localStorage.removeItem("na_acceso"); }
+catch (error) { console.warn("No se pudo limpiar una credencial antigua del navegador.", error); }
+
 // Solo permite enlaces http(s)
 const safeUrl = u => /^https?:\/\//i.test(String(u || "").trim()) ? esc(String(u).trim()) : "";
 

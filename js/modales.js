@@ -33,7 +33,17 @@
 
   // Panel de edición: pregunta si el cambio es de datos básicos (todo el grupo) o de una reunión (una sola fila)
   function editor(panel, api, grupo, cred) {
-    const base = `${api}?grupo=${encodeURIComponent(grupo)}&${new URLSearchParams(cred)}`;
+    const llamar = async cuerpo => {
+      const r = await fetch(api, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({ accion: "grupo", grupo, ...cred, ...cuerpo })
+      });
+      if (!r.ok) throw new Error("No se pudo conectar con el servidor.");
+      const j = await r.json();
+      if (!j.ok) throw new Error(j.error || "No se pudo completar la operación.");
+      return j;
+    };
     let filas = [];
     const aviso = (t, x) => `<p class="msg ${t}">${esc(x)}</p>`;
     const titulo = `<h3>${esc(grupo)}</h3>`;
@@ -41,8 +51,7 @@
     async function cargar() {
       panel.innerHTML = titulo + "<p>Cargando…</p>";
       try {
-        const j = await (await fetch(`${base}&accion=datos`)).json();
-        if (!j.ok) throw new Error();
+        const j = await llamar({ modo: "datos" });
         filas = j.filas;
         inicio();
       } catch { panel.innerHTML = titulo + aviso("err", "No se pudieron cargar los datos del grupo."); }
@@ -105,12 +114,11 @@
       campos.forEach(c => datos[c] = form.elements[c].value.trim());
       btn.disabled = true;
       try {
-        const j = await (await fetch(`${base}&accion=editar&modo=${modo}&fila=${fila}&datos=${encodeURIComponent(JSON.stringify(datos))}`)).json();
-        if (!j.ok) throw new Error();
+        await llamar({ modo: "editar", tipo: modo, fila, datos });
         // La lista pública se guarda en caché local: se borra para ver el cambio de inmediato
         Object.keys(localStorage).filter(k => k.startsWith("na_sheet_")).forEach(k => localStorage.removeItem(k));
-        const nuevo = await (await fetch(`${base}&accion=datos`)).json();
-        if (nuevo.ok) filas = nuevo.filas;
+        const nuevo = await llamar({ modo: "datos" });
+        filas = nuevo.filas;
         inicio(okMsg);
       } catch { res.innerHTML = aviso("err", "No se pudo guardar. Intenta de nuevo."); btn.disabled = false; }
     }
@@ -275,8 +283,8 @@
     inicio();
   }
 
-  // Acceso recordado en este dispositivo: el token lo emite el servidor tras validar la clave (la clave no se guarda)
-  const leerAcceso = () => { try { return JSON.parse(localStorage.getItem("na_acceso")) || null; } catch { return null; } };
+  // Solo se recuerda el nombre del grupo; la credencial nunca se persiste.
+  const leerAcceso = () => { try { return JSON.parse(localStorage.getItem("na_grupo_recordado")) || null; } catch { return null; } };
 
   // Formulario grupo + clave: carga los grupos, verifica en el servidor y llama onOk(grupo, credencial)
   function accesoGrupo(form, onOk) {
@@ -290,7 +298,7 @@
     const sel = form.grupo;
     const api = CONFIG.API_URL;
 
-    // Las claves nunca llegan al navegador: el servidor (Apps Script) solo lista grupos y verifica.
+    // Las claves de grupo solo se envían al servidor para verificarlas y nunca se guardan en localStorage.
     if (!api) sel.innerHTML = '<option value="">Servicio no configurado</option>';
     else fetchGrupos(true)
       .then(gs => {
@@ -300,10 +308,10 @@
       })
       .catch(() => { sel.innerHTML = '<option value="">No se pudieron cargar los grupos</option>'; });
 
-    // Si este dispositivo guardó el acceso del mismo usuario, se rellenan grupo y clave; el usuario presiona "Ingresar"
+    // Se puede recordar el grupo para el mismo usuario, pero la clave siempre se vuelve a ingresar.
     const guardado = leerAcceso();
     const recordado = guardado && window.NA_USER && guardado.uid === window.NA_USER.uid ? guardado : null;
-    if (recordado) form.clave.value = recordado.clave;
+    if (recordado) sel.value = recordado.grupo;
 
     form.addEventListener("submit", async e => {
       e.preventDefault();
@@ -311,14 +319,23 @@
       btn.disabled = true;
       msg.className = "msg";
       try {
-        const r = await fetch(`${api}?accion=verificar&grupo=${encodeURIComponent(sel.value)}&clave=${encodeURIComponent(form.clave.value)}`);
+        const r = await fetch(api, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify({ accion: "grupo", modo: "verificar", grupo: sel.value, clave: form.clave.value })
+        });
+        if (!r.ok) throw new Error("No se pudo conectar con el servidor.");
         const j = await r.json();
-        if (j.ok) {
+        if (j.ok && j.token) {
           form.hidden = true;
-          if (window.NA_USER) localStorage.setItem("na_acceso", JSON.stringify({ grupo: sel.value, clave: form.clave.value, uid: window.NA_USER.uid }));
-          onOk(sel.value, j.token ? { token: j.token } : { clave: form.clave.value });
+          if (window.NA_USER) {
+            try { localStorage.setItem("na_grupo_recordado", JSON.stringify({ grupo: sel.value, uid: window.NA_USER.uid })); }
+            catch (error) { console.warn("No se pudo recordar el grupo en este navegador.", error); }
+          }
+          form.clave.value = "";
+          onOk(sel.value, { token: j.token });
         } else {
-          localStorage.removeItem("na_acceso");
+          try { localStorage.removeItem("na_grupo_recordado"); } catch (error) { console.warn("No se pudo limpiar el grupo recordado.", error); }
           msg.className = "msg err";
           msg.textContent = j.bloqueado ? "Demasiados intentos. Espera unos minutos." : "Grupo o clave incorrectos.";
           form.clave.value = "";

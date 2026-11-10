@@ -42,18 +42,22 @@ function escribirReunion_(t, fila, d) {
   });
 }
 
-// Tokens por dispositivo: se emiten tras validar la clave y se guardan en Script Properties (vencen a los 180 días)
+// Tokens temporales: se emiten tras validar la clave y vencen a las 12 horas.
 function nuevoToken_(grupo) {
   const t = Utilities.getUuid();
-  PropertiesService.getScriptProperties().setProperty("tok_" + t, JSON.stringify({ g: String(grupo).trim(), exp: Date.now() + 180 * 86400000 }));
+  PropertiesService.getScriptProperties().setProperty("tok_v2_" + t, JSON.stringify({ g: String(grupo).trim(), exp: Date.now() + 12 * 3600000 }));
   return t;
 }
 
 function grupoDeToken_(token) {
-  const raw = PropertiesService.getScriptProperties().getProperty("tok_" + String(token || ""));
+  const props = PropertiesService.getScriptProperties();
+  const key = "tok_v2_" + String(token || "");
+  const raw = props.getProperty(key);
   if (!raw) return "";
   const o = JSON.parse(raw);
-  return o.exp > Date.now() ? o.g : "";
+  if (o.exp > Date.now()) return o.g;
+  props.deleteProperty(key);
+  return "";
 }
 
 function verificar_(grupo, clave, token) {
@@ -81,72 +85,74 @@ function filasDe_(t, grupo) {
   return out; // índices en t.v (fila de hoja = i + 1)
 }
 
+function grupo_(d) {
+  const grupo = String(d.grupo || "").trim();
+  if (d.modo === "verificar") return verificar_(grupo, d.clave, "");
+  if (d.modo !== "datos" && d.modo !== "editar") return { ok: false, error: "accion invalida" };
+
+  const auth = d.token ? verificar_(grupo, "", d.token) : { ok: false };
+  if (!auth.ok) return auth;
+  const t = tabla_();
+  const propias = filasDe_(t, grupo);
+
+  if (d.modo === "datos") {
+    return { ok: true, filas: propias.map(i => {
+      const o = { fila: i + 1 };
+      t.cols.forEach((c, j) => o[c] = t.v[i][j]);
+      return o;
+    }) };
+  }
+
+  const lock = LockService.getScriptLock();
+  lock.waitLock(10000);
+  try {
+    const datos = d.datos || {};
+    if (d.tipo === "basicos") {
+      if (BASICOS.some(c => !String(datos[c] == null ? "" : datos[c]).trim()) || ["TRUE", "FALSE"].indexOf(String(datos.virtual)) < 0) return { ok: false, error: "datos incompletos" };
+      datos.virtual = String(datos.virtual) === "TRUE";
+      const iId = t.cols.indexOf("id");
+      const ids = propias.map(i => String(t.v[i][iId]).trim()).filter(Boolean);
+      const objetivo = [];
+      for (let i = 1; i < t.v.length; i++) {
+        const mismoId = iId >= 0 && ids.indexOf(String(t.v[i][iId]).trim()) >= 0 && String(t.v[i][iId]).trim() !== "";
+        if (mismoId || propias.indexOf(i) >= 0) objetivo.push(i);
+      }
+      BASICOS.forEach(c => {
+        const j = t.cols.indexOf(c);
+        if (j < 0 || !(c in datos)) return;
+        objetivo.forEach(i => t.sh.getRange(i + 1, j + 1).setValue(typeof datos[c] === "boolean" ? datos[c] : clean_(datos[c])));
+      });
+      return { ok: true, filas: objetivo.length };
+    }
+    if (d.tipo === "fila") {
+      const i = Number(d.fila) - 1;
+      if (propias.indexOf(i) < 0) return { ok: false, error: "fila invalida" };
+      if (!validarReunion_(datos)) return { ok: false, error: "datos incompletos" };
+      escribirReunion_(t, i + 1, datos);
+      return { ok: true, filas: 1 };
+    }
+    if (d.tipo === "nueva") {
+      if (!validarReunion_(datos)) return { ok: false, error: "datos incompletos" };
+      const base = propias.length ? t.v[propias[0]] : [];
+      const fila = t.cols.map((c, j) => {
+        if (REUNION.indexOf(c) >= 0) return "";
+        if (c === "nombre") return base[j] || clean_(grupo);
+        return base[j] || "";
+      });
+      t.sh.appendRow(fila);
+      escribirReunion_(t, t.sh.getLastRow(), datos);
+      return { ok: true, filas: 1 };
+    }
+    return { ok: false, error: "modo invalido" };
+  } finally { lock.releaseLock(); }
+}
+
 function doGet(e) {
   try {
     const p = e.parameter || {};
-    if (p.accion === "version") return json_({ version: "2026-10-17-admin" });
+    if (p.accion === "version") return json_({ version: "2026-11-09-auth-post" });
     if (p.accion === "grupos") return json_({ grupos: claves_().map(x => x.grupo) });
-    if (p.accion === "verificar") return json_(verificar_(p.grupo, p.clave, p.token));
-
-    if (p.accion === "datos" || p.accion === "editar") {
-      const auth = verificar_(p.grupo, p.clave, p.token);
-      if (!auth.ok) return json_(auth);
-      const t = tabla_();
-      const propias = filasDe_(t, p.grupo);
-
-      if (p.accion === "datos") {
-        return json_({ ok: true, filas: propias.map(i => {
-          const o = { fila: i + 1 };
-          t.cols.forEach((c, j) => o[c] = t.v[i][j]);
-          return o;
-        }) });
-      }
-
-      const lock = LockService.getScriptLock();
-      lock.waitLock(10000);
-      try {
-        const d = JSON.parse(p.datos || "{}");
-        if (p.modo === "basicos") {
-          if (BASICOS.some(c => !String(d[c] == null ? "" : d[c]).trim()) || ["TRUE", "FALSE"].indexOf(String(d.virtual)) < 0) return json_({ ok: false, error: "datos incompletos" });
-          d.virtual = String(d.virtual) === "TRUE";
-          // Cambia en TODAS las filas que comparten el ID del grupo
-          const iId = t.cols.indexOf("id");
-          const ids = propias.map(i => String(t.v[i][iId]).trim()).filter(Boolean);
-          const objetivo = [];
-          for (let i = 1; i < t.v.length; i++) {
-            const mismoId = iId >= 0 && ids.indexOf(String(t.v[i][iId]).trim()) >= 0 && String(t.v[i][iId]).trim() !== "";
-            if (mismoId || propias.indexOf(i) >= 0) objetivo.push(i);
-          }
-          BASICOS.forEach(c => {
-            const j = t.cols.indexOf(c);
-            if (j < 0 || !(c in d)) return;
-            objetivo.forEach(i => t.sh.getRange(i + 1, j + 1).setValue(typeof d[c] === "boolean" ? d[c] : clean_(d[c])));
-          });
-          return json_({ ok: true, filas: objetivo.length });
-        }
-        if (p.modo === "fila") {
-          const i = Number(p.fila) - 1;
-          if (propias.indexOf(i) < 0) return json_({ ok: false, error: "fila invalida" }); // solo filas del propio grupo
-          if (!validarReunion_(d)) return json_({ ok: false, error: "datos incompletos" });
-          escribirReunion_(t, i + 1, d);
-          return json_({ ok: true, filas: 1 });
-        }
-        if (p.modo === "nueva") {
-          if (!validarReunion_(d)) return json_({ ok: false, error: "datos incompletos" });
-          // Copia ID, nombre, sector y datos básicos de la primera fila del grupo
-          const base = propias.length ? t.v[propias[0]] : [];
-          const fila = t.cols.map((c, j) => {
-            if (REUNION.indexOf(c) >= 0) return "";
-            if (c === "nombre") return base[j] || clean_(p.grupo);
-            return base[j] || "";
-          });
-          t.sh.appendRow(fila);
-          escribirReunion_(t, t.sh.getLastRow(), d);
-          return json_({ ok: true, filas: 1 });
-        }
-        return json_({ ok: false, error: "modo invalido" });
-      } finally { lock.releaseLock(); }
-    }
+    if (["verificar", "datos", "editar"].indexOf(p.accion) >= 0) return json_({ ok: false, error: "use_post" });
     return json_({ error: "accion invalida" });
   } catch (err) {
     return json_({ error: "error" });
@@ -514,6 +520,10 @@ function evento_(b) {
 function doPost(e) {
   try {
     const d = JSON.parse(e.postData.contents);
+    if (d.accion === "grupo") {
+      try { return json_(grupo_(d)); }
+      catch (err1) { return json_({ ok: false, error: "servidor: " + err1.message }); }
+    }
     if (d.accion === "evento") {
       try { return json_(evento_(d)); }
       catch (err2) { return json_({ ok: false, error: "servidor: " + err2.message }); }

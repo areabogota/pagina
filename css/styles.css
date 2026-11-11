@@ -1327,17 +1327,13 @@ main:has(.zona) {
   opacity: 0;
   pointer-events: none;
 }
-#loader img {
-  width: 90px;
+#loader .loader-logo {
+  width: 40%;
+  max-width: 220px;
   height: auto;
-}
-#loader .spinner {
-  width: 42px;
-  height: 42px;
-  border: 4px solid #dfe6f5;
-  border-top-color: #1f3d85;
-  border-radius: 50%;
-  animation: giro 0.8s linear infinite;
+  animation: giro 1.2s linear infinite;
+  flex: 0 0 auto;
+  object-fit: contain;
 }
 @keyframes giro {
   to {
@@ -2157,10 +2153,10 @@ html[data-tema="dark"] .admin-tabla td {
   width: 1.6rem;
   height: 1.6rem;
 }
-/* Equipos de gama baja (tema.js): se quitan animaciones y transiciones; el spinner del loader sigue girando */
-html.gama-baja *:not(.spinner),
-html.gama-baja *:not(.spinner)::before,
-html.gama-baja *:not(.spinner)::after {
+/* Equipos de gama baja (tema.js): el logo del loader sigue girando */
+html.gama-baja *:not(.loader-logo),
+html.gama-baja *:not(.loader-logo)::before,
+html.gama-baja *:not(.loader-logo)::after {
   animation: none !important;
   transition: none !important;
 }

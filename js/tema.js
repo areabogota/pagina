@@ -9,7 +9,15 @@
   if (bajo) document.documentElement.classList.add("gama-baja");
 
   const guardado = (() => { try { return localStorage.getItem(KEY); } catch { return null; } })();
-  const aplicar = t => { document.documentElement.dataset.tema = t; };
+  const aplicar = t => {
+    document.documentElement.dataset.tema = t;
+    const logoCarga = document.querySelector("#loader .loader-logo");
+    if (logoCarga) {
+      logoCarga.src = t === "dark"
+        ? "https://res.cloudinary.com/dlspk9ipi/image/upload/v1793505457/logo_del_servcio_blanco_hj4oex.png"
+        : "https://res.cloudinary.com/dlspk9ipi/image/upload/v1793505456/logo_del_servcio_negro_hyljxd.png";
+    }
+  };
   aplicar(guardado || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"));
 
   document.addEventListener("DOMContentLoaded", () => {
